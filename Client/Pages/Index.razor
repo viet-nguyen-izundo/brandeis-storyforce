@@ -1,0 +1,124 @@
+﻿@page "/"
+@using System.Security.Cryptography.X509Certificates
+@using System.Text.Encodings.Web
+@using Google.Apis.Auth.OAuth2
+@using Google.Apis.Services
+@using Tewr.Blazor.FileReader
+@using System.Dynamic
+@using Blazored.LocalStorage
+@using StoryForce.Client.ViewModels
+@inject HttpClient Http
+@inject IFileReaderService FileReaderService
+
+<p>Please use the form below to submit your files</p>
+<EditForm Model="submission">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    
+    <fieldset>
+        <legend>Title</legend>
+        <input type="text" class="form-control" @bind-value="submission.Title"/>
+    </fieldset>
+    <fieldset>
+        <legend>Description</legend>
+        <textarea class="form-control" rows="5" @bind="submission.Description" @bind:event="oninput"></textarea>
+    </fieldset>
+    <fieldset>
+        <legend>Files</legend>
+        <div class="form-group">
+            <label for="uploadFiles"></label>
+            <input type="file" class="form-control-file" id="uploadFiles" @ref="uploadedFiles" @onchange="@OnFileInputChange" multiple/>
+
+            @foreach (var file in submission.SubmittedFiles)
+            {
+                <div class="form-group">
+                    <div>@file.Title</div>
+                    <label>Description</label>
+                    <input type="text" class="form-control" @bind-value="file.Description"/>
+                    <button class="btn-sm" @onclick="@(() => RemoveFile(file))">Remove</button>
+                </div>
+            }
+
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>Submitter Info</legend>
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" class="form-control" @bind-value="submission.SubmittedBy.Name"/>
+            <label>Email</label>
+            <input type="email" class="form-control" @bind-value="submission.SubmittedBy.Email"/>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>Featured People</legend>
+        @{ var index = 0; }
+        @foreach (var person in submission.FeaturedPeople)
+        {
+            selectedPersonIndex = index;
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" class="form-control" @bind-value="person.Name"/>
+            </div>
+            <div class="form-group">
+                <label>Class of</label>
+                <input type="number" class="form-control" @bind-value="person.ClassOfYear"/>
+                <button class="btn-link btn p-0" @onclick="(e => RemoveFeaturedPerson(selectedPersonIndex))">Remove Person</button>
+            </div>
+            index++;
+        }
+        <button class="btn-link btn p-0" @onclick="AddFeaturedPerson">Add Person</button>
+    </fieldset>
+    <fieldset>
+        <legend>Event</legend>
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" class="form-control" @bind-value="submission.Event.Name"/>
+        </div>
+        <div class="form-group">
+            <label>Date</label>
+            <input type="date" class="form-control" @bind-value="submission.Event.Date"/>
+        </div>
+    </fieldset>
+    <button @onclick=HandleSelection class="btn btn-primary">Submit</button>
+    <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <button type="reset" class="btn btn-primary">Reset</button>
+</EditForm>
+
+<!-- Modal -->
+<div class="modal @modalClass" id="outputModal" @ref="outputModal" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display:@modalDisplay">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Upload Status</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @((MarkupString)Output)
+                @foreach (var file in filesToUpload)
+                {
+                    @($"File: {file.StoryFile.Title}")<br/>
+                    @($"Size: {file.StoryFile.Size.Value.ToFileSizeString()}")<br/>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped active" role="progressbar"
+                             aria-valuenow="@file.Percentage" aria-valuemin="0" aria-valuemax="100" style="width: @($"{file.Percentage}%")">
+                            @file.Percentage.ToString("0.##")%
+                        </div>
+                    </div>
+                    <br/>
+                }
+            </div>
+            <div class="modal-footer">
+                <button @onclick="@CloseModalWindow" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (showBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}

@@ -1,0 +1,27 @@
+﻿body .navbar .sideNav-lock .header-search-wrapper {
+  width: calc(100% - 300px);
+  margin: 10px auto 0 10px; }
+
+body .app-email .content-area .file {
+  font-size: 0.9rem;
+  float: left;
+  margin-right: 5px; }
+  body .app-email .content-area .file img {
+    max-width: 250px; }
+
+body .app-email .content-area .delete-task {
+  float: right; }
+
+body .app-email-content .content-area .app-wrapper .email-footer .footer-action .attachment-list .attachment .attached-image {
+  max-width: 100%; }
+
+#main {
+  padding-left: 0; }
+  #main .w-100px {
+    width: 100px !important; }
+  #main .w-200px {
+    width: 200px !important; }
+  #main .w-300px {
+    width: 300px !important; }
+  #main .content-wrapper-before {
+    top: 0; }

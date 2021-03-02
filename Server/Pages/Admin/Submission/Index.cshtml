@@ -1,0 +1,156 @@
+﻿@page "{id}"
+@model StoryForce.Server.Pages.Admin.Submission.DetailsModel
+@{
+    ViewData["Title"] = "Submission Details";
+}
+
+@section HeadScripts
+{
+    <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/css/pages/app-email-content.css">
+}
+
+<div class="app-email-content">
+    <div class="content-area content-right">
+        <div class="app-wrapper">
+            <div class="app-search">
+                <i class="material-icons mr-2 search-icon">search</i>
+                <input type="text" placeholder="Search Mail" class="app-filter" id="email_filter">
+            </div>
+            <div class="card card-default scrollspy border-radius-6 fixed-width">
+                <div class="card-content pt-0">
+                    <div class="row">
+                        <div class="col s12">
+                            <!-- Email Header -->
+                            <div class="email-header">
+                                <div class="subject">
+                                    <div class="back-to-mails">
+                                        <a href="/Admin/"><i class="material-icons">arrow_back</i></a>
+                                    </div>
+                                    <div class="email-title">@Html.DisplayFor(model => Model.Submission.Title)</div>
+                                </div>
+                                <div class="header-action">
+                                    <span class="badge grey lighten-2">
+                                        <i class="amber-text material-icons small-icons mr-2">
+                                            fiber_manual_record
+                                        </i>7<sup>th</sup> Grade
+                                    </span>
+                                    <div class="favorite">
+                                        <i class="material-icons">star_border</i>
+                                    </div>
+                                    <div class="email-label">
+                                        <i class="material-icons">label_outline</i>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Email Header Ends -->
+                            <hr>
+                            <!-- Email Content -->
+                            <div class="email-content">
+                                <div class="list-title-area">
+                                    <div class="user-media">
+                                        <img src="~/materialize-admin/app-assets/images/user/9.jpg" alt="" class="circle z-depth-2 responsive-img avtar">
+                                        <div class="list-title">
+                                            <span class="name">@Model.Submission.SubmittedBy.Name</span>
+                                        </div>
+                                    </div>
+                                    <div class="title-right">
+                                        <span class="mail-time">@Model.Submission.CreatedAtShortString</span>
+                                        <i class="material-icons">reply</i>
+                                        <i class="material-icons">more_vert</i>
+                                    </div>
+                                </div>
+                                <div class="email-desc">
+                                    @Html.DisplayFor(model => Model.Submission.Description)
+                                </div>
+                            </div>
+                            <!-- Email Content Ends -->
+                            <hr>
+                            <!-- Email Footer -->
+                            <div class="email-footer">
+                                <h6 class="footer-title"> (@Model.Submission.SubmittedFiles.Count)</h6>
+                                <div class="footer-action">
+                                    <div class="attachment-list">
+                                        @foreach (var file in Model.Submission.SubmittedFiles)
+                                        {
+                                            <div class="attachment">
+                                                <img src="@file.GetResizedImageUrl(200, 200)" alt="@file.Title" class="responsive-img attached-image">
+                                                <div class="description">@file.Description</div>
+                                                <div class="size">
+                                                    <span class="grey-text">(@file.Size)</span>
+                                                </div>
+                                                <div class="links">
+                                                    <a href="@file.DownloadUrl" class="right" target="_blank">
+                                                        <i class="material-icons">file_download</i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="footer-buttons">
+                                        <form asp-page-handler="delete" asp-route-id="@Model.Submission.Id" method="post">
+                                            <button class="btn delete mb-1"><i class="material-icons left">delete</i><span>Delete</span></button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="reply-box d-none">
+                                    <form action="#">
+                                        <div class="input-field col s12">
+                                            <div class="snow-container mt-2">
+                                                <div class="compose-editor ql-container ql-snow"><div class="ql-editor ql-blank" data-gramm="false" contenteditable="true" data-placeholder="Reply Here"><p><br></p></div><div class="ql-clipboard" contenteditable="true" tabindex="-1"></div><div class="ql-tooltip ql-hidden"><a class="ql-preview" target="_blank" href="about:blank"></a><input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL"><a class="ql-action"></a><a class="ql-remove"></a></div></div>
+                                                <div class="compose-quill-toolbar ql-toolbar ql-snow">
+                                                    <span class="ql-formats mr-0">
+                                                        <button class="ql-bold" type="button"><svg viewBox="0 0 18 18"> <path class="ql-stroke" d="M5,4H9.5A2.5,2.5,0,0,1,12,6.5v0A2.5,2.5,0,0,1,9.5,9H5A0,0,0,0,1,5,9V4A0,0,0,0,1,5,4Z"></path> <path class="ql-stroke" d="M5,9h5.5A2.5,2.5,0,0,1,13,11.5v0A2.5,2.5,0,0,1,10.5,14H5a0,0,0,0,1,0,0V9A0,0,0,0,1,5,9Z"></path> </svg></button>
+                                                        <button class="ql-italic" type="button"><svg viewBox="0 0 18 18"> <line class="ql-stroke" x1="7" x2="13" y1="4" y2="4"></line> <line class="ql-stroke" x1="5" x2="11" y1="14" y2="14"></line> <line class="ql-stroke" x1="8" x2="10" y1="14" y2="4"></line> </svg></button>
+                                                        <button class="ql-underline" type="button"><svg viewBox="0 0 18 18"> <path class="ql-stroke" d="M5,3V9a4.012,4.012,0,0,0,4,4H9a4.012,4.012,0,0,0,4-4V3"></path> <rect class="ql-fill" height="1" rx="0.5" ry="0.5" width="12" x="3" y="15"></rect> </svg></button>
+                                                        <button class="ql-link" type="button"><svg viewBox="0 0 18 18"> <line class="ql-stroke" x1="7" x2="11" y1="7" y2="11"></line> <path class="ql-even ql-stroke" d="M8.9,4.577a3.476,3.476,0,0,1,.36,4.679A3.476,3.476,0,0,1,4.577,8.9C3.185,7.5,2.035,6.4,4.217,4.217S7.5,3.185,8.9,4.577Z"></path> <path class="ql-even ql-stroke" d="M13.423,9.1a3.476,3.476,0,0,0-4.679-.36,3.476,3.476,0,0,0,.36,4.679c1.392,1.392,2.5,2.542,4.679.36S14.815,10.5,13.423,9.1Z"></path> </svg></button>
+                                                        <button class="ql-image" type="button"><svg viewBox="0 0 18 18"> <rect class="ql-stroke" height="10" width="12" x="3" y="4"></rect> <circle class="ql-fill" cx="6" cy="7" r="1"></circle> <polyline class="ql-even ql-fill" points="5 12 5 11 7 9 8 10 11 7 13 9 13 12 5 12"></polyline> </svg></button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <a class="btn reply-btn right">Reply</a>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="forward-box d-none">
+                                    <hr>
+                                    <form action="#">
+                                        <div class="input-field col s12">
+                                            <i class="material-icons prefix"> person_outline </i>
+                                            <input id="email" type="email" class="validate">
+                                            <label for="email">To</label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <i class="material-icons prefix"> title </i>
+                                            <input id="subject" type="text" class="validate">
+                                            <label for="subject">Subject</label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <div class="snow-container mt-2">
+                                                <div class="forward-email ql-container ql-snow"><div class="ql-editor ql-blank" data-gramm="false" contenteditable="true" data-placeholder="Your Message"><p><br></p></div><div class="ql-clipboard" contenteditable="true" tabindex="-1"></div><div class="ql-tooltip ql-hidden"><a class="ql-preview" target="_blank" href="about:blank"></a><input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL"><a class="ql-action"></a><a class="ql-remove"></a></div></div>
+                                                <div class="forward-email-toolbar ql-toolbar ql-snow">
+                                                    <span class="ql-formats mr-0">
+                                                        <button class="ql-bold" type="button"><svg viewBox="0 0 18 18"> <path class="ql-stroke" d="M5,4H9.5A2.5,2.5,0,0,1,12,6.5v0A2.5,2.5,0,0,1,9.5,9H5A0,0,0,0,1,5,9V4A0,0,0,0,1,5,4Z"></path> <path class="ql-stroke" d="M5,9h5.5A2.5,2.5,0,0,1,13,11.5v0A2.5,2.5,0,0,1,10.5,14H5a0,0,0,0,1,0,0V9A0,0,0,0,1,5,9Z"></path> </svg></button>
+                                                        <button class="ql-italic" type="button"><svg viewBox="0 0 18 18"> <line class="ql-stroke" x1="7" x2="13" y1="4" y2="4"></line> <line class="ql-stroke" x1="5" x2="11" y1="14" y2="14"></line> <line class="ql-stroke" x1="8" x2="10" y1="14" y2="4"></line> </svg></button>
+                                                        <button class="ql-underline" type="button"><svg viewBox="0 0 18 18"> <path class="ql-stroke" d="M5,3V9a4.012,4.012,0,0,0,4,4H9a4.012,4.012,0,0,0,4-4V3"></path> <rect class="ql-fill" height="1" rx="0.5" ry="0.5" width="12" x="3" y="15"></rect> </svg></button>
+                                                        <button class="ql-link" type="button"><svg viewBox="0 0 18 18"> <line class="ql-stroke" x1="7" x2="11" y1="7" y2="11"></line> <path class="ql-even ql-stroke" d="M8.9,4.577a3.476,3.476,0,0,1,.36,4.679A3.476,3.476,0,0,1,4.577,8.9C3.185,7.5,2.035,6.4,4.217,4.217S7.5,3.185,8.9,4.577Z"></path> <path class="ql-even ql-stroke" d="M13.423,9.1a3.476,3.476,0,0,0-4.679-.36,3.476,3.476,0,0,0,.36,4.679c1.392,1.392,2.5,2.542,4.679.36S14.815,10.5,13.423,9.1Z"></path> </svg></button>
+                                                        <button class="ql-image" type="button"><svg viewBox="0 0 18 18"> <rect class="ql-stroke" height="10" width="12" x="3" y="4"></rect> <circle class="ql-fill" cx="6" cy="7" r="1"></circle> <polyline class="ql-even ql-fill" points="5 12 5 11 7 9 8 10 11 7 13 9 13 12 5 12"></polyline> </svg></button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <a class="btn forward-btn right">Forward</a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- Email Footer Ends -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

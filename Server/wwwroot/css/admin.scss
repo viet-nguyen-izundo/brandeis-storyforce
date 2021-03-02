@@ -1,0 +1,71 @@
+﻿body {
+    .navbar {
+        input {
+            &.header-search-input {
+            }
+        }
+
+        .sideNav-lock {
+            .header-search-wrapper {
+                width: calc(100% - 300px);
+                margin: 10px auto 0 10px;
+            }
+        }
+    }
+
+    .app-email {
+        .content-area {
+            .file {
+                font-size: 0.9rem;
+                float: left;
+                margin-right: 5px;
+
+                img {
+                    max-width: 250px;
+                }
+            }
+
+            .delete-task {
+                float: right;
+            }
+        }
+    }
+
+    .app-email-content {
+        .content-area {
+            .app-wrapper {
+                .email-footer {
+                    .footer-action {
+                        .attachment-list {
+                            .attachment {
+                                .attached-image {
+                                    max-width: 100%;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+#main {
+    padding-left: 0;
+
+    .w-100px {
+        width: 100px !important;
+    }
+
+    .w-200px {
+        width: 200px !important;
+    }
+
+    .w-300px {
+        width: 300px !important;
+    }
+
+    .content-wrapper-before {
+        top:0;
+    }
+}

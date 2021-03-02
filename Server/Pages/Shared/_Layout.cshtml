@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>@ViewBag.Title</title>
+
+    <!-- BEGIN: VENDOR CSS-->
+    <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/vendors/vendors.min.css">
+    <!-- END: VENDOR CSS-->
+    <!-- BEGIN: Page Level CSS-->
+    <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/css/themes/horizontal-menu-template/materialize.css">
+    <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/css/themes/horizontal-menu-template/style.css">
+    <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/css/layouts/style-horizontal.css">
+    <!-- END: Page Level CSS-->
+    <!-- BEGIN: Custom CSS-->
+    <link href="~/css/app.css" type="text/css" rel="stylesheet" />
+    <!-- END: Custom CSS-->
+
+    @await RenderSectionAsync("HeadScripts", false)
+
+</head>
+
+<body>
+    <div class="main">
+        <div class="content px-4">
+            @RenderBody()
+        </div>
+    </div>
+
+    @await RenderSectionAsync("Scripts", false)
+    @await RenderSectionAsync("FooterScripts", false)
+</body>
+
+</html>
