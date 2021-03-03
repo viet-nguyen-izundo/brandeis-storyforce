@@ -55,7 +55,6 @@ namespace StoryForce.Server.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<List<SubmissionDto>>> Get()
         {
             var submissions = await _submissionService.GetAsync();
@@ -64,7 +63,6 @@ namespace StoryForce.Server.Controllers
         }
 
         [HttpGet("{id:length(24)}", Name = "GetSubmission")]
-        [Authorize]
         public async Task<ActionResult<SubmissionDto>> Get(string id)
         {
             var submission = await _submissionService.GetAsync(id);
@@ -78,6 +76,8 @@ namespace StoryForce.Server.Controllers
         }
 
         [HttpPost]
+        [DisableRequestSizeLimit]                       
+        [RequestFormLimits(MultipartBodyLengthLimit = 629145600)]
         public async Task<ActionResult<SubmissionDto>> Create([FromForm] FilesSubmission submission)
         {
             var googleDriveId = this._configuration.GetSection("Google:Drive:DriveId").Value;
@@ -160,7 +160,6 @@ namespace StoryForce.Server.Controllers
         }
 
         [HttpPut("{id:length(24)}")]
-        [Authorize]
         public async Task<IActionResult> Update(string id, SubmissionDto updatedSubmission)
         {
             var submission = await _submissionService.GetAsync(id);
@@ -176,7 +175,6 @@ namespace StoryForce.Server.Controllers
         }
 
         [HttpDelete("{id:length(24)}")]
-        [Authorize]
         public async Task<IActionResult> Delete(string id)
         {
             var submission = await _submissionService.GetAsync(id);

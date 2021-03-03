@@ -48,14 +48,16 @@ namespace StoryForce.Server.ViewModels
         {
             var files = FormFiles.Select((file, index) => new StoryFile()
             {
-                Title = file.FileName, 
-                Description = FileMetaDataList[index].Description, 
-                Size = file.Length, 
+                Title = file.FileName,
+                Description = FileMetaDataList != null && FileMetaDataList.Count > 0
+                    ? FileMetaDataList[index].Description
+                    : string.Empty,
+                Size = file.Length,
                 Type = file.ContentType,
                 SubmissionTitle = this.Title,
                 SubmissionDescription = this.Description,
                 FeaturedPeople = this.FeaturedPeople,
-                Event = this.Event
+                Event = !string.IsNullOrEmpty(this.Event.Name) ? this.Event : null
             }).ToList();
 
             

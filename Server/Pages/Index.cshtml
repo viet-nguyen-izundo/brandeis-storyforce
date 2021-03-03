@@ -274,50 +274,48 @@
                         const cardContent = document.createElement("div");
                         cardContent.classList.add("card-content");
 
-                        console.log("Loading the image");
                         try {
                             const reader = new FileReader();
                             reader.onload = function(e) {
-                                if (file.type.startsWith("image/")) {
+                                // if file.type.startsWith("image/")) {
                                     img.src = e.target.result;
                                     img.className = "img-preview";
-                                }
+                                //}
                             }
-
-                            name.classList.add("card-title", "font-weight-400");
-                            name.innerText = file.name;
-
-                            cardImage.appendChild(img);
-                            card.appendChild(cardImage);
-                            cardContent.appendChild(name);
-                            cardContent.appendChild(desc);
-                            card.appendChild(cardContent);
-                            cardContainer.appendChild(card);
-                            previewDiv.appendChild(cardContainer);
-
-                            reader.readAsDataURL(file);
+                            if (file.type.startsWith("image/")) {
+                                reader.readAsDataURL(file);
+                            }
                         } catch (e) {
                             console.log(e.message);
                         }
+                        name.classList.add("card-title", "font-weight-400");
+                        name.innerText = file.name;
+
+                        cardImage.appendChild(img);
+                        card.appendChild(cardImage);
+                        cardContent.appendChild(name);
+                        cardContent.appendChild(desc);
+                        card.appendChild(cardContent);
+                        cardContainer.appendChild(card);
+                        previewDiv.appendChild(cardContainer);
                     };
                 }
             );
 
             const request = new XMLHttpRequest();
+            request.timeout = 1000 * 60 * 60;
 
-            /*
-            request.upload.addEventListener("progress",
-                function(e) {
-                    const position = e.loaded || e.position;
-                    const percentComplete = Math.ceil(position / e.total) * 100;
+            //request.upload.addEventListener("progress",
+            //    function(e) {
+            //        const position = e.loaded || e.position;
+            //        const percentComplete = Math.ceil(position / e.total) * 100;
 
-                    console.log(percentComplete + "% completed.");
-                    const progressBar = document.querySelector(".progress-bar");
-                    const status = document.querySelector(".status");
-                    progressBar.setAttribute("style", `width: ${percentComplete}%`);
-                    status.innerText = percentComplete + "%";
-                });
-            */
+            //        console.log(percentComplete + "% completed.");
+            //        //const progressBar = document.querySelector(".progress-bar");
+            //        //const status = document.querySelector(".status");
+            //        //progressBar.setAttribute("style", `width: ${percentComplete}%`);
+            //        //status.innerText = percentComplete + "%";
+            //    });
 
             progressBar.classList.remove("hide");
             successMessage.classList.add("hide");
@@ -337,7 +335,7 @@
 
             request.addEventListener("error",
                 function(e) {
-                    console.log(`Error: ${e.message}`);
+                    console.log(`Error: ${request.response}`);
                 });
 
             request.addEventListener("abort",
