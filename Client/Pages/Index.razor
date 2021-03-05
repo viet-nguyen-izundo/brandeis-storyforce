@@ -3,122 +3,206 @@
 @using System.Text.Encodings.Web
 @using Google.Apis.Auth.OAuth2
 @using Google.Apis.Services
-@using Tewr.Blazor.FileReader
 @using System.Dynamic
 @using Blazored.LocalStorage
-@using StoryForce.Client.ViewModels
+@using StoryForce.Shared.ViewModels
 @inject HttpClient Http
-@inject IFileReaderService FileReaderService
 
-<p>Please use the form below to submit your files</p>
-<EditForm Model="submission">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    
-    <fieldset>
-        <legend>Title</legend>
-        <input type="text" class="form-control" @bind-value="submission.Title"/>
-    </fieldset>
-    <fieldset>
-        <legend>Description</legend>
-        <textarea class="form-control" rows="5" @bind="submission.Description" @bind:event="oninput"></textarea>
-    </fieldset>
-    <fieldset>
-        <legend>Files</legend>
-        <div class="form-group">
-            <label for="uploadFiles"></label>
-            <input type="file" class="form-control-file" id="uploadFiles" @ref="uploadedFiles" @onchange="@OnFileInputChange" multiple/>
+<div class="row">
+    <h5 class="breadcrumbs-title">
+        Please use the form below to submit your files
+    </h5>
+</div>
+<div class="row">
+    <EditForm Model="Submission" class="col s12">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-            @foreach (var file in submission.SubmittedFiles)
-            {
-                <div class="form-group">
-                    <div>@file.Title</div>
-                    <label>Description</label>
-                    <input type="text" class="form-control" @bind-value="file.Description"/>
-                    <button class="btn-sm" @onclick="@(() => RemoveFile(file))">Remove</button>
-                </div>
-            }
-
-        </div>
-    </fieldset>
-    <fieldset>
-        <legend>Submitter Info</legend>
-        <div class="form-group">
-            <label>Name</label>
-            <input type="text" class="form-control" @bind-value="submission.SubmittedBy.Name"/>
-            <label>Email</label>
-            <input type="email" class="form-control" @bind-value="submission.SubmittedBy.Email"/>
-        </div>
-    </fieldset>
-    <fieldset>
-        <legend>Featured People</legend>
-        @{ var index = 0; }
-        @foreach (var person in submission.FeaturedPeople)
-        {
-            selectedPersonIndex = index;
-            <div class="form-group">
-                <label>Name</label>
-                <input type="text" class="form-control" @bind-value="person.Name"/>
-            </div>
-            <div class="form-group">
-                <label>Class of</label>
-                <input type="number" class="form-control" @bind-value="person.ClassOfYear"/>
-                <button class="btn-link btn p-0" @onclick="(e => RemoveFeaturedPerson(selectedPersonIndex))">Remove Person</button>
-            </div>
-            index++;
-        }
-        <button class="btn-link btn p-0" @onclick="AddFeaturedPerson">Add Person</button>
-    </fieldset>
-    <fieldset>
-        <legend>Event</legend>
-        <div class="form-group">
-            <label>Name</label>
-            <input type="text" class="form-control" @bind-value="submission.Event.Name"/>
-        </div>
-        <div class="form-group">
-            <label>Date</label>
-            <input type="date" class="form-control" @bind-value="submission.Event.Date"/>
-        </div>
-    </fieldset>
-    <button @onclick=HandleSelection class="btn btn-primary">Submit</button>
-    <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <button type="reset" class="btn btn-primary">Reset</button>
-</EditForm>
-
-<!-- Modal -->
-<div class="modal @modalClass" id="outputModal" @ref="outputModal" tabindex="-1" role="dialog"
-     aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display:@modalDisplay">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Upload Status</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                @((MarkupString)Output)
-                @foreach (var file in filesToUpload)
-                {
-                    @($"File: {file.StoryFile.Title}")<br/>
-                    @($"Size: {file.StoryFile.Size.Value.ToFileSizeString()}")<br/>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-striped active" role="progressbar"
-                             aria-valuenow="@file.Percentage" aria-valuemin="0" aria-valuemax="100" style="width: @($"{file.Percentage}%")">
-                            @file.Percentage.ToString("0.##")%
+        <div class="col s12 m12 l12">
+            <div class="card card-default scrollspy">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Submitter Information
+                    </h4>
+                    <div class="row">
+                        <div class="input-field col s12 m6">
+                            <input type="text"  @bind-value="Submission.SubmittedBy.Name" />
+                            <label>Name</label>
+                        </div>
+                        <div class="input-field col s12 m6">
+                            <input type="email"  @bind-value="Submission.SubmittedBy.Email" />
+                            <label>Email</label>
                         </div>
                     </div>
-                    <br/>
-                }
+                </div>
             </div>
-            <div class="modal-footer">
-                <button @onclick="@CloseModalWindow" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+
+        <div class="col s12 m12 l12">
+            <div class="card card-default scrollspy">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Please give your Submission a name and a description.
+                    </h4>
+                    <div class="row">
+                        <div class="input-field col s12 m6">
+                            <input type="text" class="validate" @bind-value="Submission.Title" />
+                        </div>
+                        <div class="input-field col s12 m6">
+                            <textarea class="validate materialize-textarea" rows="5" @bind="Submission.Description"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m12 l12">
+            <div class="card card-default scrollspy">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Choose the files to upload
+                    </h4>
+                    <div class="row">
+                        <div class="file-field input-field">
+                            <div class="btn">
+                                <span>Files</span>
+                                <InputFile multiple class="form-control-file" id="uploadFiles" OnChange="@OnFileInputChange" />
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text" placeholder="Upload one or more files">
+                                <span asp-validation-for="Submission.UploadFiles"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m12 l12" id="previewFiles">
+            @foreach (var file in this.Submission.UploadFiles)
+            {
+                <div class="col s12 m6 l3">
+                    <div class="card">
+                        <div class="card-image">
+                            <a class="btn-floating mb-1 waves-effect waves-light remove-file" @onclick="@(() => RemoveFile(file))">
+                                <i class="material-icons">clear</i>
+                            </a>
+                            @if (file.MimeType.StartsWith("image/"))
+                            {
+                                <img src="@file.PreviewUrl" class="img-preview">
+                            }
+                        </div>
+                        <div class="card-content" data-children-count="1">
+                            <span class="card-title font-weight-400">@file.Title</span>
+                            <textarea @bind="file.Description" class="materialize-textarea" placeholder="Enter a description"></textarea>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+
+        <div class="col s12 m12 l12">
+            <div class="card card-default scrollspy">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Featured People
+                    </h4>
+                    @{ var index = 0; }
+                    @foreach (var person in this.Submission.FeaturedPeople)
+                    {
+                        selectedPersonIndex = index;
+
+                        <div class="row featured-person">
+                            <div class="input-field col s12 m6">
+                                <input type="text" class="validate" @bind-value="Submission.FeaturedPeople[index].Name" />
+                            </div>
+                            <div class="input-field col s12 m6">
+                                <input type="number" class="validate" @bind-value="Submission.FeaturedPeople[index].ClassOfYear" />
+                            </div>
+                        </div>
+
+                        index++;
+                    }
+                    <div class="row">
+                        <a class="btn waves-effect add-person" @onclick="@AddFeaturedPerson">Add Person</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m12 l12">
+            <div class="card card-default scrollspy">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Event Information
+                    </h4>
+                    <div class="row">
+                        <div class="input-field col s12 m6">
+                            <input type="text" class="validate" @bind-value="Submission.Event.Name" />
+                            <label asp-for="Submission.Event.Name"></label>
+                        </div>
+                        <div class="input-field col s12 m6">
+                            <input type="date" class="datepicker" @bind-value="Submission.Event.Date" />
+                            <label asp-for="Submission.Event.Date"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-field col s12">
+                <button class="btn cyan waves-effect waves-light right" @onclick=HandleSelection id="submit-button">
+                    Submit <i class="material-icons right">send</i>
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-field col s12">
+                <button class="btn cyan waves-effect waves-light right" type="reset">
+                    Reset <i class="material-icons right">reset</i>
+                </button>
+            </div>
+        </div>
+    </EditForm>
+
+    <!-- Modal -->
+    <div class="modal @modalClass" id="outputModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display:@modalDisplay">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Upload Status</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @((MarkupString)Output)
+                    @foreach (var file in this.Submission.UploadFiles)
+                    {
+                        @($"File: {file.Title}")<br />
+                        @($"Size: {file.Size.ToFileSizeString()}")<br />
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped active" role="progressbar"
+                                 aria-valuenow="@file.Percentage" aria-valuemin="0" aria-valuemax="100" style="width: @($"{file.Percentage}%")">
+                                @file.Percentage.ToString("0.##")%
+                            </div>
+                        </div>
+                        <br />
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button @onclick="@CloseModalWindow" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-@if (showBackdrop)
-{
-    <div class="modal-backdrop fade show"></div>
-}
+    @if (showBackdrop)
+    {
+        <div class="modal-backdrop fade show"></div>
+    }
+</div>

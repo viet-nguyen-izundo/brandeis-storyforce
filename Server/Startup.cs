@@ -115,6 +115,7 @@ namespace StoryForce.Server
             /*
                 This line causes conflict with Apache/Nginx config if the reverse proxy passthrough occurs over http.
                 Disable this option in code and allow the server config to handle https redirection.
+
                 app.UseHttpsRedirection();
             */
             app.UseBlazorFrameworkFiles();

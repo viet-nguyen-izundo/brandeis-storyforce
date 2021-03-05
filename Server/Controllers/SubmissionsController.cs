@@ -18,6 +18,7 @@ using StoryForce.Server.ViewModels;
 using StoryForce.Shared.Dtos;
 using StoryForce.Shared.Models;
 using StoryForce.Shared.Services;
+using StoryForce.Shared.ViewModels;
 using File = Google.Apis.Drive.v3.Data.File;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -76,32 +77,33 @@ namespace StoryForce.Server.Controllers
         }
 
         [HttpPost]
-        [DisableRequestSizeLimit]                       
-        [RequestFormLimits(MultipartBodyLengthLimit = 629145600)]
-        public async Task<ActionResult<SubmissionDto>> Create([FromForm] FilesSubmission submission)
+        [DisableRequestSizeLimit]
+        [RequestFormLimits(MultipartBodyLengthLimit = 2147483648)] //2GB:1024 * 1024 * 1024 * 2
+        public async Task<ActionResult<SubmissionDto>> CreateFromBlazor([FromForm] BlazorFilesSubmission submission)
         {
             var googleDriveId = this._configuration.GetSection("Google:Drive:DriveId").Value;
             var converted = submission.ConvertToEntity();
             var submitter = await _peopleService.CreateAsync(converted.SubmittedBy);
             converted.SubmittedBy = submitter;
 
-            for(var index = 0; index < submission.FormFiles.Count; index++)
+            for (var index = 0; index < submission.UploadFiles.Count; index++)
             {
-                var currentFile = submission.FormFiles[index];
+                var currentFile = submission.UploadFiles[index];
                 File newFile = new File
                 {
-                    Name = currentFile.FileName,
+                    Name = currentFile.Title,
                     Description = converted.SubmittedFiles != null && converted.SubmittedFiles.Count > 0
-                        ? converted.SubmittedFiles[index].Description 
+                        ? converted.SubmittedFiles[index].Description
                         : string.Empty,
-                    Parents = new List<string>() {googleDriveId}
+                    Parents = new List<string>() { googleDriveId }
                 };
-                Stream fileStream;
 
-                if (currentFile.Length > 0)
+                Stream readStream;
+
+                if (currentFile.Size > 0)
                 {
-                    newFile.MimeType = currentFile.ContentType;
-                    fileStream = currentFile.OpenReadStream();
+                    newFile.MimeType = currentFile.MimeType;
+                    readStream = currentFile.FileReference.OpenReadStream();
                 }
                 else
                 {
@@ -115,15 +117,138 @@ namespace StoryForce.Server.Controllers
                             (submission.GDriveOAuthToken != null
                                 ? "?access_token=" + submission.GDriveOAuthToken
                                 : string.Empty);
-                    } else if (fileMeta.StorageProvider == StorageProvider.Url)
+                    }
+                    else if (fileMeta.StorageProvider == StorageProvider.Url)
                     {
                         downloadUrl = fileMeta.DownloadUrl;
                     }
 
-                    fileStream = await _webClient.OpenReadTaskAsync(new Uri(downloadUrl));
+                    readStream = await _webClient.OpenReadTaskAsync(new Uri(downloadUrl));
                 }
 
-                var request = _gDriveService.Files.Create(newFile, fileStream, currentFile.ContentType);
+                var tempFilename = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.tmp");
+                await using (var stream = new FileStream(tempFilename, FileMode.CreateNew))
+                {
+                    const int chunkSize = 1024;
+                    var buffer = new byte[chunkSize];
+                    var bytesRead = 0;
+                    do
+                    {
+                        bytesRead = await readStream.ReadAsync(buffer, 0, buffer.Length);
+                        await stream.WriteAsync(buffer, 0, bytesRead);
+                    } while (bytesRead > 0);
+
+                    await readStream.DisposeAsync();
+                }
+
+                var uploadStream = new FileStream(tempFilename, FileMode.Open);
+
+                var request = _gDriveService.Files.Create(newFile, uploadStream, currentFile.MimeType);
+                request.ChunkSize = 1 * 1024 * 1024; //1MB per chunk
+                request.Fields = "id, name, webViewLink, webContentLink, thumbnailLink, createdTime, size";
+
+                request.ResponseReceived += (file) =>
+                {
+                    var storyFile = converted.SubmittedFiles.SingleOrDefault(f => f.Title == file.Name);
+                    storyFile.DownloadUrl = file.WebContentLink;
+                    storyFile.ThumbnailUrl = file.ThumbnailLink;
+                    storyFile.UpdatedAt = converted.CreatedAt;
+                    storyFile.SubmissionId = converted.Id;
+                    storyFile.SubmittedBy = submitter;
+                    storyFile.Size = file.Size;
+                };
+
+                await request.UploadAsync();
+            }
+
+            // await _peopleService.CreateMultipleAsync(converted.FeaturedPeople);
+            foreach (var person in converted.FeaturedPeople)
+            {
+                var addedPerson = await _peopleService.CreateAsync(person);
+                person.Id = addedPerson.Id;
+            }
+
+            await _storyFileService.CreateMultipleAsync(converted.SubmittedFiles);
+
+            if (converted.Event != null && !string.IsNullOrEmpty(converted.Event.Name))
+            {
+                await _eventService.CreateAsync(converted.Event);
+            }
+
+            await _submissionService.CreateAsync(converted);
+
+            return CreatedAtRoute("GetSubmission", new { id = converted.Id }, converted);
+        }
+
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [RequestFormLimits(MultipartBodyLengthLimit = 2147483648)] //2GB:1024 * 1024 * 1024 * 2
+        public async Task<ActionResult<SubmissionDto>> Create([FromForm] FilesSubmission submission)
+        {
+            var googleDriveId = this._configuration.GetSection("Google:Drive:DriveId").Value;
+            var converted = submission.ConvertToEntity();
+            var submitter = await _peopleService.CreateAsync(converted.SubmittedBy);
+            converted.SubmittedBy = submitter;
+
+            for (var index = 0; index < submission.FormFiles.Count; index++)
+            {
+                var currentFile = submission.FormFiles[index];
+                File newFile = new File
+                {
+                    Name = currentFile.FileName,
+                    Description = converted.SubmittedFiles != null && converted.SubmittedFiles.Count > 0
+                        ? converted.SubmittedFiles[index].Description
+                        : string.Empty,
+                    Parents = new List<string>() { googleDriveId }
+                };
+
+                Stream readStream;
+
+                if (currentFile.Length > 0)
+                {
+                    newFile.MimeType = currentFile.ContentType;
+                    readStream = currentFile.OpenReadStream();
+                }
+                else
+                {
+                    newFile.MimeType = MimeTypesMap.GetMimeType(newFile.Name);
+                    var fileMeta = submission.FileMetaDataList[index];
+                    string downloadUrl = string.Empty;
+                    if (fileMeta.StorageProvider == StorageProvider.GoogleDrive)
+                    {
+                        downloadUrl =
+                            $"https://lh3.googleusercontent.com/d/{fileMeta.FileId}" +
+                            (submission.GDriveOAuthToken != null
+                                ? "?access_token=" + submission.GDriveOAuthToken
+                                : string.Empty);
+                    }
+                    else if (fileMeta.StorageProvider == StorageProvider.Url)
+                    {
+                        downloadUrl = fileMeta.DownloadUrl;
+                    }
+
+                    readStream = await _webClient.OpenReadTaskAsync(new Uri(downloadUrl));
+                }
+
+                var tempFilename = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.tmp");
+                await using (var stream = new FileStream(tempFilename, FileMode.CreateNew))
+                {
+                    const int chunkSize = 1024;
+                    var buffer = new byte[chunkSize];
+                    var bytesRead = 0;
+                    do
+                    {
+                        bytesRead = await readStream.ReadAsync(buffer, 0, buffer.Length);
+                        await stream.WriteAsync(buffer, 0, bytesRead);
+                    } while (bytesRead > 0);
+
+                    await readStream.DisposeAsync();
+                }
+
+                var uploadStream = new FileStream(tempFilename, FileMode.Open);
+
+                var request = _gDriveService.Files.Create(newFile, uploadStream, currentFile.ContentType);
+                request.ChunkSize = 1 * 1024 * 1024; //1MB per chunk
                 request.Fields = "id, name, webViewLink, webContentLink, thumbnailLink, createdTime, size";
 
                 request.ResponseReceived += (file) =>

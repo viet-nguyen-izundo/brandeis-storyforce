@@ -1,11 +1,13 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="main">
-    <div class="top-row px-4">
-        <img src="images/logo-sm.png" />  <div class="app-title">Kavina</div> <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
-    </div>
+<div class="page">
+    <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+        <div class="container">
+            <div class="top-row px-4">
+                <img src="images/logo-sm.png" />  <div class="app-title">Kavina</div> <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
+            </div>
 
-    <div class="content px-4">
-        @Body
+            @Body
+        </div>
     </div>
 </div>

@@ -3,8 +3,15 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>d582e5dd-e185-4639-895e-3b95a3fae81c</UserSecretsId>
-    <StartupObject>StoryForce.Server.Program</StartupObject>
+    <StartupObject></StartupObject>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot_remove\**" />
+    <Content Remove="wwwroot_remove\**" />
+    <EmbeddedResource Remove="wwwroot_remove\**" />
+    <None Remove="wwwroot_remove\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
@@ -12,36 +19,11 @@
 
   <ItemGroup>
     <None Include="compilerconfig.json" />
-    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
-    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />
-    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map" />
-    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map" />
-    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap.css.map" />
-    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map" />
-    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js" />
-    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map" />
-    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js" />
-    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map" />
-    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.js" />
-    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.js.map" />
-    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js" />
-    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map" />
-    <None Include="wwwroot\lib\bootstrap\LICENSE" />
-    <None Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
-    <None Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
-    <None Include="wwwroot\lib\jquery-validation\dist\additional-methods.js" />
-    <None Include="wwwroot\lib\jquery-validation\dist\additional-methods.min.js" />
-    <None Include="wwwroot\lib\jquery-validation\dist\jquery.validate.js" />
-    <None Include="wwwroot\lib\jquery-validation\dist\jquery.validate.min.js" />
-    <None Include="wwwroot\lib\jquery-validation\LICENSE.md" />
-    <None Include="wwwroot\lib\jquery\dist\jquery.js" />
-    <None Include="wwwroot\lib\jquery\dist\jquery.min.js" />
-    <None Include="wwwroot\lib\jquery\dist\jquery.min.map" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="Google.Apis.Drive.v3" Version="1.50.0.2229" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.50.0.2250" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="5.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="5.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.3" />
@@ -56,15 +38,11 @@
     <PackageReference Include="Microsoft.jQuery.Unobtrusive.Validation" Version="3.2.12" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
-    <PackageReference Include="MongoDB.Driver" Version="2.11.6" />
+    <PackageReference Include="MongoDB.Driver" Version="2.12.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Shared\StoryForce.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\upload\" />
   </ItemGroup>
 
 
