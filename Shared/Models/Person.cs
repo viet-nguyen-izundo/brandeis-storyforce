@@ -10,7 +10,7 @@ namespace StoryForce.Shared.Models
         [Required]
         public string Name { get; set; }
 
-        public virtual string Email { get; set; }
+        public string Email { get; set; }
 
         [Display(Name = "Year of Class")]
         public int? ClassOfYear { get; set; }

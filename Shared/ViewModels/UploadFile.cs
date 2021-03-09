@@ -9,12 +9,6 @@ namespace StoryForce.Shared.ViewModels
 {
     public class UploadFile
     {
-        public UploadFile(IBrowserFile fileReference)
-        {
-            this.FileReference = fileReference;
-        }
-        public IBrowserFile FileReference { get; private set; }
-
         public string Title { get; set; }
         
         public string Description { get; set; }
@@ -25,7 +19,15 @@ namespace StoryForce.Shared.ViewModels
 
         public string PreviewUrl { get; set; }
 
-        public decimal Percentage { get; set; }
+        public decimal UploadPercentage { get; set; }
+
+        public byte[] Content { get; set; }
+
+        public StorageProvider StorageProvider { get; set; }
+
+        public string ProviderFileId { get; set; }
+
+        public string DownloadUrl { get; set; }
     }
 
     public static class MyExtensions

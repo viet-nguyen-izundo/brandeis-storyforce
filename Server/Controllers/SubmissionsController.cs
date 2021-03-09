@@ -76,10 +76,10 @@ namespace StoryForce.Server.Controllers
             return SubmissionDto.ConvertFromEntity(submission);
         }
 
-        [HttpPost]
+        [HttpPost("blazor")]
         [DisableRequestSizeLimit]
         [RequestFormLimits(MultipartBodyLengthLimit = 2147483648)] //2GB:1024 * 1024 * 1024 * 2
-        public async Task<ActionResult<SubmissionDto>> CreateFromBlazor([FromForm] BlazorFilesSubmission submission)
+        public async Task<ActionResult<SubmissionDto>> CreateFromBlazor(BlazorFilesSubmission submission)
         {
             var googleDriveId = this._configuration.GetSection("Google:Drive:DriveId").Value;
             var converted = submission.ConvertToEntity();
@@ -89,6 +89,11 @@ namespace StoryForce.Server.Controllers
             for (var index = 0; index < submission.UploadFiles.Count; index++)
             {
                 var currentFile = submission.UploadFiles[index];
+                if (currentFile.StorageProvider == StorageProvider.LocalFileSystem && currentFile.Size == 0)
+                {
+                    continue;
+                }
+
                 File newFile = new File
                 {
                     Name = currentFile.Title,
@@ -98,29 +103,30 @@ namespace StoryForce.Server.Controllers
                     Parents = new List<string>() { googleDriveId }
                 };
 
-                Stream readStream;
+                Stream readStream = null;
 
-                if (currentFile.Size > 0)
+                if (currentFile.StorageProvider == StorageProvider.LocalFileSystem)
                 {
                     newFile.MimeType = currentFile.MimeType;
-                    readStream = currentFile.FileReference.OpenReadStream();
+                    readStream = new MemoryStream(currentFile.Content);
                 }
                 else
                 {
                     newFile.MimeType = MimeTypesMap.GetMimeType(newFile.Name);
-                    var fileMeta = submission.FileMetaDataList[index];
                     string downloadUrl = string.Empty;
-                    if (fileMeta.StorageProvider == StorageProvider.GoogleDrive)
+                    
+                    if (currentFile.StorageProvider == StorageProvider.GoogleDrive)
                     {
                         downloadUrl =
-                            $"https://lh3.googleusercontent.com/d/{fileMeta.FileId}" +
+                            $"https://lh3.googleusercontent.com/d/{currentFile.ProviderFileId}" +
                             (submission.GDriveOAuthToken != null
                                 ? "?access_token=" + submission.GDriveOAuthToken
                                 : string.Empty);
                     }
-                    else if (fileMeta.StorageProvider == StorageProvider.Url)
+
+                    if (currentFile.StorageProvider == StorageProvider.Url)
                     {
-                        downloadUrl = fileMeta.DownloadUrl;
+                        downloadUrl = currentFile.DownloadUrl;
                     }
 
                     readStream = await _webClient.OpenReadTaskAsync(new Uri(downloadUrl));

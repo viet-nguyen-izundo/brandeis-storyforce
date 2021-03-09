@@ -18,7 +18,7 @@ namespace StoryForce.Shared.ViewModels
     {
         public BlazorFilesSubmission()
         {
-            this.SubmittedBy = new Submitter();
+            this.SubmittedBy = new Person();
             this.FileMetaDataList = new List<FileMeta>();
             this.FeaturedPeople = new List<Person> { new () };
             this.UploadFiles = new List<UploadFile>();
@@ -33,6 +33,7 @@ namespace StoryForce.Shared.ViewModels
 
         [Required]
         [Display(Name = "Files")]
+        [ValidateComplexType]
         public List<UploadFile> UploadFiles { get; set; }
 
         public string GDriveOAuthToken { get; set; }
@@ -41,28 +42,28 @@ namespace StoryForce.Shared.ViewModels
 
         public Event Event { get; set; }
 
+        [Required]
+        [ValidateComplexType]
         public List<Person> FeaturedPeople { get; set; }
 
         [Required]
-        public Submitter SubmittedBy { get; set; }
+        [ValidateComplexType]
+        public Person SubmittedBy { get; set; }
 
         public Submission ConvertToEntity()
         {
             var files = UploadFiles.Select((file, index) => new StoryFile()
             {
-                Title = file.FileReference.Name,
-                Description = FileMetaDataList != null && FileMetaDataList.Count > 0
-                    ? FileMetaDataList[index].Description
-                    : string.Empty,
-                Size = file.FileReference.Size,
-                Type = file.FileReference.ContentType,
+                Title = file.Title,
+                Description = file.Description,
+                Size = file.Size,
+                Type = file.MimeType,
                 SubmissionTitle = this.Title,
                 SubmissionDescription = this.Description,
                 FeaturedPeople = this.FeaturedPeople,
                 Event = !string.IsNullOrEmpty(this.Event.Name) ? this.Event : null
             }).ToList();
 
-            
             return new Submission
             {
                 Id = ObjectId.GenerateNewId().ToString(),

@@ -9,6 +9,7 @@ namespace StoryForce.Shared.Models
     {
         DropBox,
         GoogleDrive,
+        LocalFileSystem,
         OneDrive,
         Url
     }

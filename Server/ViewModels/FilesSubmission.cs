@@ -42,7 +42,7 @@ namespace StoryForce.Server.ViewModels
         public List<Person> FeaturedPeople { get; set; }
 
         [Required]
-        public Submitter SubmittedBy { get; set; }
+        public Person SubmittedBy { get; set; }
 
         public Submission ConvertToEntity()
         {

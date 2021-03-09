@@ -1,0 +1,227 @@
+﻿@page "/Upload"
+@using System.Security.Cryptography.X509Certificates
+@using System.Text.Encodings.Web
+@using Google.Apis.Auth.OAuth2
+@using Google.Apis.Services
+@using System.Dynamic
+@using Blazored.LocalStorage
+@using StoryForce.Shared.ViewModels
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+<div class="row">
+    <h5 class="breadcrumbs-title">
+        Please use the form below to submit your files
+    </h5>
+</div>
+<div class="row">
+    <EditForm Model="Submission" class="col s12" OnValidSubmit="@HandleSubmission">
+        <ObjectGraphDataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="col s12 m12 l12">
+            <div class="card card-default scrollspy">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Submitter Information
+                    </h4>
+                    <div class="row">
+                        <div class="input-field col s12 m6">
+                            <InputText CssClass="validate" @bind-Value="Submission.SubmittedBy.Name" placeholder="Name" />
+                            <label>Name</label>
+                        </div>
+                        <div class="input-field col s12 m6">
+                            <InputText type="email" CssClass="validate" @bind-Value="Submission.SubmittedBy.Email" placeholder="Email" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m12 l12">
+            <div class="card card-default scrollspy">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Please give your Submission a name and a description.
+                    </h4>
+                    <div class="row">
+                        <div class="input-field col s12 m6">
+                            <InputText CssClass="validate" @bind-Value="Submission.Title" placeholder="Title" />
+                        </div>
+                        <div class="input-field col s12 m6">
+                            <InputText CssClass="validate" @bind-Value="Submission.Description" placeholder="Description"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m12 l12">
+            <div class="card card-default scrollspy">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Choose the files to upload
+                    </h4>
+                    <div class="row">
+                        <div class="file-field input-field">
+                            <div class="btn">
+                                <span>Files</span>
+                                <InputFile multiple class="form-control-file" id="uploadFiles" OnChange="@OnFileInputChange" />
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text" placeholder="Upload one or more files">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col s12 m12 l12">
+            <div class="card scrollspy">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Upload files from Google Drive
+                    </h4>
+                    <div class="row">
+                        <div class="file-field input-field">
+                            <div class="btn" id="addGDriveFiles" @onclick="InitGooglePicker">
+                                <span>Google Drive</span>
+                                <input type="hidden" @bind-value="Submission.GDriveOAuthToken" id="Submission_GDriveOAuthToken" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m12 l12" id="previewFiles">
+            @foreach (var file in Submission.UploadFiles)
+            {
+                <div class="col s12 m6 l3">
+                    <div class="card">
+                        <div class="card-image">
+                            <a class="btn-floating mb-1 waves-effect waves-light remove-file" @onclick="@(() => RemoveFile(file))">
+                                <i class="material-icons">clear</i>
+                            </a>
+                            @if (file.MimeType.StartsWith("image/"))
+                            {
+                                <img src="@file.PreviewUrl" class="img-preview">
+                            }
+                        </div>
+                        <div class="card-content" data-children-count="1">
+                            <span class="card-title font-weight-400">@file.Title</span>
+                            <InputText @bind-Value="file.Description" CssClass="validate" placeholder="Description"/>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+
+        <div class="col s12 m12 l12">
+            <div class="card card-default scrollspy">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Featured People
+                    </h4>
+                    @{
+                        var index = 0;
+                        foreach (var person in Submission.FeaturedPeople)
+                        {
+                            selectedPersonIndex = index;
+
+                            <div class="row featured-person">
+                                <div class="input-field col s12 m6">
+                                    <InputText CssClass="validate" @bind-Value="person.Name" placeholder="Name"/>
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <InputNumber CssClass="validate" @bind-Value="person.ClassOfYear" placeholder="Year of Class"/>
+                                </div>
+                            </div>
+
+                            index++;
+                        }
+                    }
+                    <div class="row">
+                        <a class="btn waves-effect add-person" @onclick="@AddFeaturedPerson">Add Person</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m12 l12">
+            <div class="card card-default scrollspy">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Event Information
+                    </h4>
+                    <div class="row">
+                        <div class="input-field col s12 m6">
+                            <InputText CssClass="validate" @bind-Value="Submission.Event.Name" placeholder="Event Name" />
+                            <label asp-for="Submission.Event.Name"></label>
+                        </div>
+                        <div class="input-field col s12 m6">
+                            <InputDate CssClass="datepicker" @bind-Value="Submission.Event.Date" placeholder="Event Date" />
+                            <label asp-for="Submission.Event.Date"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-field col s12">
+                <button class="btn cyan waves-effect waves-light right" type="submit" id="submit-button">
+                    Submit <i class="material-icons right">send</i>
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-field col s12">
+                <button class="btn cyan waves-effect waves-light right" type="reset">
+                    Reset <i class="material-icons right">reset</i>
+                </button>
+            </div>
+        </div>
+    </EditForm>
+
+    <!-- Modal -->
+    <div class="modal @modalClass" id="outputModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display:@modalDisplay">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Upload Status</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @((MarkupString)Output)
+                    @foreach (var file in Submission.UploadFiles)
+                    {
+                        @($"File: {file.Title}")<br />
+                        @($"Size: {file.Size.ToFileSizeString()}")<br />
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped active" role="progressbar"
+                                 aria-valuenow="@file.UploadPercentage" aria-valuemin="0" aria-valuemax="100" style="width: @($"{file.UploadPercentage}%")">
+                                @file.UploadPercentage.ToString("0.##")%
+                            </div>
+                        </div>
+                        <br />
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button @onclick="@CloseModalWindow" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (showBackdrop)
+    {
+        <div class="modal-backdrop fade show"></div>
+    }
+</div>
