@@ -35,7 +35,10 @@ namespace StoryForce.Client.Pages
         public bool CanCancel { get; set; }
         public bool IsCancelDisabled => !CanCancel;
         private string modalClass = string.Empty;
+        private string successClass = "hide";
+        private string modalFooterClass = "hide";
         private string modalDisplay = "none";
+        private string modalProgressClass = string.Empty;
         private bool showBackdrop = false;
         private int selectedPersonIndex = 0;
         private int submittedCount = 0;
@@ -210,6 +213,14 @@ namespace StoryForce.Client.Pages
             this.StateHasChanged();
         }
 
+        private void ShowUploadSuccessMessage()
+        {
+            this.StateHasChanged();
+            this.successClass = string.Empty;
+            this.modalFooterClass = string.Empty;
+            this.modalProgressClass = "hide";
+        }
+
         private async Task AddSubmissionAsync(EditContext editContext)
         {
             var model = (BlazorFilesSubmission) editContext.Model;
@@ -223,6 +234,7 @@ namespace StoryForce.Client.Pages
             }
 
             await Http.PostAsJsonAsync<BlazorFilesSubmission>("api/submissions/blazor", model);
+            this.ShowUploadSuccessMessage();
         }
 
         private async Task SaveStringToLocalStorage(string key, string value)

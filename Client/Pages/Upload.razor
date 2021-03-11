@@ -27,11 +27,10 @@
                     </h4>
                     <div class="row">
                         <div class="input-field col s12 m6">
-                            <InputText CssClass="validate" @bind-Value="Submission.SubmittedBy.Name" placeholder="Name" />
-                            <label>Name</label>
+                            <InputText class="validate" @bind-Value="Submission.SubmittedBy.Name" placeholder="Name" />
                         </div>
                         <div class="input-field col s12 m6">
-                            <InputText type="email" CssClass="validate" @bind-Value="Submission.SubmittedBy.Email" placeholder="Email" />
+                            <InputText type="email" class="validate" @bind-Value="Submission.SubmittedBy.Email" placeholder="Email" />
                         </div>
                     </div>
                 </div>
@@ -46,10 +45,10 @@
                     </h4>
                     <div class="row">
                         <div class="input-field col s12 m6">
-                            <InputText CssClass="validate" @bind-Value="Submission.Title" placeholder="Title" />
+                            <InputText class="validate" @bind-Value="Submission.Title" placeholder="Title" />
                         </div>
                         <div class="input-field col s12 m6">
-                            <InputText CssClass="validate" @bind-Value="Submission.Description" placeholder="Description"/>
+                            <InputText class="validate" @bind-Value="Submission.Description" placeholder="Description"/>
                         </div>
                     </div>
                 </div>
@@ -111,7 +110,7 @@
                         </div>
                         <div class="card-content" data-children-count="1">
                             <span class="card-title font-weight-400">@file.Title</span>
-                            <InputText @bind-Value="file.Description" CssClass="validate" placeholder="Description"/>
+                            <InputText @bind-Value="file.Description" class="validate" placeholder="Description"/>
                         </div>
                     </div>
                 </div>
@@ -133,10 +132,10 @@
 
                             <div class="row featured-person">
                                 <div class="input-field col s12 m6">
-                                    <InputText CssClass="validate" @bind-Value="person.Name" placeholder="Name"/>
+                                    <InputText class="validate" @bind-Value="person.Name" placeholder="Name"/>
                                 </div>
                                 <div class="input-field col s12 m6">
-                                    <InputNumber CssClass="validate" @bind-Value="person.ClassOfYear" placeholder="Year of Class"/>
+                                    <InputNumber class="validate" @bind-Value="person.ClassOfYear" placeholder="Year of Class"/>
                                 </div>
                             </div>
 
@@ -158,11 +157,11 @@
                     </h4>
                     <div class="row">
                         <div class="input-field col s12 m6">
-                            <InputText CssClass="validate" @bind-Value="Submission.Event.Name" placeholder="Event Name" />
+                            <InputText class="validate" @bind-Value="Submission.Event.Name" placeholder="Event Name" />
                             <label asp-for="Submission.Event.Name"></label>
                         </div>
                         <div class="input-field col s12 m6">
-                            <InputDate CssClass="datepicker" @bind-Value="Submission.Event.Date" placeholder="Event Date" />
+                            <InputDate class="datepicker" @bind-Value="Submission.Event.Date" placeholder="Event Date" />
                             <label asp-for="Submission.Event.Date"></label>
                         </div>
                     </div>
@@ -188,37 +187,20 @@
     </EditForm>
 
     <!-- Modal -->
-    <div class="modal @modalClass" id="outputModal" tabindex="-1" role="dialog"
-         aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display:@modalDisplay">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Upload Status</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    @((MarkupString)Output)
-                    @foreach (var file in Submission.UploadFiles)
-                    {
-                        @($"File: {file.Title}")<br />
-                        @($"Size: {file.Size.ToFileSizeString()}")<br />
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-striped active" role="progressbar"
-                                 aria-valuenow="@file.UploadPercentage" aria-valuemin="0" aria-valuemax="100" style="width: @($"{file.UploadPercentage}%")">
-                                @file.UploadPercentage.ToString("0.##")%
-                            </div>
-                        </div>
-                        <br />
-                    }
-                </div>
-                <div class="modal-footer">
-                    <button @onclick="@CloseModalWindow" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
+
+    <div id="modal1" class="modal @modalClass" style="display:@modalDisplay">
+        <div class="modal-content">
+            <h4>Upload Progress</h4>
+            <div class="progress @modalProgressClass">
+                <div class="indeterminate"></div>
             </div>
+            <div class="success-message @successClass">Your files were uploaded successfully!</div>
+        </div>
+        <div class="modal-footer @modalFooterClass">
+            <a class="modal-action modal-close waves-effect waves-green btn-flat" @onclick="@CloseModalWindow">Close</a>
         </div>
     </div>
+
 
     @if (showBackdrop)
     {
