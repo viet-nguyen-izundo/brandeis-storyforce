@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.JSInterop;
+using StoryForce.Client.UI;
 using StoryForce.Shared.ViewModels;
 using UploadFile = StoryForce.Shared.ViewModels.UploadFile;
 
@@ -39,11 +40,14 @@ namespace StoryForce.Client.Pages
         private string modalFooterClass = "hide";
         private string modalDisplay = "none";
         private string modalProgressClass = string.Empty;
+        private string errorMessageClass = "hide";
+        private string submissionFailedMessage = string.Empty;
         private bool showBackdrop = false;
         private int selectedPersonIndex = 0;
         private int submittedCount = 0;
         private static Action<string, string, string> action;
-        
+        private Interop _interop;
+
         [Inject]
         public IConfiguration Configuration { get; set; }
 
@@ -54,12 +58,14 @@ namespace StoryForce.Client.Pages
         public Upload()
         {
             this.Submission = new BlazorFilesSubmission();
+
         }
 
         public BlazorFilesSubmission Submission { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
+            this._interop = new Interop(JS);
             action = AddGoogleFile;
 
             var name = await GetStringFromLocalStorage("name");
@@ -119,10 +125,7 @@ namespace StoryForce.Client.Pages
                     await resizedImageFile.OpenReadStream().ReadAsync(buffer);
                     uploadFile.PreviewUrl = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
                 }
-
-                var fileContent = new byte[file.Size];
-                await file.OpenReadStream(file.Size).ReadAsync(fileContent);
-                uploadFile.Content = fileContent;
+                
                 this.Submission.UploadFiles.Add(uploadFile);
                 this.StateHasChanged();
             }
@@ -182,7 +185,7 @@ namespace StoryForce.Client.Pages
 
         protected async Task LoadFile(UploadFile file)
         {
-            max = file.Size;
+            max = file.Size.Value;
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -221,9 +224,8 @@ namespace StoryForce.Client.Pages
             this.modalProgressClass = "hide";
         }
 
-        private async Task AddSubmissionAsync(EditContext editContext)
+        private async Task SaveDataToLocalStorage()
         {
-            var model = (BlazorFilesSubmission) editContext.Model;
             await SaveStringToLocalStorage("name", this.Submission.SubmittedBy.Name);
             await SaveStringToLocalStorage("email", this.Submission.SubmittedBy.Email);
             var featuredPerson = this.Submission.FeaturedPeople.FirstOrDefault();
@@ -232,9 +234,56 @@ namespace StoryForce.Client.Pages
                 await SaveStringToLocalStorage("featuredName", featuredPerson.Name);
                 await SaveStringToLocalStorage("featuredClass", featuredPerson.ClassOfYear.ToString());
             }
+        }
 
-            await Http.PostAsJsonAsync<BlazorFilesSubmission>("api/submissions/blazor", model);
-            this.ShowUploadSuccessMessage();
+        private async Task AddSubmissionAsync(EditContext editContext)
+        {
+            var model = (BlazorFilesSubmission) editContext.Model;
+            await SaveDataToLocalStorage();
+
+            var filesToUpload = new List<string>();
+
+            // Upload local files
+            var localFilesQuery = this.Submission.UploadFiles
+                .Where(f => f.StorageProvider == StorageProvider.LocalFileSystem);
+            var descriptions = localFilesQuery.Select(f => f.Description)
+                .ToArray();
+
+            //var googleFiles = (from file in this.Submission.UploadFiles.Where(f => f.StorageProvider == StorageProvider.GoogleDrive)
+            //    let fileUrl = $"https://lh3.googleusercontent.com/d/{file.ProviderFileId}" + (this.Submission.GDriveOAuthToken != null
+            //        ? "?access_token=" + this.Submission.GDriveOAuthToken
+            //        : string.Empty)
+            //    select new UploadByUrl { Url = fileUrl, FileName = file.Title, MimeType = file.MimeType, Description = file.Description }).ToList();
+ 
+            var localUploads = await _interop.UploadFiles( "api/file/UploadFileChunk", "uploadFiles", descriptions);
+
+
+            // Upload Google Picker files
+            var googleFiles = (from file in this.Submission.UploadFiles.Where(f => f.StorageProvider == StorageProvider.GoogleDrive)
+                               let fileUrl = $"https://lh3.googleusercontent.com/d/{file.ProviderFileId}" + (this.Submission.GDriveOAuthToken != null
+                                   ? "?access_token=" + this.Submission.GDriveOAuthToken
+                                   : string.Empty)
+                               select new UploadByUrl { Url = fileUrl, FileName = file.Title, MimeType = file.MimeType, Description = file.Description }).ToList();
+
+
+            var response = await Http.PostAsJsonAsync<UploadByUrl[]>("api/file/uploadbyurls", googleFiles.ToArray());
+            var googleUploads = await response.Content.ReadFromJsonAsync<string[]>();
+
+            filesToUpload.AddRange(localUploads);
+            filesToUpload.AddRange(googleUploads);
+
+            model.FilesUploadedToServerDisk = filesToUpload.ToArray();
+            
+            try
+            {
+                await Http.PostAsJsonAsync<BlazorFilesSubmission>("api/submissions/simple", model);
+                this.ShowUploadSuccessMessage();
+            }
+            catch (Exception err)
+            {
+                this.submissionFailedMessage = "I am sorry. Your submission failed.";
+                this.errorMessageClass = string.Empty;
+            }
         }
 
         private async Task SaveStringToLocalStorage(string key, string value)

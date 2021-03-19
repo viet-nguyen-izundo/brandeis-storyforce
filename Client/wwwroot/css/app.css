@@ -207,3 +207,6 @@ body .card .card-image {
 
 body .success-message {
   font-size: 20px; }
+
+body .modal {
+  z-index: 1001; }

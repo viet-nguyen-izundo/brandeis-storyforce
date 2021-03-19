@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="JsInterop\" />
     <Folder Include="ViewModels\" />
   </ItemGroup>
 

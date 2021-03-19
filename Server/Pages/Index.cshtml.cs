@@ -22,6 +22,7 @@ namespace StoryForce.Server.Pages
 
         public void OnGet()
         {
+            
         }
 
         public void AddPerson()

@@ -15,19 +15,19 @@ namespace StoryForce.Shared.ViewModels
 
         public string MimeType { get; set; }
 
-        public long Size { get; set; }
+        public long? Size { get; set; }
 
         public string PreviewUrl { get; set; }
 
         public decimal UploadPercentage { get; set; }
-
-        public byte[] Content { get; set; }
 
         public StorageProvider StorageProvider { get; set; }
 
         public string ProviderFileId { get; set; }
 
         public string DownloadUrl { get; set; }
+
+        public string ThumbnailUrl { get; set; }
     }
 
     public static class MyExtensions

@@ -9,6 +9,7 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using HeyRed.Mime;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Caching.Memory;
@@ -16,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using StoryForce.Server.Services;
 using StoryForce.Server.ViewModels;
+using StoryForce.Shared;
 using StoryForce.Shared.Dtos;
 using StoryForce.Shared.Models;
 using StoryForce.Shared.Services;
@@ -39,6 +41,7 @@ namespace StoryForce.Server.Controllers
         DriveService _gDriveService;
         private FileService _fileService;
         private WebClient _webClient;
+        private string UPLOAD_DIRECTORY;
 
         public SubmissionsController(IConfiguration configration
             , SubmissionService submissionService
@@ -54,6 +57,7 @@ namespace StoryForce.Server.Controllers
             _eventService = eventService;
             _fileService = new FileService();
             _webClient = new WebClient();
+            this.UPLOAD_DIRECTORY = Path.Combine(Path.GetTempPath(), "uploads");
         }
 
         [HttpGet]
@@ -75,6 +79,68 @@ namespace StoryForce.Server.Controllers
             }
 
             return SubmissionDto.ConvertFromEntity(submission);
+        }
+
+        [HttpPost("simple")]
+        [DisableRequestSizeLimit]
+        [RequestFormLimits(MultipartBodyLengthLimit = 2147483648)] //2GB:1024 * 1024 * 1024 * 2
+        public async Task<ActionResult<SubmissionDto>> CreateFromSimple(BlazorFilesSubmission submission)
+        {
+            var googleDriveId = this._configuration.GetSection("Google:Drive:DriveId").Value;
+            var converted = submission.ConvertToEntity();
+            var submitter = await _peopleService.CreateAsync(converted.SubmittedBy);
+            converted.SubmittedBy = submitter;
+
+            foreach (var fileName in submission.FilesUploadedToServerDisk)
+            {
+                var originalFileName = fileName.GetFileNameWithoutTimeStamp();
+                var filePath = Path.Combine(UPLOAD_DIRECTORY, fileName);
+
+                var currentFile = submission.UploadFiles.Where(f => f.Title == originalFileName).SingleOrDefault();
+                File newFile = new File
+                {
+                    Name = originalFileName,
+                    Description = currentFile.Description,
+                    Parents = new List<string>() { googleDriveId }
+                };
+                //upload to google
+                var uploadStream = new FileStream(filePath, FileMode.Open);
+
+                var request = _gDriveService.Files.Create(newFile, uploadStream, currentFile.MimeType);
+                request.ChunkSize = 1 * 1024 * 1024; //1MB per chunk
+                request.Fields = "id, name, webViewLink, webContentLink, thumbnailLink, createdTime, size";
+
+                request.ResponseReceived += (file) =>
+                {
+                    var storyFile = converted.SubmittedFiles.SingleOrDefault(f => f.Title == file.Name);
+                    storyFile.DownloadUrl = file.WebContentLink;
+                    storyFile.ThumbnailUrl = file.ThumbnailLink;
+                    storyFile.UpdatedAt = converted.CreatedAt;
+                    storyFile.SubmissionId = converted.Id;
+                    storyFile.SubmittedBy = submitter;
+                    storyFile.Size = file.Size;
+                };
+
+                await request.UploadAsync();
+            }
+
+            // await _peopleService.CreateMultipleAsync(converted.FeaturedPeople);
+            foreach (var person in converted.FeaturedPeople)
+            {
+                var addedPerson = await _peopleService.CreateAsync(person);
+                person.Id = addedPerson.Id;
+            }
+
+            await _storyFileService.CreateMultipleAsync(converted.SubmittedFiles);
+
+            if (converted.Event != null && !string.IsNullOrEmpty(converted.Event.Name))
+            {
+                await _eventService.CreateAsync(converted.Event);
+            }
+
+            await _submissionService.CreateAsync(converted);
+
+            return CreatedAtRoute("GetSubmission", new { id = converted.Id }, converted);
         }
 
         [HttpPost("blazor")]
@@ -109,7 +175,7 @@ namespace StoryForce.Server.Controllers
                 if (currentFile.StorageProvider == StorageProvider.LocalFileSystem)
                 {
                     newFile.MimeType = currentFile.MimeType;
-                    readStream = new MemoryStream(currentFile.Content);
+                    readStream = new MemoryStream();
                 }
                 else
                 {
@@ -185,6 +251,43 @@ namespace StoryForce.Server.Controllers
             await _submissionService.CreateAsync(converted);
 
             return CreatedAtRoute("GetSubmission", new { id = converted.Id }, converted);
+        }
+
+        private async Task SaveFileChunkToDisk(IFormFile file)
+        {
+            var tempFilename = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.tmp");
+            await using var stream = new FileStream(tempFilename, FileMode.CreateNew);
+            await file.CopyToAsync(stream);
+        }
+
+        private async Task UploadFileToGoogleDrive(Submission converted, Person submitter, UploadFile currentFile, string readFilePath)
+        {
+            var googleDriveId = this._configuration.GetSection("Google:Drive:DriveId").Value;
+
+            File newFile = new File
+            {
+                Name = currentFile.Title,
+                Description = currentFile.Description,
+                Parents = new List<string>() { googleDriveId }
+            };
+            var uploadStream = new FileStream(readFilePath, FileMode.Open);
+
+            var request = _gDriveService.Files.Create(newFile, uploadStream, currentFile.MimeType);
+            request.ChunkSize = 1 * 1024 * 1024; //1MB per chunk
+            request.Fields = "id, name, webViewLink, webContentLink, thumbnailLink, createdTime, size";
+
+            request.ResponseReceived += (file) =>
+            {
+                var storyFile = converted.SubmittedFiles.SingleOrDefault(f => f.Title == file.Name);
+                storyFile.DownloadUrl = file.WebContentLink;
+                storyFile.ThumbnailUrl = file.ThumbnailLink;
+                storyFile.UpdatedAt = converted.CreatedAt;
+                storyFile.SubmissionId = converted.Id;
+                storyFile.SubmittedBy = submitter;
+                storyFile.Size = file.Size;
+            };
+
+            await request.UploadAsync();
         }
 
         [HttpPost]

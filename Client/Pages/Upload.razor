@@ -28,9 +28,11 @@
                     <div class="row">
                         <div class="input-field col s12 m6">
                             <InputText class="validate" @bind-Value="Submission.SubmittedBy.Name" placeholder="Name" />
+                            <ValidationMessage For="@(() => Submission.SubmittedBy.Name)" />
                         </div>
                         <div class="input-field col s12 m6">
                             <InputText type="email" class="validate" @bind-Value="Submission.SubmittedBy.Email" placeholder="Email" />
+                            <ValidationMessage For="@(() => Submission.SubmittedBy.Email)" />
                         </div>
                     </div>
                 </div>
@@ -46,9 +48,11 @@
                     <div class="row">
                         <div class="input-field col s12 m6">
                             <InputText class="validate" @bind-Value="Submission.Title" placeholder="Title" />
+                            <ValidationMessage For="@(() => Submission.Title)" />
                         </div>
                         <div class="input-field col s12 m6">
-                            <InputText class="validate" @bind-Value="Submission.Description" placeholder="Description"/>
+                            <InputText class="validate" @bind-Value="Submission.Description" placeholder="Description" />
+                            <ValidationMessage For="@(() => Submission.Description)" />
                         </div>
                     </div>
                 </div>
@@ -132,7 +136,8 @@
 
                             <div class="row featured-person">
                                 <div class="input-field col s12 m6">
-                                    <InputText class="validate" @bind-Value="person.Name" placeholder="Name"/>
+                                    <InputText class="validate" @bind-Value="person.Name" placeholder="Name" />
+                                    <ValidationMessage For="@(() => person.Name)" />
                                 </div>
                                 <div class="input-field col s12 m6">
                                     <InputNumber class="validate" @bind-Value="person.ClassOfYear" placeholder="Year of Class"/>
@@ -152,9 +157,9 @@
         <div class="col s12 m12 l12">
             <div class="card card-default scrollspy">
                 <div class="card-content">
-                    <h4 class="card-title">
+                    <h5 class="card-title">
                         Event Information
-                    </h4>
+                    </h5>
                     <div class="row">
                         <div class="input-field col s12 m6">
                             <InputText class="validate" @bind-Value="Submission.Event.Name" placeholder="Event Name" />
@@ -170,17 +175,14 @@
         </div>
 
         <div class="row">
-            <div class="input-field col s12">
-                <button class="btn cyan waves-effect waves-light right" type="submit" id="submit-button">
-                    Submit <i class="material-icons right">send</i>
+            <div class="input-field col s6">
+                <button class="btn cyan waves-effect waves-light left" type="reset">
+                    Reset
                 </button>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="input-field col s12">
-                <button class="btn cyan waves-effect waves-light right" type="reset">
-                    Reset <i class="material-icons right">reset</i>
+            <div class="input-field col s6">
+                <button class="btn cyan waves-effect waves-light right" type="submit" id="submit-button">
+                    Submit <i class="material-icons right">send</i>
                 </button>
             </div>
         </div>
@@ -195,6 +197,7 @@
                 <div class="indeterminate"></div>
             </div>
             <div class="success-message @successClass">Your files were uploaded successfully!</div>
+            <div class="@errorMessageClass">@submissionFailedMessage</div>
         </div>
         <div class="modal-footer @modalFooterClass">
             <a class="modal-action modal-close waves-effect waves-green btn-flat" @onclick="@CloseModalWindow">Close</a>

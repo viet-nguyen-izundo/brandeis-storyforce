@@ -40,6 +40,8 @@ namespace StoryForce.Shared.ViewModels
 
         public List<FileMeta> FileMetaDataList { get; set; }
 
+        public string[] FilesUploadedToServerDisk { get; set; }
+
         public Event Event { get; set; }
 
         [Required]
@@ -52,28 +54,33 @@ namespace StoryForce.Shared.ViewModels
 
         public Submission ConvertToEntity()
         {
-            var files = UploadFiles.Select((file, index) => new StoryFile()
-            {
-                Title = file.Title,
-                Description = file.Description,
-                Size = file.Size,
-                Type = file.MimeType,
-                SubmissionTitle = this.Title,
-                SubmissionDescription = this.Description,
-                FeaturedPeople = this.FeaturedPeople,
-                Event = !string.IsNullOrEmpty(this.Event.Name) ? this.Event : null
-            }).ToList();
-
+            var submissionId = ObjectId.GenerateNewId().ToString();
+            var createdAt = DateTime.UtcNow;
             return new Submission
             {
-                Id = ObjectId.GenerateNewId().ToString(),
+                Id = submissionId,
                 Title = this.Title,
                 Description = this.Description,
-                SubmittedFiles = files,
                 FeaturedPeople = this.FeaturedPeople,
                 Event = this.Event,
                 SubmittedBy = this.SubmittedBy,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = createdAt,
+                SubmittedFiles = UploadFiles.Select((file, index) => new StoryFile()
+                {
+                    Title = file.Title,
+                    Description = file.Description,
+                    Size = file.Size,
+                    Type = file.MimeType,
+                    DownloadUrl = file.DownloadUrl,
+                    ThumbnailUrl = file.ThumbnailUrl,
+                    UpdatedAt = createdAt,
+                    SubmissionId = submissionId,
+                    SubmittedBy = this.SubmittedBy,
+                    SubmissionTitle = this.Title,
+                    SubmissionDescription = this.Description,
+                    FeaturedPeople = this.FeaturedPeople,
+                    Event = !string.IsNullOrEmpty(this.Event.Name) ? this.Event : null
+                }).ToList(),
             };
         }
     }
