@@ -1,15 +1,4 @@
-﻿    // The Browser API key obtained from the Google API Console.
-// Replace with your own Browser API key, or your own key.
-const developerKey = "AIzaSyCc-MEb_bdMG0_8MmHMO5EDI_H5R0vDPEs";
-
-// The Client ID obtained from the Google API Console. Replace with your own Client ID.
-const clientId = "819781231719-kmlgq9anqg49a2dltgsr2ld0t5e62p6b.apps.googleusercontent.com";
-
-// Replace with your own project number from console.developers.google.com.
-// See "Project number" under "IAM & Admin" > "Settings"
-const appId = "819781231719";
-
-// Scope to use to access user's Drive items.
+﻿// Scope to use to access user's Drive items.
 const scope = ['https://www.googleapis.com/auth/drive.file'];
 
 let pickerApiLoaded = false;
@@ -17,12 +6,12 @@ let oauthToken = null;
 
 function initPicker() {};
 
-function loadPicker () {
-    gapi.load('auth', { 'callback': onAuthApiLoad });
-    gapi.load('picker', { 'callback': onPickerApiLoad });
+function loadPicker (clientId, appId, developerKey) {
+    gapi.load('auth', { 'callback': onAuthApiLoad(clientId) });
+    gapi.load('picker', { 'callback': onPickerApiLoad(appId, developerKey) });
 };
 
-function onAuthApiLoad () {
+function onAuthApiLoad (clientId) {
     window.gapi.auth.authorize(
         {
             'client_id': clientId,
@@ -43,13 +32,13 @@ function handleAuthResult(authResult) {
     }
 };
 
-function onPickerApiLoad() {
+function onPickerApiLoad(appId, developerKey) {
     pickerApiLoaded = true;
-    createPicker();
+    createPicker(appId, developerKey);
 };
 
 // Create and render a Picker object for searching images.
-function createPicker() {
+function createPicker(appId, developerKey) {
     if (pickerApiLoaded && oauthToken) {
         var view = new google.picker.View(google.picker.ViewId.DOCS);
         view.setMimeTypes("image/png,image/jpeg,image/jpg");

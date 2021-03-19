@@ -133,7 +133,10 @@ namespace StoryForce.Client.Pages
 
         protected async Task InitGooglePicker()
         {
-            await JS.InvokeVoidAsync("loadPicker");
+            var clientId = this.Configuration.GetSection("Google:ClientId").Value;
+            var appId = this.Configuration.GetSection("Google:ProjectId").Value;
+            var developerKey = this.Configuration.GetSection("Google:DevKey").Value;
+            await JS.InvokeVoidAsync("loadPicker", clientId, appId, developerKey);
         }
 
         protected void AddGoogleFile(string fileName, string fileId, string gDriveOAuthToken)
@@ -254,16 +257,21 @@ namespace StoryForce.Client.Pages
             //        ? "?access_token=" + this.Submission.GDriveOAuthToken
             //        : string.Empty)
             //    select new UploadByUrl { Url = fileUrl, FileName = file.Title, MimeType = file.MimeType, Description = file.Description }).ToList();
- 
-            var localUploads = await _interop.UploadFiles( "api/file/UploadFileChunk", "uploadFiles", descriptions);
+
+            var localUploads = await _interop.UploadFiles("api/file/UploadFileChunk", "uploadFiles", descriptions);
 
 
             // Upload Google Picker files
-            var googleFiles = (from file in this.Submission.UploadFiles.Where(f => f.StorageProvider == StorageProvider.GoogleDrive)
-                               let fileUrl = $"https://lh3.googleusercontent.com/d/{file.ProviderFileId}" + (this.Submission.GDriveOAuthToken != null
-                                   ? "?access_token=" + this.Submission.GDriveOAuthToken
-                                   : string.Empty)
-                               select new UploadByUrl { Url = fileUrl, FileName = file.Title, MimeType = file.MimeType, Description = file.Description }).ToList();
+            var googleFiles =
+                (from file in this.Submission.UploadFiles.Where(f => f.StorageProvider == StorageProvider.GoogleDrive)
+                    let fileUrl = $"https://lh3.googleusercontent.com/d/{file.ProviderFileId}" +
+                                  (this.Submission.GDriveOAuthToken != null
+                                      ? "?access_token=" + this.Submission.GDriveOAuthToken
+                                      : string.Empty)
+                    select new UploadByUrl
+                    {
+                        Url = fileUrl, FileName = file.Title, MimeType = file.MimeType, Description = file.Description
+                    }).ToList();
 
 
             var response = await Http.PostAsJsonAsync<UploadByUrl[]>("api/file/uploadbyurls", googleFiles.ToArray());
@@ -273,17 +281,9 @@ namespace StoryForce.Client.Pages
             filesToUpload.AddRange(googleUploads);
 
             model.FilesUploadedToServerDisk = filesToUpload.ToArray();
-            
-            try
-            {
-                await Http.PostAsJsonAsync<BlazorFilesSubmission>("api/submissions/simple", model);
-                this.ShowUploadSuccessMessage();
-            }
-            catch (Exception err)
-            {
-                this.submissionFailedMessage = "I am sorry. Your submission failed.";
-                this.errorMessageClass = string.Empty;
-            }
+
+            await Http.PostAsJsonAsync<BlazorFilesSubmission>("api/submissions/simple", model);
+            this.ShowUploadSuccessMessage();
         }
 
         private async Task SaveStringToLocalStorage(string key, string value)

@@ -126,11 +126,6 @@ StoryForce.Interop = {
 
             for (let cIdx = 0; cIdx < fileChunk.length; cIdx++) {
                 const chunk = fileChunk[cIdx];
-
-                if (cIdx > totalParts - 1) {
-                    return;
-                }
-
                 const data = new FormData();
                 data.append("file", chunk, fileName);
                 data.append("description", description);
@@ -138,9 +133,8 @@ StoryForce.Interop = {
 
                 await this.requestUpload(postUrl, fileName, data, cIdx + 1);
             }
-
-            return uploadedFiles;
         };
+        return uploadedFiles;
     },
     uploadFileByUrl: function (postUrl, fileUrl, fileName, description) {
         var data = new FormData();

@@ -104,10 +104,10 @@ namespace StoryForce.Server.Controllers
                     Parents = new List<string>() { googleDriveId }
                 };
                 //upload to google
-                var uploadStream = new FileStream(filePath, FileMode.Open);
+                await using var uploadStream = new FileStream(filePath, FileMode.Open);
 
                 var request = _gDriveService.Files.Create(newFile, uploadStream, currentFile.MimeType);
-                request.ChunkSize = 1 * 1024 * 1024; //1MB per chunk
+                //request.ChunkSize = 1 * 1024 * 1024; //1MB per chunk
                 request.Fields = "id, name, webViewLink, webContentLink, thumbnailLink, createdTime, size";
 
                 request.ResponseReceived += (file) =>
@@ -120,8 +120,14 @@ namespace StoryForce.Server.Controllers
                     storyFile.SubmittedBy = submitter;
                     storyFile.Size = file.Size;
                 };
-
-                await request.UploadAsync();
+                try
+                {
+                    await request.UploadAsync();
+                }
+                catch (Exception err)
+                {
+                    return new JsonResult(new { error = err.Message });
+                }
             }
 
             // await _peopleService.CreateMultipleAsync(converted.FeaturedPeople);
@@ -139,6 +145,13 @@ namespace StoryForce.Server.Controllers
             }
 
             await _submissionService.CreateAsync(converted);
+
+            foreach (var fileName in submission.FilesUploadedToServerDisk)
+            {
+                var filePath = Path.Combine(UPLOAD_DIRECTORY, fileName);
+
+                //System.IO.File.Delete(filePath);
+            }
 
             return CreatedAtRoute("GetSubmission", new { id = converted.Id }, converted);
         }

@@ -22,8 +22,8 @@ namespace StoryForce.Client.UI
             try
             {
                 return await _jsRuntime.InvokeAsync<string[]>(
-                    "StoryForce.Interop.uploadFiles",
-                    postUrl, fileInputId, descriptions);
+                    "StoryForce.Interop.uploadFiles", new TimeSpan(1, 0, 0),
+                postUrl, fileInputId, descriptions);
             }
             catch(Exception err)
             {
