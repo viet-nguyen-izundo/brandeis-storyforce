@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Amazon.S3;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -46,6 +47,9 @@ namespace StoryForce.Server
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
+            services.AddAWSService<IAmazonS3>();
+
             // requires using Microsoft.Extensions.Options
             services.Configure<MongoDbDatabaseSettings>(
                 Configuration.GetSection(nameof(MongoDbDatabaseSettings)));
@@ -57,6 +61,7 @@ namespace StoryForce.Server
             services.AddSingleton<StoryFileService>();
             services.AddSingleton<PeopleService>();
             services.AddSingleton<EventService>();
+            services.AddSingleton<ImageService>();
 
             services.AddControllersWithViews();
             services.AddRazorPages();

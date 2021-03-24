@@ -17,13 +17,13 @@ namespace StoryForce.Client.UI
             this._jsRuntime = jsRuntime;
         }
 
-        public async Task<string[]> UploadFiles(string postUrl, string fileInputId, string[] descriptions)
+        public async Task<string[]> UploadFiles(string postUrl, string fileInputId, string[] descriptions, string keyPrefix)
         {
             try
             {
                 return await _jsRuntime.InvokeAsync<string[]>(
-                    "StoryForce.Interop.uploadFiles", new TimeSpan(1, 0, 0),
-                postUrl, fileInputId, descriptions);
+                    "StoryForce.Interop.uploadFilesToS3", new TimeSpan(1, 0, 0),
+                fileInputId, descriptions, keyPrefix);
             }
             catch(Exception err)
             {

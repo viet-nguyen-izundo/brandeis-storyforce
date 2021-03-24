@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Web;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 namespace StoryForce.Shared.Models
 {
@@ -10,6 +13,8 @@ namespace StoryForce.Shared.Models
     public class StoryFile : DatabaseEntity
     {
         public string Title { get; set; }
+
+        public string Key { get; set; }
 
         public string Description { get; set; }
 
@@ -78,7 +83,15 @@ namespace StoryForce.Shared.Models
 
         public string GetResizedImageUrl(int width, int height)
         {
-            return $"https://lh3.google.com/u/1/d/{this.GoogleFileId}=w{width}-h{height}-p-k-nu-iv1";
+            var json = new
+            {
+                bucket = "storyforce", key = this.Key, edits = new
+                {
+                    resize = new { width = width, height = height, fit = "cover"}
+                }
+            };
+            var encodedParams = BtoA(JsonConvert.SerializeObject(json));
+            return $"https://d13zk917buogwh.cloudfront.net/{encodedParams}";
         }
 
         public string GetFileType()
@@ -102,6 +115,13 @@ namespace StoryForce.Shared.Models
             }
 
             return "Unknown";
+        }
+
+        public string BtoA(string toEncode)
+        {
+            byte[] bytes = Encoding.GetEncoding(28591).GetBytes(toEncode);
+            string toReturn = System.Convert.ToBase64String(bytes);
+            return toReturn;
         }
     }
 }

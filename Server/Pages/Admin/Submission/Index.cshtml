@@ -1,9 +1,10 @@
 ﻿@page "{id}"
+@using StoryForce.Server.Services
 @model StoryForce.Server.Pages.Admin.Submission.DetailsModel
 @{
     ViewData["Title"] = "Submission Details";
 }
-
+@inject ImageService ImageService
 @section HeadScripts
 {
     <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/css/pages/app-email-content.css">
@@ -79,7 +80,7 @@
                                                     <span class="grey-text">(@file.Size)</span>
                                                 </div>
                                                 <div class="links">
-                                                    <a href="@file.DownloadUrl" class="right" target="_blank">
+                                                    <a href="@ImageService.GetPreSignedUrl(file.Key)" class="right" target="_blank">
                                                         <i class="material-icons">file_download</i>
                                                     </a>
                                                 </div>

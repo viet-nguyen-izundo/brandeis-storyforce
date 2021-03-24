@@ -45,8 +45,9 @@ namespace StoryForce.Client.Pages
         private bool showBackdrop = false;
         private int selectedPersonIndex = 0;
         private int submittedCount = 0;
-        private static Action<string, string, string> action;
+        private static Action<string, string, long, string> action;
         private Interop _interop;
+        private string _fileKeyPrefix;
 
         [Inject]
         public IConfiguration Configuration { get; set; }
@@ -58,7 +59,7 @@ namespace StoryForce.Client.Pages
         public Upload()
         {
             this.Submission = new BlazorFilesSubmission();
-
+            this._fileKeyPrefix = DateTime.UtcNow.Ticks.ToString();
         }
 
         public BlazorFilesSubmission Submission { get; set; }
@@ -107,12 +108,14 @@ namespace StoryForce.Client.Pages
         protected async Task OnFileInputChange(InputFileChangeEventArgs e)
         {
             var format = "image/png";
+            https://github.com/SyncfusionExamples/ej2-amazon-s3-aspcore-file-provider.git
             selectedFiles = e.GetMultipleFiles(10);
             foreach (var file in selectedFiles)
             {
                 var uploadFile = new UploadFile
                 {
                     Title = file.Name, 
+                    Key = $"{this._fileKeyPrefix}-{file.Name}",
                     Size = file.Size, 
                     MimeType = file.ContentType, 
                     StorageProvider = StorageProvider.LocalFileSystem
@@ -139,14 +142,15 @@ namespace StoryForce.Client.Pages
             await JS.InvokeVoidAsync("loadPicker", clientId, appId, developerKey);
         }
 
-        protected void AddGoogleFile(string fileName, string fileId, string gDriveOAuthToken)
+        protected void AddGoogleFile(string fileName, string fileId, long size, string gDriveOAuthToken)
         {
             this.Submission.GDriveOAuthToken = gDriveOAuthToken;
 
             var uploadFile = new UploadFile
             {
                 Title = fileName,
-                Size = 0,
+                Key = $"{this._fileKeyPrefix}-{fileName}",
+                Size = size,
                 MimeType = MimeTypesMap.GetMimeType(fileName),
                 StorageProvider = StorageProvider.GoogleDrive,
                 ProviderFileId = fileId
@@ -165,9 +169,9 @@ namespace StoryForce.Client.Pages
         }
 
         [JSInvokable]
-        public static void AddToFileList(string fileName, string fileId, string gDriveOAuthToken)
+        public static void AddToFileList(string fileName, string fileId, long size, string gDriveOAuthToken)
         {
-            action.Invoke(fileName, fileId, gDriveOAuthToken);
+            action.Invoke(fileName, fileId, size, gDriveOAuthToken);
         }
 
         protected void AddFeaturedPerson()
@@ -258,29 +262,29 @@ namespace StoryForce.Client.Pages
             //        : string.Empty)
             //    select new UploadByUrl { Url = fileUrl, FileName = file.Title, MimeType = file.MimeType, Description = file.Description }).ToList();
 
-            var localUploads = await _interop.UploadFiles("api/file/UploadFileChunk", "uploadFiles", descriptions);
+            var localUploads = await _interop.UploadFiles("api/file/UploadFileChunk", "uploadFiles", descriptions, this._fileKeyPrefix);
 
 
             // Upload Google Picker files
             var googleFiles =
                 (from file in this.Submission.UploadFiles.Where(f => f.StorageProvider == StorageProvider.GoogleDrive)
-                    let fileUrl = $"https://lh3.googleusercontent.com/d/{file.ProviderFileId}" +
-                                  (this.Submission.GDriveOAuthToken != null
-                                      ? "?access_token=" + this.Submission.GDriveOAuthToken
-                                      : string.Empty)
-                    select new UploadByUrl
-                    {
-                        Url = fileUrl, FileName = file.Title, MimeType = file.MimeType, Description = file.Description
-                    }).ToList();
+                 let fileUrl = $"https://lh3.googleusercontent.com/d/{file.ProviderFileId}" +
+                               (this.Submission.GDriveOAuthToken != null
+                                   ? "?access_token=" + this.Submission.GDriveOAuthToken
+                                   : string.Empty)
+                 select new UploadByUrl
+                 {
+                     Url = fileUrl,
+                     FileName = file.Title,
+                     Key = $"{this._fileKeyPrefix}-{file.Title}",
+                     MimeType = file.MimeType,
+                     Description = file.Description,
+                     Size = file.Size.Value
+                 }).ToList();
 
 
-            var response = await Http.PostAsJsonAsync<UploadByUrl[]>("api/file/uploadbyurls", googleFiles.ToArray());
+            var response = await Http.PostAsJsonAsync<UploadByUrl[]>("api/S3/uploadbyurls", googleFiles.ToArray());
             var googleUploads = await response.Content.ReadFromJsonAsync<string[]>();
-
-            filesToUpload.AddRange(localUploads);
-            filesToUpload.AddRange(googleUploads);
-
-            model.FilesUploadedToServerDisk = filesToUpload.ToArray();
 
             await Http.PostAsJsonAsync<BlazorFilesSubmission>("api/submissions/simple", model);
             this.ShowUploadSuccessMessage();

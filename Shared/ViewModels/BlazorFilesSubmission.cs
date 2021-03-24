@@ -68,6 +68,7 @@ namespace StoryForce.Shared.ViewModels
                 SubmittedFiles = UploadFiles.Select((file, index) => new StoryFile()
                 {
                     Title = file.Title,
+                    Key = file.Key,
                     Description = file.Description,
                     Size = file.Size,
                     Type = file.MimeType,

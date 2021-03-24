@@ -1,7 +1,7 @@
 ﻿var StoryForce = StoryForce || {};
 
 StoryForce.Interop = {
-    uploadFile: function(postUrl, file, description) {
+    uploadFile: function (postUrl, file, description) {
         const MaxFileSizeMB = 1;
         const BufferChunkSize = MaxFileSizeMB * (1024 * 1024);
 
@@ -42,18 +42,18 @@ StoryForce.Interop = {
             request.responseType = "json";
             request.open("POST", postUrl, true);
 
-            request.upload.onloadstart = function(e) {
+            request.upload.onloadstart = function (e) {
                 //progressbar.value = 0;
                 //progressinfo.innerHTML = file.name + ' 0%';
             };
 
-            request.upload.onprogress = function(e) {
+            request.upload.onprogress = function (e) {
                 var percent = Math.ceil((e.loaded / e.total) * 100);
                 //progressbar.value = (percent / 100);
                 //progressinfo.innerHTML = file.name + '[' + partCount + '] ' + percent + '%';
             };
 
-            request.upload.onloadend = function(e) {
+            request.upload.onloadend = function (e) {
                 //progressbar.value = 1;
                 //progressinfo.innerHTML = file.name + ' 100%';
                 uploadedFile = request.response.uploadedFile;
@@ -63,6 +63,81 @@ StoryForce.Interop = {
         }
 
         return uploadedFile;
+    },
+    uploadFileToS3: function (preSignedUrl, file, fileName, description) {
+        return new Promise(function (resolve, reject) {
+            const xhr = new XMLHttpRequest();
+            xhr.responseType = "text";
+            xhr.contentType = file.type;
+            xhr.open("PUT", preSignedUrl, true);
+
+            xhr.upload.onloadstart = function (e) {
+                console.log(fileName + " 0%");
+            };
+
+            xhr.upload.onprogress = function (e) {
+                var percent = Math.ceil((e.loaded / e.total) * 100);
+                console.log(fileName + ": " + percent + "%");
+            };
+
+            xhr.upload.onloadend = function (e) {
+                const status = xhr.status;
+                if (status === 200) {
+                    console.log(xhr.response);
+                    resolve(xhr.response);
+                } else {
+                    // Oh no! There has been an error with the request!
+                    reject(xhr.response);
+                }
+            };
+
+            xhr.send(file);
+        });
+    },
+    getPreSignedUrls: function(fileNames) {
+        return new Promise(function (resolve, reject) {
+
+            const fileNamesParam = fileNames.join("&");
+            const xhr = new XMLHttpRequest();
+            xhr.responseType = "json";
+            xhr.open("GET", `api/s3/getpresignedurls?${fileNamesParam}`, true);
+
+            xhr.onload = function() {
+                const status = xhr.status;
+                if (status === 200) {
+                    // The request has been completed successfully
+                    const preSignedUrls = xhr.response;
+                    console.log(preSignedUrls);
+                    resolve(preSignedUrls);
+                } else {
+                    reject(xhr.response);
+                }
+            }
+
+            xhr.send();
+        });
+    },
+    uploadFilesToS3: async function(fileInputId, descriptions, keyPrefix) {
+        const files = document.getElementById(fileInputId).files;
+        const fileNames = [];
+        const promises = [];
+        for (let index = 0; index < files.length; index++) {
+            const file = files[index];
+            const fileName = `fileNames=${keyPrefix}-${file.name}`;
+            fileNames.push(fileName);
+        }
+
+        const preSignedUrls = await this.getPreSignedUrls(fileNames);
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const description = descriptions[i];
+            const fileName = `${keyPrefix}-${file.name}`;
+            const preSignedUrl = preSignedUrls[i];
+            promises.push(this.uploadFileToS3(preSignedUrl, file, fileName, description));
+        };
+
+        return Promise.all(promises);
     },
     requestUpload: function (postUrl, fileName, formData, chunkIndex) {
         return new Promise(function(resolve, reject) {

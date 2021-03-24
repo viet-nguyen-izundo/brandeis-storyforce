@@ -10,7 +10,10 @@ namespace StoryForce.Shared.ViewModels
     {
         public string Url { get; set; }
         public string FileName { get; set; }
+        public string Key { get; set; }
         public string Description { get; set; }
         public string MimeType { get; set; }
+
+        public long Size { get; set; }
     }
 }

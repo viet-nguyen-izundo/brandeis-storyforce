@@ -86,48 +86,17 @@ namespace StoryForce.Server.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = 2147483648)] //2GB:1024 * 1024 * 1024 * 2
         public async Task<ActionResult<SubmissionDto>> CreateFromSimple(BlazorFilesSubmission submission)
         {
-            var googleDriveId = this._configuration.GetSection("Google:Drive:DriveId").Value;
             var converted = submission.ConvertToEntity();
             var submitter = await _peopleService.CreateAsync(converted.SubmittedBy);
             converted.SubmittedBy = submitter;
 
-            foreach (var fileName in submission.FilesUploadedToServerDisk)
+            foreach (var file in submission.UploadFiles)
             {
-                var originalFileName = fileName.GetFileNameWithoutTimeStamp();
-                var filePath = Path.Combine(UPLOAD_DIRECTORY, fileName);
+                var storyFile = converted.SubmittedFiles.SingleOrDefault(f => f.Title == file.Title);
 
-                var currentFile = submission.UploadFiles.Where(f => f.Title == originalFileName).SingleOrDefault();
-                File newFile = new File
-                {
-                    Name = originalFileName,
-                    Description = currentFile.Description,
-                    Parents = new List<string>() { googleDriveId }
-                };
-                //upload to google
-                await using var uploadStream = new FileStream(filePath, FileMode.Open);
-
-                var request = _gDriveService.Files.Create(newFile, uploadStream, currentFile.MimeType);
-                //request.ChunkSize = 1 * 1024 * 1024; //1MB per chunk
-                request.Fields = "id, name, webViewLink, webContentLink, thumbnailLink, createdTime, size";
-
-                request.ResponseReceived += (file) =>
-                {
-                    var storyFile = converted.SubmittedFiles.SingleOrDefault(f => f.Title == file.Name);
-                    storyFile.DownloadUrl = file.WebContentLink;
-                    storyFile.ThumbnailUrl = file.ThumbnailLink;
-                    storyFile.UpdatedAt = converted.CreatedAt;
-                    storyFile.SubmissionId = converted.Id;
-                    storyFile.SubmittedBy = submitter;
-                    storyFile.Size = file.Size;
-                };
-                try
-                {
-                    await request.UploadAsync();
-                }
-                catch (Exception err)
-                {
-                    return new JsonResult(new { error = err.Message });
-                }
+                storyFile.UpdatedAt = converted.CreatedAt;
+                storyFile.SubmissionId = converted.Id;
+                storyFile.SubmittedBy = submitter;
             }
 
             // await _peopleService.CreateMultipleAsync(converted.FeaturedPeople);
@@ -145,13 +114,6 @@ namespace StoryForce.Server.Controllers
             }
 
             await _submissionService.CreateAsync(converted);
-
-            foreach (var fileName in submission.FilesUploadedToServerDisk)
-            {
-                var filePath = Path.Combine(UPLOAD_DIRECTORY, fileName);
-
-                //System.IO.File.Delete(filePath);
-            }
 
             return CreatedAtRoute("GetSubmission", new { id = converted.Id }, converted);
         }
