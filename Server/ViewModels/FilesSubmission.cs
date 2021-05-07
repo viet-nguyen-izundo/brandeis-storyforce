@@ -54,8 +54,6 @@ namespace StoryForce.Server.ViewModels
                     : string.Empty,
                 Size = file.Length,
                 Type = file.ContentType,
-                SubmissionTitle = this.Title,
-                SubmissionDescription = this.Description,
                 FeaturedPeople = this.FeaturedPeople,
                 Event = !string.IsNullOrEmpty(this.Event.Name) ? this.Event : null
             }).ToList();

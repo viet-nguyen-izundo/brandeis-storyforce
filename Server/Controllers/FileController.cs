@@ -127,8 +127,8 @@ namespace StoryForce.Server.Controllers
             var utcTicks = DateTime.UtcNow.Ticks;
             foreach (var file in files)
             {
-                await using var readStream = await _webClient.OpenReadTaskAsync(new Uri(file.Url));
-                var tempFilename = Path.Combine(UPLOAD_DIRECTORY, $"{utcTicks}-{file.FileName}");
+                await using var readStream = await _webClient.OpenReadTaskAsync(new Uri(file.DownloadUrl));
+                var tempFilename = Path.Combine(UPLOAD_DIRECTORY, $"{utcTicks}-{file.Title}");
                 uploads.Add(tempFilename);
                 await using (var writeStream = new FileStream(tempFilename, FileMode.CreateNew))
                 {

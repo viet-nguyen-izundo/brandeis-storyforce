@@ -83,8 +83,16 @@
                                     </div>
                                     @foreach (var file in submission.SubmittedFiles)
                                     {
+
                                         <div class="file">
-                                            <img src="@file.GetResizedImageUrl(100, 100)" alt="@file.Title" title="@file.Title"/><br/>
+                                            @if (file.Type.StartsWith("image/"))
+                                            {
+                                                <img src="@file.GetResizedImageUrl(100, 100)" alt="@file.Title" title="@file.Title"/><br/>
+                                            } 
+                                            else 
+                                            {
+                                                @file.Title   
+                                            }
                                         </div>
                                     }
                                 </div>

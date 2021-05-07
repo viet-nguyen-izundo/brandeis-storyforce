@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StoryForce.Shared.Models;
 
 namespace StoryForce.Shared.ViewModels
 {
-    public class UploadByUrl
+    public class UploadByUrl : UploadFile 
     {
-        public string Url { get; set; }
-        public string FileName { get; set; }
-        public string Key { get; set; }
-        public string Description { get; set; }
-        public string MimeType { get; set; }
+        public UploadByUrl() => this.StorageProvider = StorageProvider.Url;
 
-        public long Size { get; set; }
+        public string AccessToken { get; set; }
     }
 }

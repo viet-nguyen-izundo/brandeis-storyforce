@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Forms;
@@ -13,6 +14,7 @@ namespace StoryForce.Shared.ViewModels
 
         public string Key { get; set; }
         
+        [Required]
         public string Description { get; set; }
 
         public string MimeType { get; set; }
@@ -30,6 +32,18 @@ namespace StoryForce.Shared.ViewModels
         public string DownloadUrl { get; set; }
 
         public string ThumbnailUrl { get; set; }
+
+        [Required]
+        [ValidateComplexType]
+        public List<Person> FeaturedPeople { get; set; }
+
+        public Event Event { get; set; }
+
+        public UploadFile()
+        {
+            this.FeaturedPeople = new List<Person>{ new ()};
+            this.Event = new();
+        }
     }
 
     public static class MyExtensions

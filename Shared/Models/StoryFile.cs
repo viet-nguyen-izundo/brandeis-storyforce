@@ -4,6 +4,7 @@ using System.Net;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Web;
+using Amazon.S3.Model.Internal.MarshallTransformations;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
@@ -38,10 +39,6 @@ namespace StoryForce.Shared.Models
 
         public string SubmissionId { get; set; }
 
-        public string SubmissionTitle { get; set; }
-
-        public string SubmissionDescription { get; set; }
-
         public string DownloadUrl { get; set; }
 
         [BsonIgnore]
@@ -61,6 +58,25 @@ namespace StoryForce.Shared.Models
         }
 
         public long? Size { get; set; }
+
+        [BsonIgnore]
+        public string SizeText
+        {
+            get
+            {
+                if (this.Size.HasValue)
+                {
+                    if (this.Size.Value == 0)
+                    {
+                        return "Unknown";
+                    }
+
+                    return this.Size.Value.ToString();
+                }
+
+                return "Unknown";
+            }
+        }
 
         public string ThumbnailUrl { get; set; }
 

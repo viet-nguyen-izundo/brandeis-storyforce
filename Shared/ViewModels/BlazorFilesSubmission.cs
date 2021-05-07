@@ -20,21 +20,22 @@ namespace StoryForce.Shared.ViewModels
         {
             this.SubmittedBy = new Person();
             this.FileMetaDataList = new List<FileMeta>();
-            this.FeaturedPeople = new List<Person> { new () };
             this.UploadFiles = new List<UploadFile>();
             this.Event = new Event();
         }
 
         [Required]
-        public string Title { get; set; }
-
-        [Required]
-        public string Description { get; set; }
-
-        [Required]
         [Display(Name = "Files")]
         [ValidateComplexType]
         public List<UploadFile> UploadFiles { get; set; }
+
+        [Required]
+        [Display(Name = "Urls")]
+        [ValidateComplexType]
+        public List<UploadFile> UploadByUrls
+        {
+            get { return this.UploadFiles.Where(f => f.StorageProvider == StorageProvider.Url).ToList(); }
+        }
 
         public string GDriveOAuthToken { get; set; }
 
@@ -43,10 +44,6 @@ namespace StoryForce.Shared.ViewModels
         public string[] FilesUploadedToServerDisk { get; set; }
 
         public Event Event { get; set; }
-
-        [Required]
-        [ValidateComplexType]
-        public List<Person> FeaturedPeople { get; set; }
 
         [Required]
         [ValidateComplexType]
@@ -59,11 +56,9 @@ namespace StoryForce.Shared.ViewModels
             return new Submission
             {
                 Id = submissionId,
-                Title = this.Title,
-                Description = this.Description,
-                FeaturedPeople = this.FeaturedPeople,
-                Event = this.Event,
                 SubmittedBy = this.SubmittedBy,
+                Title = $"{this.SubmittedBy.Name}-{createdAt.ToShortTimeString()} {createdAt.ToShortDateString()}",
+                Description = $"{UploadFiles.Count} files by {this.SubmittedBy.Name}",
                 CreatedAt = createdAt,
                 SubmittedFiles = UploadFiles.Select((file, index) => new StoryFile()
                 {
@@ -77,10 +72,8 @@ namespace StoryForce.Shared.ViewModels
                     UpdatedAt = createdAt,
                     SubmissionId = submissionId,
                     SubmittedBy = this.SubmittedBy,
-                    SubmissionTitle = this.Title,
-                    SubmissionDescription = this.Description,
-                    FeaturedPeople = this.FeaturedPeople,
-                    Event = !string.IsNullOrEmpty(this.Event.Name) ? this.Event : null
+                    FeaturedPeople = file.FeaturedPeople,
+                    Event = !string.IsNullOrEmpty(file.Event.Name) ? file.Event : null
                 }).ToList(),
             };
         }

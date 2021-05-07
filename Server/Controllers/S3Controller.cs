@@ -13,6 +13,8 @@ using Amazon.S3.Transfer;
 using HeyRed.Mime;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using MongoDB.Bson.IO;
+using Sentry;
+using StoryForce.Shared.Dtos;
 using StoryForce.Shared.ViewModels;
 
 namespace StoryForce.Server.Controllers
@@ -24,18 +26,16 @@ namespace StoryForce.Server.Controllers
         private readonly IConfiguration _configuration;
         private IAmazonS3 _s3Client;
         private string _s3BucketName;
-        private WebClient _webClient;
 
         public S3Controller(IConfiguration configuration, IAmazonS3 s3Client)
         {
             this._configuration = configuration;
             this._s3BucketName = this._configuration.GetSection("AWS:S3:BucketName").Value;
             this._s3Client = s3Client;
-            this._webClient = new WebClient();
         }
         public IActionResult Index()
         {
-            return View();
+            return new JsonResult("Nothing here yet.");
         }
 
         [HttpGet("GetPreSignedBucketUrl")]
@@ -92,19 +92,24 @@ namespace StoryForce.Server.Controllers
         }
 
         [HttpPost("UploadByUrls")]
-        public async Task<string[]> UploadByUrls(UploadByUrl[] files)
+        public IActionResult UploadByUrls(UrlsWithAccessToken dto)
         {
             var uploads = new List<string>();
             const long chunkSize = 5 * 1024 * 1024; // 5 MB
 
-            Parallel.ForEach(files, async (file) =>
+            Parallel.ForEach(dto.UploadByUrls, async (file) => 
             {
                 uploads.Add(file.Key);
-
-                if (file.Size < chunkSize)
+                var webClient = new WebClient();
+                if (!string.IsNullOrEmpty(file.AccessToken))
                 {
-                    _webClient.DownloadDataAsync(new Uri(file.Url));
-                    _webClient.DownloadDataCompleted += async delegate(object sender, DownloadDataCompletedEventArgs args)
+                    webClient.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {file.AccessToken}");
+                }
+
+                if (file.Size.GetValueOrDefault() < chunkSize)
+                {
+                    webClient.DownloadDataAsync(new Uri(file.DownloadUrl));
+                    webClient.DownloadDataCompleted += async delegate(object sender, DownloadDataCompletedEventArgs args)
                     {
                         await Upload(file.Key, args.Result);
                     };
@@ -115,7 +120,7 @@ namespace StoryForce.Server.Controllers
                     List<UploadPartResponse> uploadResponses = new List<UploadPartResponse>();
 
                     string targetPath = Path.Combine(Path.Combine(Path.GetTempPath(), "uploads"), $"{file.Key}");
-                    _webClient.DownloadFile(new Uri(file.Url), targetPath);
+                    await webClient.DownloadFileTaskAsync(new Uri(file.DownloadUrl), targetPath);
 
                     var initiateRequest = new InitiateMultipartUploadRequest
                     {
@@ -129,10 +134,9 @@ namespace StoryForce.Server.Controllers
                     try
                     {
                         long filePosition = 0;
-                        for (var i = 0; filePosition < file.Size; i++)
+                        for (var i = 1; filePosition < file.Size; i++)
                         {
-                            //await writeStream.WriteAsync(buffer, 0, bytesRead);
-                            var uploadPartResponse = await _s3Client.UploadPartAsync(new UploadPartRequest
+                            var uploadRequest = new UploadPartRequest
                             {
                                 BucketName = _s3BucketName,
                                 Key = file.Key,
@@ -141,7 +145,10 @@ namespace StoryForce.Server.Controllers
                                 PartSize = chunkSize,
                                 FilePosition = filePosition,
                                 FilePath = targetPath
-                            });
+                            };
+
+                            //await writeStream.WriteAsync(buffer, 0, bytesRead);
+                            var uploadPartResponse = await _s3Client.UploadPartAsync(uploadRequest);
 
                             uploadResponses.Add(uploadPartResponse);
 
@@ -162,7 +169,6 @@ namespace StoryForce.Server.Controllers
                         CompleteMultipartUploadResponse completeUploadResponse =
                             await _s3Client.CompleteMultipartUploadAsync(completeRequest);
 
-                        //System.IO.File.Delete(targetPath);
                     }
                     catch (Exception exception)
                     {
@@ -176,11 +182,13 @@ namespace StoryForce.Server.Controllers
                             UploadId = initResponse.UploadId
                         };
                         await _s3Client.AbortMultipartUploadAsync(abortMPURequest);
+
+                        SentrySdk.CaptureException(exception);
                     }
                 }
             });
 
-            return uploads.ToArray();
+            return new JsonResult(uploads);
         }
 
         private async Task Upload(string fileKey, byte[] data)

@@ -12,7 +12,7 @@ namespace StoryForce.Shared.Models
 
         public string Email { get; set; }
 
-        [Display(Name = "Year of Class")]
+        [Display(Name = "Year")]
         public int? ClassOfYear { get; set; }
 
         public string AvatarUrl { get; set; }

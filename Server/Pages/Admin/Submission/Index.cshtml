@@ -73,18 +73,25 @@
                                     <div class="attachment-list">
                                         @foreach (var file in Model.Submission.SubmittedFiles)
                                         {
-                                            <div class="attachment">
-                                                <img src="@file.GetResizedImageUrl(200, 200)" alt="@file.Title" class="responsive-img attached-image">
-                                                <div class="description">@file.Description</div>
-                                                <div class="size">
-                                                    <span class="grey-text">(@file.Size)</span>
-                                                </div>
-                                                <div class="links">
-                                                    <a href="@ImageService.GetPreSignedUrl(file.Key)" class="right" target="_blank">
-                                                        <i class="material-icons">file_download</i>
-                                                    </a>
-                                                </div>
+                                        <div class="attachment">
+                                            @if (file.Type.StartsWith("image/"))
+                                                {
+                                            <img src="@file.GetResizedImageUrl(200, 200)" alt="@file.Title" class="responsive-img attached-image">
+                                                }
+                                            <div class="title">@file.Title</div>
+                                            <div class="description">@file.Description</div>
+                                            <div class="size">
+                                                @if (file.Size > 0)
+                                                    {
+                                                <span class="grey-text">(@file.SizeText)</span>
+                                                    }
                                             </div>
+                                            <div class="links">
+                                                <a href="@ImageService.GetPreSignedUrl(file.Key)" class="right" target="_blank">
+                                                    <i class="material-icons">file_download</i>
+                                                </a>
+                                            </div>
+                                        </div>
                                         }
                                     </div>
                                     <div class="footer-buttons">
