@@ -1,0 +1,269 @@
+﻿@page
+@using System.Reflection.PortableExecutable
+@model StoryForce.Server.Pages.Admin.Person.IndexModel
+@{
+}
+
+@section HeadScripts
+{
+    <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/css/pages/app-email.css">
+    <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/vendors/data-tables/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/vendors/data-tables/extensions/responsive/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/css/pages/page-users.css">
+}
+<div class="app-email">
+    <div class="content-area content-right">
+        <div class="app-wrapper">
+            <div class="card card-default scrollspy border-radius-6 fixed-width">
+                <div class="card-content pt-0">
+                    <div class="row">
+                        <div class="col s12">
+                            <!-- Email Content -->
+                            <div class="email-content">
+                                <section class="users-list-wrapper section">
+                                    <div class="users-list-filter">
+                                        <div class="card-panel">
+                                            <div class="row">
+                                                <form>
+                                                    <div class="col s12 m6 l3">
+                                                        <label for="users-list-verified">Verified</label>
+                                                        <div class="input-field">
+                                                            <div class="select-wrapper">
+                                                                <input class="select-dropdown dropdown-trigger" type="text" readonly="true" data-target="select-options-622a3913-5299-4de7-418a-191df42dbba4"><ul id="select-options-622a3913-5299-4de7-418a-191df42dbba4" class="dropdown-content select-dropdown" tabindex="0"><li id="select-options-622a3913-5299-4de7-418a-191df42dbba40" tabindex="0" class="selected"><span>Any</span></li><li id="select-options-622a3913-5299-4de7-418a-191df42dbba41" tabindex="0"><span>Yes</span></li><li id="select-options-622a3913-5299-4de7-418a-191df42dbba42" tabindex="0"><span>No</span></li></ul><svg class="caret" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg><select class="form-control" id="users-list-verified" tabindex="-1">
+                                                                    <option value="">Any</option>
+                                                                    <option value="Yes">Yes</option>
+                                                                    <option value="No">No</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col s12 m6 l3">
+                                                        <label for="users-list-role">Role</label>
+                                                        <div class="input-field">
+                                                            <div class="select-wrapper">
+                                                                <input class="select-dropdown dropdown-trigger" type="text" readonly="true" data-target="select-options-358db944-c2ac-c828-5cc8-300012335321"><ul id="select-options-358db944-c2ac-c828-5cc8-300012335321" class="dropdown-content select-dropdown" tabindex="0"><li id="select-options-358db944-c2ac-c828-5cc8-3000123353210" tabindex="0" class="selected"><span>Any</span></li><li id="select-options-358db944-c2ac-c828-5cc8-3000123353211" tabindex="0"><span>User</span></li><li id="select-options-358db944-c2ac-c828-5cc8-3000123353212" tabindex="0"><span>Staff</span></li></ul><svg class="caret" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg><select class="form-control" id="users-list-role" tabindex="-1">
+                                                                    <option value="">Any</option>
+                                                                    <option value="User">User</option>
+                                                                    <option value="Staff">Staff</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col s12 m6 l3">
+                                                        <label for="users-list-status">Status</label>
+                                                        <div class="input-field">
+                                                            <div class="select-wrapper">
+                                                                <input class="select-dropdown dropdown-trigger" type="text" readonly="true" data-target="select-options-9b2d6dff-5d6c-5eb4-6bfc-40d355541bb5"><ul id="select-options-9b2d6dff-5d6c-5eb4-6bfc-40d355541bb5" class="dropdown-content select-dropdown" tabindex="0"><li id="select-options-9b2d6dff-5d6c-5eb4-6bfc-40d355541bb50" tabindex="0" class="selected"><span>Any</span></li><li id="select-options-9b2d6dff-5d6c-5eb4-6bfc-40d355541bb51" tabindex="0"><span>Active</span></li><li id="select-options-9b2d6dff-5d6c-5eb4-6bfc-40d355541bb52" tabindex="0"><span>Close</span></li><li id="select-options-9b2d6dff-5d6c-5eb4-6bfc-40d355541bb53" tabindex="0"><span>Banned</span></li></ul><svg class="caret" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg><select class="form-control" id="users-list-status" tabindex="-1">
+                                                                    <option value="">Any</option>
+                                                                    <option value="Active">Active</option>
+                                                                    <option value="Close">Close</option>
+                                                                    <option value="Banned">Banned</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col s12 m6 l3 display-flex align-items-center show-btn">
+                                                        <button type="submit" class="btn btn-block indigo waves-effect waves-light">Show</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="users-list-table">
+                                        <div class="card">
+                                            <div class="card-content">
+                                                <!-- datatable start -->
+                                                <div class="responsive-table">
+                                                    <table id="users-list-datatable" class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th></th>
+                                                                <th>id</th>
+                                                                <th>username</th>
+                                                                <th>name</th>
+                                                                <th>last activity</th>
+                                                                <th>verified</th>
+                                                                <th>role</th>
+                                                                <th>status</th>
+                                                                <th>edit</th>
+                                                                <th>delete</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var (person, index) in Model.People.Select((p, index) => (p, index)))
+                                                            {
+                                                                <tr>
+                                                                    <td></td>
+                                                                    <td>@person.Id</td>
+                                                                    <td>
+                                                                        <a href="page-users-view.html">@person.Email</a>
+                                                                    </td>
+                                                                    <td>@person.Name</td>
+                                                                    <td>30/04/2019</td>
+                                                                    <td>No</td>
+                                                                    <td>@person.Type</td>
+                                                                    <td>
+                                                                        <span class="chip green lighten-5">
+                                                                            <span class="green-text">Active</span>
+                                                                        </span>
+                                                                    </td>
+                                                                    <td><a href="page-users-edit.html"><i class="material-icons">edit</i></a></td>
+                                                                    <td>
+                                                                        <form asp-page-handler="delete" asp-route-id="@person.Id" method="post">
+                                                                            <button class="btn delete mb-1"><i class="material-icons left">delete</i><span>Delete</span></button>
+                                                                        </form>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <!-- datatable ends -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section FooterScripts
+{
+    <script src="~/materialize-admin/app-assets/vendors/data-tables/js/jquery.dataTables.min.js"></script>
+    <script src="~/materialize-admin/app-assets/vendors/data-tables/extensions/responsive/js/dataTables.responsive.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            // variable declaration
+            var usersTable;
+            var usersDataArray = [];
+            // datatable initialization
+            if ($("#users-list-datatable").length > 0) {
+                usersTable = $("#users-list-datatable").DataTable({
+                    responsive: true,
+                    'columnDefs': [
+                        {
+                            "orderable": false,
+                            "targets": [0, 8, 9]
+                        }
+                    ]
+                });
+            };
+            // on click selected users data from table(page named page-users-list)
+            // to store into local storage to get rendered on second page named page-users-view
+            $(document).on("click",
+                "#users-list-datatable tr",
+                function () {
+                    $(this).find("td").each(function () {
+                        usersDataArray.push($(this).text().trim())
+                    })
+
+                    localStorage.setItem("usersId", usersDataArray[1]);
+                    localStorage.setItem("usersUsername", usersDataArray[2]);
+                    localStorage.setItem("usersName", usersDataArray[3]);
+                    localStorage.setItem("usersVerified", usersDataArray[5]);
+                    localStorage.setItem("usersRole", usersDataArray[6]);
+                    localStorage.setItem("usersStatus", usersDataArray[7]);
+                })
+            // render stored local storage data on page named page-users-view
+            if (localStorage.usersId !== undefined) {
+                $(".users-view-id").html(localStorage.getItem("usersId"));
+                $(".users-view-username").html(localStorage.getItem("usersUsername"));
+                $(".users-view-name").html(localStorage.getItem("usersName"));
+                $(".users-view-verified").html(localStorage.getItem("usersVerified"));
+                $(".users-view-role").html(localStorage.getItem("usersRole"));
+                $(".users-view-status").html(localStorage.getItem("usersStatus"));
+                // update badge color on status change
+                if ($(".users-view-status").text() === "Banned") {
+                    $(".users-view-status").toggleClass("badge-light-success badge-light-danger")
+                }
+                // update badge color on status change
+                if ($(".users-view-status").text() === "Close") {
+                    $(".users-view-status").toggleClass("badge-light-success badge-light-warning")
+                }
+            }
+            // page users list verified filter
+            $("#users-list-verified").on("change",
+                function () {
+                    var usersVerifiedSelect = $("#users-list-verified").val();
+                    usersTable.search(usersVerifiedSelect).draw();
+                });
+            // page users list role filter
+            $("#users-list-role").on("change",
+                function () {
+                    var usersRoleSelect = $("#users-list-role").val();
+                    // console.log(usersRoleSelect);
+                    usersTable.search(usersRoleSelect).draw();
+                });
+            // page users list status filter
+            $("#users-list-status").on("change",
+                function () {
+                    var usersStatusSelect = $("#users-list-status").val();
+                    // console.log(usersStatusSelect);
+                    usersTable.search(usersStatusSelect).draw();
+                });
+            // users language select
+            if ($("#users-language-select2").length > 0) {
+                $("#users-language-select2").select2({
+                    dropdownAutoWidth: true,
+                    width: '100%'
+                });
+            }
+            // users music select
+            if ($("#users-music-select2").length > 0) {
+                $("#users-music-select2").select2({
+                    dropdownAutoWidth: true,
+                    width: '100%'
+                });
+            }
+            // users movies select
+            if ($("#users-movies-select2").length > 0) {
+                $("#users-movies-select2").select2({
+                    dropdownAutoWidth: true,
+                    width: '100%'
+                });
+            }
+
+            // Input, Select, Textarea validations except submit button validation initialization
+            if ($(".users-edit").length > 0) {
+                $("#accountForm, #infotabForm").validate({
+                    rules: {
+                        username: {
+                            required: true,
+                            minlength: 5
+                        },
+                        name: {
+                            required: true
+                        },
+                        email: {
+                            required: true
+                        },
+                        datepicker: {
+                            required: true
+                        },
+                        address: {
+                            required: true
+                        }
+                    },
+                    errorElement: 'div'
+                });
+                $("#infotabForm").validate({
+                    rules: {
+                        datepicker: {
+                            required: true
+                        },
+                        address: {
+                            required: true
+                        }
+                    },
+                    errorElement: 'div'
+                });
+            }
+        });
+    </script>
+}
