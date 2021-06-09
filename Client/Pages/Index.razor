@@ -24,7 +24,7 @@
             <div class="card card-default scrollspy">
                 <div class="card-content">
                     <h4 class="card-title">
-                        Submitter Information
+                        Your Info
                     </h4>
                     <div class="row">
                         <div class="input-field col s12 m6">
@@ -39,18 +39,24 @@
                 </div>
             </div>
         </div>
-
+        
         <div class="col s12 m12 l12">
             <div class="card card-default scrollspy">
                 <div class="card-content">
                     <h4 class="card-title">
-                        Upload files from your device
+                        Please select where your files are located:
                     </h4>
+                    <div class="row">
+                        <div class="col s12">
+                            Load files from your current device, Google Drive, or other online locations<br/>
+                            You may load multiple files at once. We recommend you load videos, written documents, and sound files, one at a time to make the upload easier.
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col s12 m4 l4">
                             <div class="file-field input-field">
                                 <div class="btn">
-                                    <span>From Device</span>
+                                    <span>Device</span>
                                     <InputFile multiple class="form-control-file" id="uploadFiles" OnChange="@OnFileInputChange" />
                                 </div>
 
@@ -62,7 +68,7 @@
                         <div class="col s12 m4 l4">
                             <div class="file-field input-field">
                                 <div class="btn" id="addGDriveFiles" @onclick="InitGooglePicker">
-                                    <span>From Google Drive</span>
+                                    <span>Google Drive</span>
                                     <input type="hidden" @bind-value="Submission.GDriveOAuthToken" id="Submission_GDriveOAuthToken" />
                                 </div>
                             </div>
@@ -70,7 +76,7 @@
                         <div class="col s12 m4 l4">
                             <div class="file-field input-field">
                                 <div class="btn" id="uploadByUrl" @onclick="@AddUrl">
-                                    <span>From URL</span>
+                                    <span>URL</span>
                                 </div>
                             </div>
                         </div>
@@ -78,7 +84,6 @@
                 </div>
             </div>
         </div>
-
 
         <div class="col s12 m12 l12" id="previewFiles">
             @foreach (var (file, index) in Submission.UploadFiles.Select((file, index) => (file, index)))
@@ -91,7 +96,10 @@
                             </a>
                             @if (!string.IsNullOrEmpty(file.PreviewUrl))
                             {
-                                <img src="@file.PreviewUrl" class="img-preview">
+                                @if (file.MimeType.StartsWith("image/"))
+                                {
+                                    <img src="@file.PreviewUrl" class="img-preview">
+                                } 
                             }
                         </div>
                         <div class="card-content" data-children-count="1">
@@ -100,49 +108,96 @@
                             {
                                 <InputText @bind-Value="file.DownloadUrl" class="validate" placeholder="Enter Url" />
                             }
-                            <InputText @bind-Value="file.Description" class="validate" placeholder="Description" />
-                            
-                            @{
-                                var pi = 0;
+                            <InputText @bind-Value="file.Description" class="validate" placeholder="What are we loking at? Describe file." />
+                            <div class="row">
+                                Featured faces and voices
+                            </div>
+                            @foreach (var (person, pi) in file.FeaturedPeople.Select((person, pi) => (person, pi)))
+                            {
+                        <div class="row featured-person">
+                            <div class="input-field col s4 m4">
+                                <label>Who?</label>
+                            </div>
+                            <div class="input-field col s8 m8">
+                                <InputSelect @bind-Value=person.Type>
+                                    <option value="0">Specific Student</option>
+                                    <option value="1">Class</option>
+                                    <option value="2">Staff</option>
+                                    <option value="3">Parent</option>
+                                    <option value="4">Alumni Student, Teacher, or Parent</option>
+                                    <option value="5">Community Member</option>
+                                    <option value="6">Other</option>
+                                </InputSelect>
+                            </div>
 
-                                foreach (var person in file.FeaturedPeople)
-                                {
-                                    <div class="row featured-person">
-                                        <div class="input-field col s12 m6">
-                                            <InputText class="validate" @bind-Value="person.Name" placeholder="Name" />
-                                            <ValidationMessage For="@(() => person.Name)" />
-                                        </div>
-                                        <div class="input-field col s11 m5">
-                                            <InputNumber class="validate" @bind-Value="person.ClassOfYear" placeholder="Year" />
-                                        </div>
-                                        <div class="input-field col s1 m1 p-0">
-                                            <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => RemoveFeaturedPerson(file, person))"><i class="material-icons dp48">remove_circle_outline</i></a>
-                                        </div>
-                                    </div>
-
-                                    pi++;
-                                }
-                                
+                            @if (person.Type == PersonType.Student)
+                            {
+                                <div class="input-field col s3 m3">
+                                    <label>Full Name</label>
+                                </div>
+                                <div class="input-field col s8 m8">
+                                    <RadzenAutoComplete @bind-Value=@person.Name Placeholder="Name..." FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@Students TextProperty="Name" Style="" />
+                                </div>
                             }
+                            else if (person.Type == PersonType.Staff)
+                            {
+                                <div class="input-field col s3 m3">
+                                    <label>Full Name</label>
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <RadzenAutoComplete @bind-Value=@person.Name Placeholder="Name..." FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@Staff TextProperty="Name" Style="" />
+                                </div>
+                            }
+                            else if (person.Type == PersonType.Class)
+                            {
+                                <div class="input-field col s4 m4">
+                                    <label>Graduation Year</label>
+                                </div>
+                                <div class="input-field col s6 m6">
+                                    <InputSelect @bind-Value=file.Class placeholder="Select Year">
+                                        @foreach (var year in this.Classes)
+                                                    {
+                                            <option value="@year">@year</option>
+                                                    }
+                                    </InputSelect>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="input-field col s3 m3">
+                                    <label>Full Name</label>
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <InputText @bind-Value="@person.Name"></InputText>
+                                </div>
+                            }
+
+                            <div class="input-field col s1 m1 p-0">
+                                <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => RemoveFeaturedPerson(file, person))"><i class="material-icons dp48">remove_circle_outline</i></a>
+                            </div>
+                        </div>
+                              }                              
+                         
                             <div class="row">
                                 <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => AddFeaturedPerson(file))"><i class="material-icons dp48">add_circle_outline</i>Add Person</a>
                             </div>
                             <div class="row">
+                                Is this file associated with an event or holiday?
+                            </div>
+                            <div class="row">
                                 <div class="input-field col s12 m6">
-                                    <InputText class="validate" @bind-Value="file.Event.Name" placeholder="Event Name" />
-                                </div>
-                                <div class="input-field col s12 m6">
-                                    <InputNumber class="validate" @bind-Value="file.Event.Year" placeholder="Event Year" />
-                                    <ValidationMessage For="@(() => file.Event.Year)" />
+                                    <RadzenAutoComplete @bind-Value=@file.EventName Placeholder="Event Name..." FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@Events TextProperty="Name" Style="" />
                                 </div>
                             </div>
                             @if (index == 0)
                             {
                                 <div class="row">
-                                    <a class="btn-flat waves-effect blue-text text-darken-3 duplicate-data p-0" @onclick="@(() => DuplicateFileAttributes(file))">Duplicate Data</a> 
-                                    <br/><i>You can make changes to individual files</i>
+                                    <a class="btn-flat waves-effect blue-text text-darken-3 duplicate-data p-0" @onclick="@(() => DuplicateFileAttributes(file))">Copy Info to All Other Files</a>
+                                    <br /><i>You can make changes to individual files</i>
                                 </div>
+                               
                             }
+
                         </div>
                     </div>
                 </div>

@@ -41,6 +41,8 @@ namespace StoryForce.Shared.Models
 
         public string DownloadUrl { get; set; }
 
+        public int Class { get; set; }
+
         [BsonIgnore]
         public string GoogleFileId
         {

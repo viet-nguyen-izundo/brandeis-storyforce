@@ -760,7 +760,6 @@
             <div class="container"><span>&copy; @DateTime.Today.Year Brandeis Marin All rights reserved.</span><span class="right hide-on-small-only">Design and Developed by <a href="https://www.izundo.com/">Izundo</a></span></div>
         </div>
     </footer>
-    @await RenderSectionAsync("FooterScripts", false)
     <!-- END: Footer-->
     <!-- BEGIN VENDOR JS-->
     <script src="~/materialize-admin/app-assets/js/vendors.min.js"></script>
@@ -768,16 +767,18 @@
     <!-- BEGIN PAGE VENDOR JS-->
     <script src="~/materialize-admin/app-assets/vendors/sortable/jquery-sortable-min.js"></script>
     <script src="~/materialize-admin/app-assets/vendors/quill/quill.min.js"></script>
+
     <!-- END PAGE VENDOR JS-->
     <!-- BEGIN THEME  JS-->
     <script src="~/materialize-admin/app-assets/js/plugins.js"></script>
     <script src="~/materialize-admin/app-assets/js/search.js"></script>
+    <script src="~/materialize-admin/app-assets/js/custom/custom-script.js"></script>
     <!-- END THEME  JS-->
     <!-- BEGIN PAGE LEVEL JS-->
     <script src="~/materialize-admin/app-assets/js/scripts/app-email.js"></script>
     <!-- END PAGE LEVEL JS-->
 
-
+    @await RenderSectionAsync("FooterScripts", false)
 
 </body>
 

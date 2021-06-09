@@ -86,6 +86,8 @@ namespace StoryForce.Server.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = 2147483648)] //2GB:1024 * 1024 * 1024 * 2
         public async Task<ActionResult<SubmissionDto>> CreateFromSimple(BlazorFilesSubmission submission)
         {
+            var events = await _eventService.GetAsync();
+            var people = await _peopleService.GetAsync();
             var converted = submission.ConvertToEntity();
             var submitter = await _peopleService.CreateAsync(converted.SubmittedBy);
             converted.SubmittedBy = submitter;
@@ -97,21 +99,25 @@ namespace StoryForce.Server.Controllers
                 storyFile.UpdatedAt = converted.CreatedAt;
                 storyFile.SubmissionId = converted.Id;
                 storyFile.SubmittedBy = submitter;
-            }
+                var fEvent = events.SingleOrDefault(e => e.Name == file.EventName);
+                storyFile.Event = fEvent;
+                storyFile.Class = file.Class;
 
-            // await _peopleService.CreateMultipleAsync(converted.FeaturedPeople);
-            foreach (var person in converted.FeaturedPeople)
-            {
-                var addedPerson = await _peopleService.CreateAsync(person);
-                person.Id = addedPerson.Id;
+                foreach (var person in storyFile.FeaturedPeople)
+                {
+                    var featured = people.Find(p => p.Name == person.Name);
+                    if (featured is null) {
+                        continue;
+                    }
+                    person.Id = featured.Id;
+                    person.Email = featured.Email;
+                    person.Type = featured.Type;
+                    person.ClassOfYear = featured.ClassOfYear;
+                    person.AvatarUrl = featured.AvatarUrl;
+                }
             }
 
             await _storyFileService.CreateMultipleAsync(converted.SubmittedFiles);
-
-            if (converted.Event != null && !string.IsNullOrEmpty(converted.Event.Name))
-            {
-                await _eventService.CreateAsync(converted.Event);
-            }
 
             await _submissionService.CreateAsync(converted);
 

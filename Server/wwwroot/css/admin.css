@@ -1,19 +1,103 @@
-﻿body .navbar .sideNav-lock .header-search-wrapper {
-  width: calc(100% - 300px);
-  margin: 10px auto 0 10px; }
-
-body .app-email .content-area .file {
-  font-size: 0.9rem;
-  float: left;
-  margin-right: 5px; }
-  body .app-email .content-area .file img {
-    max-width: 250px; }
-
-body .app-email .content-area .delete-task {
-  float: right; }
-
-body .app-email-content .content-area .app-wrapper .email-footer .footer-action .attachment-list .attachment .attached-image {
-  max-width: 100%; }
+﻿body {
+  /* user list css */
+  /*--------------*/
+  /* user view css*/
+  /*-------------*/
+  /* user edit css*/
+  /*-------------*/ }
+  body .navbar .sideNav-lock .header-search-wrapper {
+    width: calc(100% - 300px);
+    margin: 10px auto 0 10px; }
+  body .app-email .content-area .file {
+    font-size: 0.9rem;
+    float: left;
+    margin-right: 5px; }
+    body .app-email .content-area .file img {
+      max-width: 250px; }
+  body .app-email .content-area .delete-task {
+    float: right; }
+  body .app-email-content .content-area .app-wrapper .email-footer .footer-action .attachment-list .attachment .attached-image {
+    max-width: 100%; }
+  body .users-list-wrapper i {
+    vertical-align: middle; }
+  body .users-list-wrapper .users-list-filter .show-btn {
+    padding-top: 43px !important; }
+  body .users-list-wrapper .users-list-table {
+    overflow: hidden; }
+    body .users-list-wrapper .users-list-table .dataTables_filter label input {
+      width: auto;
+      height: auto;
+      margin-left: .5rem; }
+    body .users-list-wrapper .users-list-table .dataTables_length label select {
+      display: inline-block;
+      width: auto;
+      height: auto; }
+    body .users-list-wrapper .users-list-table .dataTable {
+      border-collapse: collapse; }
+      body .users-list-wrapper .users-list-table .dataTable th {
+        width: auto !important;
+        padding: 19px 15px;
+        border-bottom: 1px solid #e0e0e0; }
+      body .users-list-wrapper .users-list-table .dataTable tbody td {
+        padding: .8rem .8rem; }
+    body .users-list-wrapper .users-list-table .dataTables_paginate .paginate_button {
+      margin-top: .25rem;
+      padding: .25em .65em; }
+      body .users-list-wrapper .users-list-table .dataTables_paginate .paginate_button:hover {
+        color: white !important;
+        border: 1px solid #3f51b5;
+        border-radius: 4px;
+        background: #3f51b5;
+        box-shadow: 0 0 8px 0 #3f51b5; }
+    body .users-list-wrapper .users-list-table .dataTables_paginate .paginate_button.current {
+      color: white !important;
+      border: 1px solid #3f51b5;
+      border-radius: 4px;
+      background: #3f51b5;
+      box-shadow: 0 0 8px 0 #3f51b5; }
+  body .users-view i {
+    vertical-align: middle; }
+  body .users-view .media .avatar {
+    margin-right: .6rem; }
+  body .users-view .media .users-view-name {
+    font-size: 1.47rem; }
+  body .users-view .quick-action-btns a {
+    margin-left: 1rem; }
+  body .users-view .users-view-timeline {
+    padding: 2rem; }
+    body .users-view .users-view-timeline h6 span {
+      font-size: 2rem;
+      vertical-align: middle; }
+  body .users-view .striped td:first-child {
+    width: 140px; }
+  body .users-edit i {
+    vertical-align: middle; }
+  body .users-edit .tabs .tab a {
+    text-overflow: clip; }
+    body .users-edit .tabs .tab a span {
+      position: relative;
+      top: 2px; }
+  body .users-edit .tabs .tab a.active {
+    border-radius: 4px;
+    background-color: #e8eaf6; }
+  body .users-edit .user-edit-btns a {
+    margin-right: 1rem; }
+  body .users-edit form button[type='submit'] {
+    margin-right: 1rem; }
+  @media (max-width: 600px) {
+    body .users-view-timeline h6 {
+      text-align: center; }
+    body .users-view .media {
+      margin-bottom: .5rem; }
+      body .users-view .media .media-heading {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex; }
+        body .users-view .media .media-heading .users-view-name {
+          font-size: 1.2rem; }
+        body .users-view .media .media-heading .users-view-username {
+          font-size: .8rem; } }
 
 #main {
   padding-left: 0; }

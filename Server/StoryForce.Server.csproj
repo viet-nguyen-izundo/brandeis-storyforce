@@ -42,5 +42,9 @@
     <ProjectReference Include="..\Shared\StoryForce.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Admin\Event\" />
+  </ItemGroup>
+
 
 </Project>

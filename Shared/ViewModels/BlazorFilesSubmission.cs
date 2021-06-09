@@ -72,8 +72,7 @@ namespace StoryForce.Shared.ViewModels
                     UpdatedAt = createdAt,
                     SubmissionId = submissionId,
                     SubmittedBy = this.SubmittedBy,
-                    FeaturedPeople = file.FeaturedPeople,
-                    Event = !string.IsNullOrEmpty(file.Event.Name) ? file.Event : null
+                    FeaturedPeople = file.FeaturedPeople
                 }).ToList(),
             };
         }

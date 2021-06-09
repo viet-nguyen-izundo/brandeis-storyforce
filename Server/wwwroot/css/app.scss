@@ -312,4 +312,30 @@ body {
     .modal {
         z-index: 1001;
     }
+
+    a {
+        &.add-person {
+            display: inline-flex;
+        }
+    }
+
+    .rz-autocomplete {
+        border: none !important;
+    }
+
+    input {
+        &.rz-autocomplete-input {
+            border-top: none !important;
+            border-right: none !important;
+            border-left: none !important;
+        }
+    }
+
+    select {
+        display: block !important;
+    }
+
+    ::placeholder {
+        color: #9e9e9e !important;
+    }
 }

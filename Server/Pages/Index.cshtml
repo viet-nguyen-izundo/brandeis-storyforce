@@ -18,6 +18,7 @@
     <link rel="stylesheet" type="text/css" href="materialize-admin/app-assets/css/themes/horizontal-menu-template/materialize.css">
     <link rel="stylesheet" type="text/css" href="materialize-admin/app-assets/css/themes/horizontal-menu-template/style.css">
     <link rel="stylesheet" type="text/css" href="materialize-admin/app-assets/css/layouts/style-horizontal.css">
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/default-base.css">
     <!-- END: VENDOR CSS-->
     <!-- BEGIN: Custom CSS-->
     <link href="css/app.css" type="text/css" rel="stylesheet" />
@@ -34,7 +35,9 @@
     </div>
 
     <!-- Custom JS (must be loaded before the Blazor framework script) -->
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
     <script src="materialize-admin/app-assets/js/vendors.min.js"></script>
+
     <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
     @{
         var pickerConfig = Configuration.GetSection("Google"); 
@@ -54,6 +57,11 @@
     <script src="js/google-picker.js"></script>
     <script src="js/interop.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        $(function() {
+            $("select").formSelect();
+        });
+    </script>
 </body>
 
 </html>

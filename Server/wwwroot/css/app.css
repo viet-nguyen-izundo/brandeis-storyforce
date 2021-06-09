@@ -218,3 +218,20 @@ body .success-message {
 
 body .modal {
   z-index: 1001; }
+
+body a.add-person {
+  display: inline-flex; }
+
+body .rz-autocomplete {
+  border: none !important; }
+
+body input.rz-autocomplete-input {
+  border-top: none !important;
+  border-right: none !important;
+  border-left: none !important; }
+
+body select {
+  display: block !important; }
+
+body ::placeholder {
+  color: #9e9e9e !important; }

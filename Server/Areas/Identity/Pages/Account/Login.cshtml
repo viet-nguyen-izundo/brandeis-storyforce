@@ -2,12 +2,12 @@
 @model LoginModel
 
 @{
-    ViewData["Title"] = "Log in";
+    ViewData["Title"] = "Log in.";
 }
 
 <h1>@ViewData["Title"]</h1>
 <div class="row">
-    <div class="col-md-6">
+    @*<div class="col-md-6">
         <section>
             <form id="account" method="post">
                 <h4>Use a local account to log in.</h4>
@@ -47,10 +47,10 @@
                 </div>
             </form>
         </section>
-    </div>
-    <div class="col-md-6">
+    </div>*@
+    <div class="col-md-12">
         <section>
-            <h4>Use another service to log in.</h4>
+            <p>The page you requested requires authentication.</p>
             <hr />
             @{
                 if ((Model.ExternalLogins?.Count ?? 0) == 0)
@@ -69,7 +69,7 @@
                             <p>
                                 @foreach (var provider in Model.ExternalLogins)
                                 {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                   <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">Log in with @provider.DisplayName</button>
                                 }
                             </p>
                         </div>

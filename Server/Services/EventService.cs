@@ -25,6 +25,9 @@ namespace StoryForce.Server.Services
         public async Task<Event> GetAsync(string id) =>
             (await _events.FindAsync<Event>(s => s.Id == id)).FirstOrDefault();
 
+        public async Task<Event> GetByNameAsync(string name) =>
+            (await _events.FindAsync<Event>(s => s.Name == name)).FirstOrDefault();
+
         public async Task<Event> CreateAsync(Event e)
         {
             await _events.InsertOneAsync(e);

@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.JSInterop;
+using Radzen;
+using Radzen.Blazor;
 using Sentry;
 using StoryForce.Client.UI;
 using StoryForce.Shared.ViewModels;
@@ -62,6 +64,17 @@ namespace StoryForce.Client.Pages
 
         public UploadByUrl NewUploadByUrl { get; set; }
 
+        public IEnumerable<Person> Students { get; set; }
+        public IEnumerable<Person> Staff { get; set; }
+        public IEnumerable<Event> Events { get; set; }
+
+        public IEnumerable<int> Classes {
+            get {
+                return Enumerable.Range(DateTime.Now.Year - 10, 19).ToList();
+
+            }
+        }
+
         public Index()
         {
             this.ResetPageData();
@@ -72,6 +85,20 @@ namespace StoryForce.Client.Pages
                 "application/vnd.google-apps.spreadsheet",
                 "application/vnd.google-apps.drawing"
             };
+
+            //this.Students = new List<Person>
+            //{
+            //    new Person{ Name = "Nataan Hong", ClassOfYear = 2021 },
+            //    new Person{ Name = "Ezra Rosen", ClassOfYear = 2021 },
+            //    new Person{ Name = "Aviv Shakked", ClassOfYear = 2021 },
+            //    new Person{ Name = "David Flores", ClassOfYear = 2021 }
+            //};
+            //this.Events = new List<Event>
+            //{
+            //    new Event {Name = "First Event", CreatedAt = DateTime.UtcNow, Id = "1"},
+            //    new Event {Name = "Second Event", CreatedAt = DateTime.UtcNow, Id = "2"},
+            //    new Event {Name = "Third Event", CreatedAt = DateTime.UtcNow, Id = "3"}
+            //};
         }
 
         private void ResetPageData()
@@ -103,6 +130,10 @@ namespace StoryForce.Client.Pages
             action = AddGoogleFile;
 
             await PopulateUserDataFromLocalStorage();
+            var people = await Http.GetFromJsonAsync<IEnumerable<Person>>("api/people/");
+            this.Students = people.Where(p => p.Type == PersonType.Student).ToList();
+            this.Staff = people.Where(p => p.Type == PersonType.Staff).ToList();
+            this.Events = await Http.GetFromJsonAsync<IEnumerable<Event>>("api/events/");
         }
 
         [Parameter] 
@@ -137,7 +168,7 @@ namespace StoryForce.Client.Pages
                     await resizedImageFile.OpenReadStream().ReadAsync(buffer);
                     uploadFile.PreviewUrl = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
                 }
-                
+               
                 this.Submission.UploadFiles.Add(uploadFile);
                 this.StateHasChanged();
             }
@@ -149,6 +180,16 @@ namespace StoryForce.Client.Pages
             var appId = this.Configuration.GetSection("Google:ProjectId").Value;
             var developerKey = this.Configuration.GetSection("Google:DevKey").Value;
             await JS.InvokeVoidAsync("loadPicker", clientId, appId, developerKey);
+        }
+        
+        void OnPersonChange(object args, UploadFile file, int index, Person person)
+        {
+            //person;
+        }
+
+        void OnEventChange(object value, UploadFile file)
+        {
+            file.EventName = value.ToString();
         }
 
         private string GetGoogleAppDownloadUrl(string fileId, string googleMimeType)
@@ -309,12 +350,12 @@ namespace StoryForce.Client.Pages
 
                 foreach (var person in file.FeaturedPeople)
                 {
-                    copiedFeaturedPeople.Add(new Person {Name = person.Name, ClassOfYear = person.ClassOfYear});
+                    copiedFeaturedPeople.Add(new Person {Id = person.Id, Name = person.Name, ClassOfYear = person.ClassOfYear});
                 }
 
                 f.FeaturedPeople = copiedFeaturedPeople;
 
-                f.Event = new Event {Name = file.Event.Name, Year = file.Event.Year};
+                f.EventName = file.EventName;
             }
         }
 

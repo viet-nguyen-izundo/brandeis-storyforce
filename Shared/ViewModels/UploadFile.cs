@@ -33,11 +33,16 @@ namespace StoryForce.Shared.ViewModels
 
         public string ThumbnailUrl { get; set; }
 
-        [Required]
         [ValidateComplexType]
         public List<Person> FeaturedPeople { get; set; }
 
         public Event Event { get; set; }
+
+        public string EventName { get; set; }
+
+        public string EventId { get; set; }
+
+        public int Class { get; set; }
 
         public UploadFile()
         {

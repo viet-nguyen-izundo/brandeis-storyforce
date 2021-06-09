@@ -7,7 +7,6 @@ namespace StoryForce.Shared.Models
 {
     public class Person : DatabaseEntity
     {
-        [Required]
         public string Name { get; set; }
 
         public string Email { get; set; }
@@ -16,5 +15,18 @@ namespace StoryForce.Shared.Models
         public int? ClassOfYear { get; set; }
 
         public string AvatarUrl { get; set; }
+
+        public PersonType Type { get; set; }
+    }
+
+    public enum PersonType
+    {
+        Student,
+        Class,
+        Staff,
+        Parent,
+        Alumni,
+        CommunityMember,
+        Other
     }
 }
