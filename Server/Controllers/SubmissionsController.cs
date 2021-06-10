@@ -100,7 +100,9 @@ namespace StoryForce.Server.Controllers
                 storyFile.SubmissionId = converted.Id;
                 storyFile.SubmittedBy = submitter;
                 var fEvent = events.SingleOrDefault(e => e.Name == file.EventName);
+                var fRequestedBy = people.SingleOrDefault(e => e.Name == file.RequestedBy);
                 storyFile.Event = fEvent;
+                storyFile.RequestedBy = fRequestedBy;
                 storyFile.Class = file.Class;
 
                 foreach (var person in storyFile.FeaturedPeople)

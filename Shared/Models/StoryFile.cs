@@ -93,6 +93,8 @@ namespace StoryForce.Shared.Models
 
         public Person SubmittedBy { get; set; }
 
+        public Person RequestedBy { get; set; }
+
         public Administrator UpdatedBy { get; set; }
 
         public List<Story> BelongsTo { get; set; }
