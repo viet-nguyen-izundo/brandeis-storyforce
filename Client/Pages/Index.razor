@@ -156,9 +156,9 @@
                                         <div class="input-field col s6 m6">
                                             <InputSelect @bind-Value=file.Class placeholder="Select Year">
                                                 @foreach (var year in this.Classes)
-                                                            {
+                                                 {
                                                     <option value="@year">@year</option>
-                                                            }
+                                                 }
                                             </InputSelect>
                                         </div>
                                     }
@@ -194,7 +194,7 @@
                             </div>
                             <div class="row">
                                 <div class="input-field col s12 m6">
-                                    <RadzenAutoComplete @bind-Value=@file.EventName Placeholder="Event Name..." FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@Events TextProperty="Name" Style="" />
+                                    <RadzenAutoComplete @bind-Value=@file.RequestedBy FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@Staff TextProperty="Name" Style="" />
                                 </div>
                             </div>
                             @if (index == 0)

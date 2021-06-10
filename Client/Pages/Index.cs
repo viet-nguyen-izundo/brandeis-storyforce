@@ -356,6 +356,7 @@ namespace StoryForce.Client.Pages
                 f.FeaturedPeople = copiedFeaturedPeople;
 
                 f.EventName = file.EventName;
+                f.RequestedBy = file.RequestedBy;
             }
         }
 
