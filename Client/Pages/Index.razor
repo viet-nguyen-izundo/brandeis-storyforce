@@ -11,9 +11,9 @@
 @inject IJSRuntime JS
 
 <div class="row">
-    <h5 class="breadcrumbs-title">
+    @*<h5 class="breadcrumbs-title">
         Please use the form below to submit your files
-    </h5>
+    </h5>*@
 </div>
 <div class="row">
     <EditForm Model="Submission" class="col s12" OnValidSubmit="@HandleSubmission">
@@ -110,6 +110,14 @@
                             }
                             <InputText @bind-Value="file.Description" class="validate" placeholder="What are we loking at? Describe file." />
                             <div class="row">
+                                Is this file associated with an event or holiday?
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12 m6">
+                                    <RadzenAutoComplete @bind-Value=@file.EventName Placeholder="Event Name..." FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@Events TextProperty="Name" Style="" />
+                                </div>
+                            </div>
+                            <div class="row">
                                 Featured faces and voices
                             </div>
                             @foreach (var (person, pi) in file.FeaturedPeople.Select((person, pi) => (person, pi)))
@@ -156,9 +164,9 @@
                                         <div class="input-field col s6 m6">
                                             <InputSelect @bind-Value=file.Class placeholder="Select Year">
                                                 @foreach (var year in this.Classes)
-                                                 {
+                                                            {
                                                     <option value="@year">@year</option>
-                                                 }
+                                                            }
                                             </InputSelect>
                                         </div>
                                     }
@@ -182,14 +190,6 @@
                                 <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => AddFeaturedPerson(file))"><i class="material-icons dp48">add_circle_outline</i>Add Person</a>
                             </div>
                             <div class="row">
-                                Is this file associated with an event or holiday?
-                            </div>
-                            <div class="row">
-                                <div class="input-field col s12 m6">
-                                    <RadzenAutoComplete @bind-Value=@file.EventName Placeholder="Event Name..." FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@Events TextProperty="Name" Style="" />
-                                </div>
-                            </div>
-                            <div class="row">
                                 Is this file requested by a staff member?
                             </div>
                             <div class="row">
@@ -197,7 +197,8 @@
                                     <RadzenAutoComplete @bind-Value=@file.RequestedBy FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@Staff TextProperty="Name" Style="" />
                                 </div>
                             </div>
-                            @if (index == 0)
+                            @*@if (index == 0)*@
+                            @if (Submission.UploadFiles.Count() > 1)
                             {
                                 <div class="row">
                                     <a class="btn-flat waves-effect blue-text text-darken-3 duplicate-data p-0" @onclick="@(() => DuplicateFileAttributes(file))">Copy Info to All Other Files</a>
