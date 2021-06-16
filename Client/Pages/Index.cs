@@ -59,6 +59,9 @@ namespace StoryForce.Client.Pages
         public IConfiguration Configuration { get; set; }
 
         [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
+        [Inject]
         public ILocalStorageService LocalStorage { get; set; }
 
         public BlazorFilesSubmission Submission { get; set; }
@@ -484,12 +487,29 @@ namespace StoryForce.Client.Pages
             this.ResetPageData();
             await this.PopulateUserDataFromLocalStorage();
 
-            var sendmail = await Http.PostAsJsonAsync("api/sendmail/SendMail", new { toEmail = "", subject = "" });
-            if (model.RequestedBy != null)
-            {
-                var to = model.RequestedBy.Email;
+            var requestedPersons =
+                model.UploadFiles.Select(x => x.RequestedBy).Distinct().Select(r => Staff.FirstOrDefault(s => s.Name == r));
 
+            foreach (var requestedPerson in requestedPersons)
+            {
+                if (requestedPerson == null) continue;
+
+                var sendmailResponse = await Http.PostAsJsonAsync("api/SendMail", new SendMailRequest()
+                {
+                    To = requestedPerson.Email,
+                    Subject = "[StoryForce] Requested documents was uploaded",
+                    Content = @$"Dear {requestedPerson.Name}, 
+                                <br>
+                                The documents you request was uploaded, please check it out <a href='{NavigationManager.Uri}'>here</a>"
+                });
+                if (!sendmailResponse.IsSuccessStatusCode)
+                {
+                    SentrySdk.CaptureException(new Exception(submissionResponse.ReasonPhrase));
+                    this.ShowErrorMessage();
+                    return;
+                }
             }
+            
         }
 
         private async Task SaveStringToLocalStorage(string key, string value)

@@ -1,28 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using BackgroundEmailSenderSample.HostedServices;
-using BackgroundEmailSenderSample.Models.InputModels;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using HeyRed.Mime;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using MongoDB.Bson;
 using StoryForce.Server.Services;
 using StoryForce.Server.ViewModels;
-using StoryForce.Shared;
 using StoryForce.Shared.Dtos;
 using StoryForce.Shared.Models;
 using StoryForce.Shared.Services;
@@ -47,14 +37,12 @@ namespace StoryForce.Server.Controllers
         private FileService _fileService;
         private WebClient _webClient;
         private string UPLOAD_DIRECTORY;
-        private readonly SendMailService _sendMailService;
-        private readonly IMailService _mailService;      
 
         public SubmissionsController(IConfiguration configration
             , SubmissionService submissionService
             , StoryFileService storyFileService
             , PeopleService peopleService
-            , EventService eventService, IMailService mailService, IHostedService hostedService)
+            , EventService eventService)
         {
             _configuration = configration;
             _submissionService = submissionService;
@@ -65,8 +53,6 @@ namespace StoryForce.Server.Controllers
             _fileService = new FileService();
             _webClient = new WebClient();
             this.UPLOAD_DIRECTORY = Path.Combine(Path.GetTempPath(), "uploads");
-            _mailService = mailService;
-            _sendMailService = hostedService as SendMailService;
         }
 
         [HttpGet]

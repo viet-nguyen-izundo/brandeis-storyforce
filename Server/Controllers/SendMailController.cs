@@ -1,9 +1,7 @@
-﻿using BackgroundEmailSenderSample.HostedServices;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using StoryForce.Server.Services;
+using StoryForce.Shared.ViewModels;
 
 namespace StoryForce.Server.Controllers
 {
@@ -11,17 +9,17 @@ namespace StoryForce.Server.Controllers
     [ApiController]
     public class SendMailController : Controller
     {
-        private readonly SendMailService _sendMailService;
+        private readonly SendMailJobService _sendMailJobService;
       
-        public SendMailController(SendMailService sendMailService)
+        public SendMailController(SendMailJobService sendMailJobService)
         {            
-            _sendMailService = sendMailService ;
+            _sendMailJobService = sendMailJobService ;
         }
 
-        [HttpPost("SendMail")]
-        public async Task<ActionResult> SendMail(string toEmail, string subject, string content)
+        [HttpPost]
+        public async Task<ActionResult> SendMail(SendMailRequest sendMailRequest)
         {
-            await _sendMailService.SendEmailAsync(toEmail, subject, content);
+            await _sendMailJobService.SendEmailAsync(sendMailRequest);
             return Ok();
         }
     }

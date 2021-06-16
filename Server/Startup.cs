@@ -23,8 +23,8 @@ using Microsoft.Extensions.Options;
 using StoryForce.Server.Data;
 using StoryForce.Server.Services;
 using StoryForce.Shared.Models;
-using BackgroundEmailSenderSample.HostedServices;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using StoryForce.Server.Models.Options;
 
 namespace StoryForce.Server
 {
@@ -56,6 +56,8 @@ namespace StoryForce.Server
             services.Configure<MongoDbDatabaseSettings>(
                 Configuration.GetSection(nameof(MongoDbDatabaseSettings)));
 
+            
+
             services.AddSingleton<IMongoDbDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<MongoDbDatabaseSettings>>().Value);
 
@@ -65,11 +67,11 @@ namespace StoryForce.Server
             services.AddSingleton<EventService>();
             services.AddSingleton<ImageService>();
 
-            services.AddSingleton<SendMailService>();
-            services.AddSingleton<IHostedService>(serviceProvider => serviceProvider.GetService<SendMailService>());
-            services.AddSingleton<IEmailSender>(serviceProvider => serviceProvider.GetService<SendMailService>());
-
-            services.AddTransient<IMailService, SenGridMailService>();
+            services.Configure<SendGridOptions>(Configuration.GetSection("SendGrid"));
+            services.AddSingleton<SendMailJobService>();
+            services.AddSingleton<IHostedService>(serviceProvider => serviceProvider.GetService<SendMailJobService>());
+            services.AddSingleton<ISendMailJobService>(serviceProvider => serviceProvider.GetService<SendMailJobService>());
+            
 
             services.AddControllersWithViews();
             services.AddRazorPages();
