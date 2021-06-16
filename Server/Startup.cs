@@ -23,6 +23,8 @@ using Microsoft.Extensions.Options;
 using StoryForce.Server.Data;
 using StoryForce.Server.Services;
 using StoryForce.Shared.Models;
+using BackgroundEmailSenderSample.HostedServices;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace StoryForce.Server
 {
@@ -62,6 +64,12 @@ namespace StoryForce.Server
             services.AddSingleton<PeopleService>();
             services.AddSingleton<EventService>();
             services.AddSingleton<ImageService>();
+
+            services.AddSingleton<SendMailService>();
+            services.AddSingleton<IHostedService>(serviceProvider => serviceProvider.GetService<SendMailService>());
+            services.AddSingleton<IEmailSender>(serviceProvider => serviceProvider.GetService<SendMailService>());
+
+            services.AddTransient<IMailService, SenGridMailService>();
 
             services.AddControllersWithViews();
             services.AddRazorPages();

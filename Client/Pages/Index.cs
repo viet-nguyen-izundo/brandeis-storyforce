@@ -26,6 +26,7 @@ using StoryForce.Client.UI;
 using StoryForce.Shared.ViewModels;
 using UploadFile = StoryForce.Shared.ViewModels.UploadFile;
 
+
 namespace StoryForce.Client.Pages
 {
     public partial class Index
@@ -66,10 +67,12 @@ namespace StoryForce.Client.Pages
 
         public IEnumerable<Person> Students { get; set; }
         public IEnumerable<Person> Staff { get; set; }
-        public IEnumerable<Event> Events { get; set; }
+        public IEnumerable<Event> Events { get; set; }    
 
-        public IEnumerable<int> Classes {
-            get {
+        public IEnumerable<int> Classes
+        {
+            get
+            {
                 return Enumerable.Range(DateTime.Now.Year - 10, 19).ToList();
 
             }
@@ -78,7 +81,7 @@ namespace StoryForce.Client.Pages
         public Index()
         {
             this.ResetPageData();
-            this._googleDocTypes = new []
+            this._googleDocTypes = new[]
             {
                 "application/vnd.google-apps.document",
                 "application/vnd.google-apps.presentation",
@@ -136,7 +139,7 @@ namespace StoryForce.Client.Pages
             this.Events = await Http.GetFromJsonAsync<IEnumerable<Event>>("api/events/");
         }
 
-        [Parameter] 
+        [Parameter]
         public EventCallback OnFileRemoved { get; set; }
 
         protected async Task HandleSubmission(EditContext editContext)
@@ -154,10 +157,10 @@ namespace StoryForce.Client.Pages
             {
                 var uploadFile = new UploadFile
                 {
-                    Title = file.Name, 
+                    Title = file.Name,
                     Key = $"{this._fileKeyPrefix}-{file.Name}",
-                    Size = file.Size, 
-                    MimeType = file.ContentType, 
+                    Size = file.Size,
+                    MimeType = file.ContentType,
                     StorageProvider = StorageProvider.LocalFileSystem
                 };
                 if (file.ContentType.StartsWith("image/"))
@@ -168,7 +171,7 @@ namespace StoryForce.Client.Pages
                     await resizedImageFile.OpenReadStream().ReadAsync(buffer);
                     uploadFile.PreviewUrl = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
                 }
-               
+
                 this.Submission.UploadFiles.Add(uploadFile);
                 this.StateHasChanged();
             }
@@ -181,7 +184,7 @@ namespace StoryForce.Client.Pages
             var developerKey = this.Configuration.GetSection("Google:DevKey").Value;
             await JS.InvokeVoidAsync("loadPicker", clientId, appId, developerKey);
         }
-        
+
         void OnPersonChange(object args, UploadFile file, int index, Person person)
         {
             //person;
@@ -264,7 +267,7 @@ namespace StoryForce.Client.Pages
             {
                 uploadFile.Key = $"{uploadFile.Key}.{GetGoogleDocExt(mimeType)}";
             }
-            else 
+            else
             {
                 uploadFile.MimeType = MimeTypesMap.GetMimeType(fileName);
             }
@@ -288,7 +291,7 @@ namespace StoryForce.Client.Pages
 
         protected void AddFeaturedPerson(UploadFile file)
         {
-            file.FeaturedPeople.Add(new ());
+            file.FeaturedPeople.Add(new());
         }
 
         protected void RemoveFeaturedPerson(UploadFile file, Person person)
@@ -350,7 +353,7 @@ namespace StoryForce.Client.Pages
 
                 foreach (var person in file.FeaturedPeople)
                 {
-                    copiedFeaturedPeople.Add(new Person {Id = person.Id, Name = person.Name, ClassOfYear = person.ClassOfYear});
+                    copiedFeaturedPeople.Add(new Person { Id = person.Id, Name = person.Name, ClassOfYear = person.ClassOfYear });
                 }
 
                 f.FeaturedPeople = copiedFeaturedPeople;
@@ -403,7 +406,7 @@ namespace StoryForce.Client.Pages
 
         private async Task AddSubmissionAsync(EditContext editContext)
         {
-            var model = (BlazorFilesSubmission) editContext.Model;
+            var model = (BlazorFilesSubmission)editContext.Model;
             await SaveDataToLocalStorage();
 
             // Upload local files
@@ -434,7 +437,7 @@ namespace StoryForce.Client.Pages
                     }).ToList();
 
             var urlFiles = new List<UploadByUrl>();
-            foreach(var file in this.Submission.UploadFiles.Where(file => file.StorageProvider == StorageProvider.Url))
+            foreach (var file in this.Submission.UploadFiles.Where(file => file.StorageProvider == StorageProvider.Url))
             {
                 var fileName = GetFileNameFromUrl(file.DownloadUrl);
                 file.Title = fileName;
@@ -460,7 +463,7 @@ namespace StoryForce.Client.Pages
             //uploadByUrlsFiles.AddRange(urlFiles);
 
             var uploadByUrlsResponse = await Http.PostAsJsonAsync<UrlsWithAccessToken>("api/s3/UploadByUrls",
-                new UrlsWithAccessToken {UploadByUrls = uploadByUrlsFiles.ToArray()});
+                new UrlsWithAccessToken { UploadByUrls = uploadByUrlsFiles.ToArray() });
             if (!uploadByUrlsResponse.IsSuccessStatusCode)
             {
                 SentrySdk.CaptureException(new Exception(
@@ -480,6 +483,13 @@ namespace StoryForce.Client.Pages
             this.ShowUploadSuccessMessage();
             this.ResetPageData();
             await this.PopulateUserDataFromLocalStorage();
+
+            var sendmail = await Http.PostAsJsonAsync("api/sendmail/SendMail", new { toEmail = "", subject = "" });
+            if (model.RequestedBy != null)
+            {
+                var to = model.RequestedBy.Email;
+
+            }
         }
 
         private async Task SaveStringToLocalStorage(string key, string value)
@@ -494,6 +504,7 @@ namespace StoryForce.Client.Pages
         private async Task<string> GetStringFromLocalStorage(string key)
         {
             return await LocalStorage.GetItemAsync<string>(key);
-        }
+        }           
+
     }
 }

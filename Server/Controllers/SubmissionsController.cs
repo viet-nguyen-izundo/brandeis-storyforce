@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using BackgroundEmailSenderSample.HostedServices;
+using BackgroundEmailSenderSample.Models.InputModels;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using HeyRed.Mime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using MongoDB.Bson;
 using StoryForce.Server.Services;
 using StoryForce.Server.ViewModels;
@@ -42,12 +47,14 @@ namespace StoryForce.Server.Controllers
         private FileService _fileService;
         private WebClient _webClient;
         private string UPLOAD_DIRECTORY;
+        private readonly SendMailService _sendMailService;
+        private readonly IMailService _mailService;      
 
         public SubmissionsController(IConfiguration configration
             , SubmissionService submissionService
             , StoryFileService storyFileService
             , PeopleService peopleService
-            , EventService eventService)
+            , EventService eventService, IMailService mailService, IHostedService hostedService)
         {
             _configuration = configration;
             _submissionService = submissionService;
@@ -58,6 +65,8 @@ namespace StoryForce.Server.Controllers
             _fileService = new FileService();
             _webClient = new WebClient();
             this.UPLOAD_DIRECTORY = Path.Combine(Path.GetTempPath(), "uploads");
+            _mailService = mailService;
+            _sendMailService = hostedService as SendMailService;
         }
 
         [HttpGet]
@@ -108,7 +117,8 @@ namespace StoryForce.Server.Controllers
                 foreach (var person in storyFile.FeaturedPeople)
                 {
                     var featured = people.Find(p => p.Name == person.Name);
-                    if (featured is null) {
+                    if (featured is null)
+                    {
                         continue;
                     }
                     person.Id = featured.Id;
@@ -164,7 +174,7 @@ namespace StoryForce.Server.Controllers
                 {
                     newFile.MimeType = MimeTypesMap.GetMimeType(newFile.Name);
                     string downloadUrl = string.Empty;
-                    
+
                     if (currentFile.StorageProvider == StorageProvider.GoogleDrive)
                     {
                         downloadUrl =
@@ -425,6 +435,7 @@ namespace StoryForce.Server.Controllers
             });
 
             return service;
-        }
+        }        
+
     }
 }
