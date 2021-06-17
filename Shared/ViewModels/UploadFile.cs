@@ -42,7 +42,7 @@ namespace StoryForce.Shared.ViewModels
 
         public string EventId { get; set; }
 
-        public int Class { get; set; }
+        public int? Class { get; set; }
 
         public string RequestedBy { get; set; }
 

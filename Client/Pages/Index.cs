@@ -137,8 +137,8 @@ namespace StoryForce.Client.Pages
 
             await PopulateUserDataFromLocalStorage();
             var people = await Http.GetFromJsonAsync<IEnumerable<Person>>("api/people/");
-            this.Students = people.Where(p => p.Type == PersonType.Student).ToList();
-            this.Staff = people.Where(p => p.Type == PersonType.Staff).ToList();
+            this.Students = people.Where(p => p.Type == PersonType.Student);
+            this.Staff = people.Where(p => p.Type == PersonType.Staff);
             this.Events = await Http.GetFromJsonAsync<IEnumerable<Event>>("api/events/");
         }
 

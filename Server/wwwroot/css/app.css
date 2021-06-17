@@ -213,6 +213,12 @@ body .card .card-image {
     right: 0;
     margin: 3px; }
 
+body #previewFiles .card .card-content {
+  padding: 10px 24px; }
+  body #previewFiles .card .card-content .card-title {
+    font-size: 16px;
+    text-align: center; }
+
 body .success-message {
   font-size: 20px; }
 

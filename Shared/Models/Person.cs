@@ -16,7 +16,7 @@ namespace StoryForce.Shared.Models
 
         public string AvatarUrl { get; set; }
 
-        public PersonType Type { get; set; }
+        public PersonType? Type { get; set; }
     }
 
     public enum PersonType
