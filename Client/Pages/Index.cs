@@ -500,7 +500,7 @@ namespace StoryForce.Client.Pages
                     Subject = "[StoryForce] Requested documents was uploaded",
                     Content = @$"Dear {requestedPerson.Name}, 
                                 <br>
-                                The documents you request was uploaded, please check it out <a href='{NavigationManager.Uri}'>here</a>"
+                                The documents you request was uploaded, please check it out <a href='{NavigationManager.Uri}/showFile'>here</a>"
                 });
                 if (!sendmailResponse.IsSuccessStatusCode)
                 {

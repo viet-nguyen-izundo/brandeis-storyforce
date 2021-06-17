@@ -34,7 +34,8 @@
                                 <i class="material-icons">folder_open</i>
                                 <i class="material-icons">info_outline</i>
                                 <i class="material-icons delete-mails">delete</i>
-                            </span>
+                            </span>                            
+                            <a href="/showFile">next Page</a>
                         </div>
                         <div class="list-content"></div>
                         <div class="email-action">
@@ -83,7 +84,7 @@
                                     </div>
                                     @foreach (var file in submission.SubmittedFiles)
                                     {
-
+                                        
                                         <div class="file">
                                             @if (file.Type.StartsWith("image/"))
                                             {
