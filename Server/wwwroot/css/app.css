@@ -207,7 +207,9 @@ body .file-path-wrapper .file-path {
   width: 0; }
 
 body .card .card-image {
-  position: relative; }
+  position: relative;
+  width: 100%;
+  height: 300px; }
   body .card .card-image .remove-file {
     position: absolute;
     right: 0;
