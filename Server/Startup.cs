@@ -23,6 +23,8 @@ using Microsoft.Extensions.Options;
 using StoryForce.Server.Data;
 using StoryForce.Server.Services;
 using StoryForce.Shared.Models;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using StoryForce.Server.Models.Options;
 
 namespace StoryForce.Server
 {
@@ -54,6 +56,8 @@ namespace StoryForce.Server
             services.Configure<MongoDbDatabaseSettings>(
                 Configuration.GetSection(nameof(MongoDbDatabaseSettings)));
 
+            
+
             services.AddSingleton<IMongoDbDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<MongoDbDatabaseSettings>>().Value);
 
@@ -62,6 +66,12 @@ namespace StoryForce.Server
             services.AddSingleton<PeopleService>();
             services.AddSingleton<EventService>();
             services.AddSingleton<ImageService>();
+
+            services.Configure<SendGridOptions>(Configuration.GetSection("SendGrid"));
+            services.AddSingleton<SendMailJobService>();
+            services.AddSingleton<IHostedService>(serviceProvider => serviceProvider.GetService<SendMailJobService>());
+            services.AddSingleton<ISendMailJobService>(serviceProvider => serviceProvider.GetService<SendMailJobService>());
+            
 
             services.AddControllersWithViews();
             services.AddRazorPages();

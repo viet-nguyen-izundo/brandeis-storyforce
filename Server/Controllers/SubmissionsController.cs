@@ -8,16 +8,11 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using HeyRed.Mime;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
-using MongoDB.Bson;
 using StoryForce.Server.Services;
 using StoryForce.Server.ViewModels;
-using StoryForce.Shared;
 using StoryForce.Shared.Dtos;
 using StoryForce.Shared.Models;
 using StoryForce.Shared.Services;
@@ -108,7 +103,8 @@ namespace StoryForce.Server.Controllers
                 foreach (var person in storyFile.FeaturedPeople)
                 {
                     var featured = people.Find(p => p.Name == person.Name);
-                    if (featured is null) {
+                    if (featured is null)
+                    {
                         continue;
                     }
                     person.Id = featured.Id;
@@ -164,7 +160,7 @@ namespace StoryForce.Server.Controllers
                 {
                     newFile.MimeType = MimeTypesMap.GetMimeType(newFile.Name);
                     string downloadUrl = string.Empty;
-                    
+
                     if (currentFile.StorageProvider == StorageProvider.GoogleDrive)
                     {
                         downloadUrl =
@@ -425,6 +421,7 @@ namespace StoryForce.Server.Controllers
             });
 
             return service;
-        }
+        }        
+
     }
 }
