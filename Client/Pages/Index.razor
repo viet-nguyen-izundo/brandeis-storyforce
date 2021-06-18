@@ -180,9 +180,9 @@
                                             </div>
                                         }
 
-                                        @if (!string.IsNullOrEmpty(person.Name))
+                                        @if (!string.IsNullOrEmpty(person.Name) || file.Class.HasValue)
                                         {
-                                            <div class="row">
+                                            <div class="col pt-2">
                                                 <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => AddFeaturedPerson(file))"><i class="material-icons dp48">add_circle_outline</i>Add Person</a>
                                             </div>                                            
                                         }

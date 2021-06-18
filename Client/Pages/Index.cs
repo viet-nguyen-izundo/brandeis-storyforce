@@ -346,7 +346,7 @@ namespace StoryForce.Client.Pages
 
         protected void DuplicateFileAttributes(UploadFile file)
         {
-            var files = this.Submission.UploadFiles.Skip(1);
+            var files = this.Submission.UploadFiles;
             foreach (var f in files)
             {
                 f.Description = file.Description;
@@ -354,12 +354,18 @@ namespace StoryForce.Client.Pages
 
                 foreach (var person in file.FeaturedPeople)
                 {
-                    copiedFeaturedPeople.Add(new Person { Id = person.Id, Name = person.Name, ClassOfYear = person.ClassOfYear });
+                    copiedFeaturedPeople.Add(new Person { 
+                        Id = person.Id, 
+                        Name = person.Name, 
+                        ClassOfYear = person.ClassOfYear, 
+                        Type = person.Type 
+                    });
                 }
 
                 f.FeaturedPeople = copiedFeaturedPeople;
 
-                f.EventName = file.EventName;
+                f.Event = file.Event;
+                f.Class = file.Class;
                 f.RequestedBy = file.RequestedBy;
             }
         }
