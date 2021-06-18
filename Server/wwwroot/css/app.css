@@ -208,12 +208,14 @@ body .file-path-wrapper .file-path {
 
 body .card .card-image {
   position: relative;
-  width: 100%;
-  height: 300px; }
+  width: 100%; }
   body .card .card-image .remove-file {
     position: absolute;
     right: 0;
     margin: 3px; }
+
+body .mdc-text-field--filled {
+  height: 46px; }
 
 body #previewFiles .card .card-content {
   padding: 10px 24px; }
@@ -243,3 +245,6 @@ body select {
 
 body ::placeholder {
   color: #9e9e9e !important; }
+
+body .input-field.col label {
+  left: 0; }

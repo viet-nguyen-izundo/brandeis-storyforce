@@ -100,7 +100,7 @@
                         }
                         else
                         {
-                        <div class="card-image" style="background: url('@file.PreviewUrl') no-repeat center center;background-size: cover;">
+                        <div class="card-image" style="background: url('@file.PreviewUrl') no-repeat center center;background-size: cover;height: 300px;">
                             <a class="btn-floating mb-1 waves-effect waves-light remove-file" @onclick="@(() => RemoveFile(file))">
                                 <i class="material-icons">clear</i>
                             </a>
@@ -120,7 +120,7 @@
                             </div>
                             <div class="row mb-10">
                                 Is this file associated with an event or holiday?
-                                <div class="input-field col m-0 s12 m12">
+                                <div class="input-field col m-0 s12 m12 mt-2">
                                     <MatAutocompleteList @bind-Value=@file.Event Label="Event Name..." Items=@Events TItem=@Event CustomStringSelector="@(e => string.IsNullOrEmpty(e.Name) ? string.Empty : e.Name)" />
                                 </div>
                             </div>
@@ -130,7 +130,7 @@
                                 @foreach (var (person, pi) in file.FeaturedPeople.Select((person, pi) => (person, pi)))
                                 {
                                     <div class="featured-person">
-                                        <div class="input-field col m-0 s12 m12">
+                                        <div class="input-field col m-0 s12 m12 mt-2">
                                             <InputSelect @bind-Value=person.Type>
                                                 <option value="">Select Type</option>
                                                 <option value="Student">Specific Student</option>
@@ -145,13 +145,13 @@
 
                                         @if (person.Type == PersonType.Student)
                                         {
-                                            <div class="input-field col m-0 s11 m11">
+                                            <div class="input-field col m-0 s11 m11 mt-2">
                                                 <MatAutocompleteList @bind-Value=@person.Name Label="Full Name..." Items=@Students.Select(s => s.Name) TItem="string" />
                                             </div>
                                         }
                                         else if (person.Type == PersonType.Staff)
                                         {
-                                            <div class="input-field col m-0 s11 m11">
+                                            <div class="input-field col m-0 s11 m11 mt-2">
                                                 <MatAutocompleteList @bind-Value=@person.Name Label="Full Name..." Items=@Staff.Select(s => s.Name) TItem="string"  />
                                             </div>
                                         }
@@ -161,9 +161,9 @@
                                                 <InputSelect @bind-Value=file.Class placeholder="Select Graduating Year">
                                                     <option value="">Select Graduating Year</option>
                                                     @foreach (var year in this.Classes)
-                                                                {
+                                                    {
                                                         <option value="@year">@year</option>
-                                                                }
+                                                    }
                                                 </InputSelect>
                                             </div>
                                         }
@@ -182,7 +182,9 @@
 
                                         @if (!string.IsNullOrEmpty(person.Name))
                                         {
-                                            <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => AddFeaturedPerson(file))"><i class="material-icons dp48">add_circle_outline</i>Add Person</a>
+                                            <div class="row">
+                                                <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => AddFeaturedPerson(file))"><i class="material-icons dp48">add_circle_outline</i>Add Person</a>
+                                            </div>                                            
                                         }
                                     </div>
                                 }
@@ -191,7 +193,7 @@
 
                             <div class="row">
                                 If this file was requested by a staff member, please specify who:
-                                <div class="input-field col s12 m12">
+                                <div class="input-field col s12 m12 mt-2">
                                     <MatAutocompleteList @bind-Value=@file.RequestedBy Label="Full Name" Items=@Staff TItem=@Person CustomStringSelector="@(p => p.Name)" />
                                 </div>
                             </div>
@@ -211,9 +213,9 @@
 
         <div class="row">
             <div class="input-field col s6">
-                <button class="btn cyan waves-effect waves-light left" onClick="window.location.reload();">
+                <a class="btn cyan waves-effect waves-light left" onClick="window.location.reload();">
                     Reset
-                </button>
+                </a>
             </div>
             <div class="input-field col s6">
                 <button class="btn cyan waves-effect waves-light right" type="submit" id="submit-button">
