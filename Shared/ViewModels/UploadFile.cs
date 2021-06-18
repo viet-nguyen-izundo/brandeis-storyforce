@@ -44,7 +44,7 @@ namespace StoryForce.Shared.ViewModels
 
         public int? Class { get; set; }
 
-        public string RequestedBy { get; set; }
+        public Person RequestedBy { get; set; }
 
         public UploadFile()
         {

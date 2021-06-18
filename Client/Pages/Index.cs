@@ -19,8 +19,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.JSInterop;
-using Radzen;
-using Radzen.Blazor;
 using Sentry;
 using StoryForce.Client.UI;
 using StoryForce.Shared.ViewModels;
@@ -488,7 +486,7 @@ namespace StoryForce.Client.Pages
             await this.PopulateUserDataFromLocalStorage();
 
             var requestedPersons =
-                model.UploadFiles.Select(x => x.RequestedBy).Distinct().Select(r => Staff.FirstOrDefault(s => s.Name == r));
+                model.UploadFiles.Select(x => x.RequestedBy).Distinct();
 
             foreach (var requestedPerson in requestedPersons)
             {

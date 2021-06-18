@@ -25,6 +25,7 @@ using StoryForce.Server.Services;
 using StoryForce.Shared.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using StoryForce.Server.Models.Options;
+using MatBlazor;
 
 namespace StoryForce.Server
 {
@@ -71,7 +72,8 @@ namespace StoryForce.Server
             services.AddSingleton<SendMailJobService>();
             services.AddSingleton<IHostedService>(serviceProvider => serviceProvider.GetService<SendMailJobService>());
             services.AddSingleton<ISendMailJobService>(serviceProvider => serviceProvider.GetService<SendMailJobService>());
-            
+
+            services.AddMatBlazor();
 
             services.AddControllersWithViews();
             services.AddRazorPages();

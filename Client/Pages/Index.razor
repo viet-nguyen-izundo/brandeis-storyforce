@@ -90,11 +90,22 @@
             {
                 <div class="col s12 m6 l4">
                     <div class="card">
+                        @if (string.IsNullOrEmpty(file.PreviewUrl))
+                        {
+                        <div class="card-image">
+                            <a class="btn-floating mb-1 waves-effect waves-light remove-file" @onclick="@(() => RemoveFile(file))">
+                                <i class="material-icons">clear</i>
+                            </a>
+                        </div>
+                        }
+                        else
+                        {
                         <div class="card-image" style="background: url('@file.PreviewUrl') no-repeat center center;background-size: cover;">
                             <a class="btn-floating mb-1 waves-effect waves-light remove-file" @onclick="@(() => RemoveFile(file))">
                                 <i class="material-icons">clear</i>
                             </a>
                         </div>
+                        }
                         <div class="card-content" data-children-count="1">
                             <span class="card-title font-weight-400">@file.Title</span>
                             @if (file.StorageProvider == StorageProvider.Url)
@@ -110,77 +121,78 @@
                             <div class="row mb-10">
                                 Is this file associated with an event or holiday?
                                 <div class="input-field col m-0 s12 m12">
-                                    <RadzenAutoComplete @bind-Value=@file.EventName Placeholder="Event Name..." FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@Events TextProperty="Name" Style="" />
+                                    <MatAutocompleteList Value="@file.Event" Label="Event Name..." Items=@Events TItem="@Event" CustomStringSelector="@(e => e.Name)" />
                                 </div>
                             </div>
                             <div class="row mb-10">
                                 Who is featured?
                                 @foreach (var (person, pi) in file.FeaturedPeople.Select((person, pi) => (person, pi)))
                                 {
-                                <div class="featured-person">
-                                    <div class="input-field col m-0 s12 m12">
-                                        <InputSelect @bind-Value=person.Type>
-                                            <option value="">Select Type</option>
-                                            <option value="Student">Specific Student</option>
-                                            <option value="Class">Class</option>
-                                            <option value="Staff">Staff</option>
-                                            <option value="Parent">Parent</option>
-                                            <option value="Alumni">Alumni Student, Teacher, or Parent</option>
-                                            <option value="CommunityMember">Community Member</option>
-                                            <option value="Other">Other</option>
-                                        </InputSelect>
-                                    </div>
-
-                                    @if (person.Type == PersonType.Student)
-                                    {
-                                        <div class="input-field col m-0 s11 m11">
-                                            <RadzenAutoComplete @bind-Value=@person.Name Placeholder="Full Name..." FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@Students TextProperty="Name" Style="" />
-                                        </div>
-                                    }
-                                    else if (person.Type == PersonType.Staff)
-                                    {
-                                        <div class="input-field col m-0 s11 m11">
-                                            <RadzenAutoComplete @bind-Value=@person.Name Placeholder="Full Name..." FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@Staff TextProperty="Name" Style="" />
-                                        </div>
-                                    }
-                                    else if (person.Type == PersonType.Class)
-                                    {
-                                        <div class="input-field col m-0 s11 m11">
-                                            <InputSelect @bind-Value=file.Class placeholder="Select Graduating Year">
-                                                <option value="">Select Graduating Year</option>
-                                                @foreach (var year in this.Classes)
-                                                {
-                                                    <option value="@year">@year</option>
-                                                }
+                                    var currentPerson = person;
+                                    <div class="featured-person">
+                                        <div class="input-field col m-0 s12 m12">
+                                            <InputSelect @bind-Value=person.Type>
+                                                <option value="">Select Type</option>
+                                                <option value="Student">Specific Student</option>
+                                                <option value="Class">Class</option>
+                                                <option value="Staff">Staff</option>
+                                                <option value="Parent">Parent</option>
+                                                <option value="Alumni">Alumni Student, Teacher, or Parent</option>
+                                                <option value="CommunityMember">Community Member</option>
+                                                <option value="Other">Other</option>
                                             </InputSelect>
                                         </div>
-                                    }
-                                    else if (person.Type.HasValue)
-                                    {
-                                        <div class="input-field col m-0 s11 m11">
-                                            <InputText @bind-Value="@person.Name" placeholder="Full Name"></InputText>
-                                        </div>
-                                    }
-                                    @if (file.FeaturedPeople.Count > 1)
-                                    {
-                                        <div class="input-field col m-0 s1 m1 p-0">
-                                            <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => RemoveFeaturedPerson(file, person))"><i class="material-icons dp48">remove_circle_outline</i></a>
-                                        </div>
-                                    }
 
-                                    @if (!string.IsNullOrEmpty(person.Name))
-                                    {
-                                        <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => AddFeaturedPerson(file))"><i class="material-icons dp48">add_circle_outline</i>Add Person</a>
-                                    }
-                                </div>
-                                }                                
-                                
+                                        @if (person.Type == PersonType.Student)
+                                        {
+                                            <div class="input-field col m-0 s11 m11">
+                                                <MatAutocompleteList Value=@currentPerson Label="Full Name..." Items="@Students" TItem="@Person" CustomStringSelector="@(p => p.Name)" />
+                                            </div>
+                                        }
+                                        else if (person.Type == PersonType.Staff)
+                                        {
+                                            <div class="input-field col m-0 s11 m11">
+                                                <MatAutocompleteList Value=@currentPerson Label="Full Name..." Items="@Staff" TItem="@Person" CustomStringSelector="@(p => p.Name)" />
+                                            </div>
+                                        }
+                                        else if (person.Type == PersonType.Class)
+                                        {
+                                            <div class="input-field col m-0 s11 m11">
+                                                <InputSelect @bind-Value=file.Class placeholder="Select Graduating Year">
+                                                    <option value="">Select Graduating Year</option>
+                                                    @foreach (var year in this.Classes)
+                                                                {
+                                                        <option value="@year">@year</option>
+                                                                }
+                                                </InputSelect>
+                                            </div>
+                                        }
+                                        else if (person.Type.HasValue)
+                                        {
+                                            <div class="input-field col m-0 s11 m11">
+                                                <InputText @bind-Value="@person.Name" placeholder="Full Name"></InputText>
+                                            </div>
+                                        }
+                                        @if (file.FeaturedPeople.Count > 1)
+                                        {
+                                            <div class="input-field col m-0 s1 m1 p-0">
+                                                <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => RemoveFeaturedPerson(file, person))"><i class="material-icons dp48">remove_circle_outline</i></a>
+                                            </div>
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(person.Name))
+                                        {
+                                            <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => AddFeaturedPerson(file))"><i class="material-icons dp48">add_circle_outline</i>Add Person</a>
+                                        }
+                                    </div>
+                                }
+
                             </div>
 
                             <div class="row">
                                 If this file was requested by a staff member, please specify who:
                                 <div class="input-field col s12 m12">
-                                    <RadzenAutoComplete @bind-Value=@file.RequestedBy FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Full Name" Data=@Staff TextProperty="Name" Style="" />
+                                    <MatAutocompleteList Value=@file.RequestedBy Label="Full Name" Items=@Staff TItem=@Person CustomStringSelector="@(p => p.Name)" />
                                 </div>
                             </div>
                             @*@if (index == 0)*@
