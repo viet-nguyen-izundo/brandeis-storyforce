@@ -155,6 +155,9 @@ app {
 .w-300px {
   width: 300px !important; }
 
+body .top-row img.logo {
+  width: 150px; }
+
 body .hide {
   display: none; }
 
