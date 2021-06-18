@@ -121,14 +121,14 @@
                             <div class="row mb-10">
                                 Is this file associated with an event or holiday?
                                 <div class="input-field col m-0 s12 m12">
-                                    <MatAutocompleteList Value="@file.Event" Label="Event Name..." Items=@Events TItem="@Event" CustomStringSelector="@(e => e.Name)" />
+                                    <MatAutocompleteList @bind-Value=@file.Event Label="Event Name..." Items=@Events TItem=@Event CustomStringSelector="@(e => string.IsNullOrEmpty(e.Name) ? string.Empty : e.Name)" />
                                 </div>
                             </div>
                             <div class="row mb-10">
                                 Who is featured?
+                                 
                                 @foreach (var (person, pi) in file.FeaturedPeople.Select((person, pi) => (person, pi)))
                                 {
-                                    var currentPerson = person;
                                     <div class="featured-person">
                                         <div class="input-field col m-0 s12 m12">
                                             <InputSelect @bind-Value=person.Type>
@@ -146,13 +146,13 @@
                                         @if (person.Type == PersonType.Student)
                                         {
                                             <div class="input-field col m-0 s11 m11">
-                                                <MatAutocompleteList Value=@currentPerson Label="Full Name..." Items="@Students" TItem="@Person" CustomStringSelector="@(p => p.Name)" />
+                                                <MatAutocompleteList @bind-Value=@person.Name Label="Full Name..." Items=@Students.Select(s => s.Name) TItem="string" />
                                             </div>
                                         }
                                         else if (person.Type == PersonType.Staff)
                                         {
                                             <div class="input-field col m-0 s11 m11">
-                                                <MatAutocompleteList Value=@currentPerson Label="Full Name..." Items="@Staff" TItem="@Person" CustomStringSelector="@(p => p.Name)" />
+                                                <MatAutocompleteList @bind-Value=@person.Name Label="Full Name..." Items=@Staff.Select(s => s.Name) TItem="string"  />
                                             </div>
                                         }
                                         else if (person.Type == PersonType.Class)
@@ -192,7 +192,7 @@
                             <div class="row">
                                 If this file was requested by a staff member, please specify who:
                                 <div class="input-field col s12 m12">
-                                    <MatAutocompleteList Value=@file.RequestedBy Label="Full Name" Items=@Staff TItem=@Person CustomStringSelector="@(p => p.Name)" />
+                                    <MatAutocompleteList @bind-Value=@file.RequestedBy Label="Full Name" Items=@Staff TItem=@Person CustomStringSelector="@(p => p.Name)" />
                                 </div>
                             </div>
                             @*@if (index == 0)*@
