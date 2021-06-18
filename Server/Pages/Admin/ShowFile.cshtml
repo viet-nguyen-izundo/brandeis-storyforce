@@ -1,0 +1,192 @@
+﻿@page "/showFile"
+@using StoryForce.Server.Services
+@using System.Data
+@using Microsoft.AspNetCore.Identity
+
+@model StoryForce.Server.Pages.Admin.ShowFileModel
+@inject ImageService ImageService
+@inject UserManager<IdentityUser> UserManager
+@{
+    ViewData["Title"] = "Show File";
+    Layout = "~/Pages/Shared/_LayoutFile.cshtml";
+}
+
+@section HeadScripts
+{
+    <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/css/pages/app-email.css">
+}
+<style>
+    .app-wrapper {
+        margin-top: 9% !important;
+    }
+</style>
+<div class="app-email">
+    <div class="content-area content-right">
+        <div class="app-wrapper">
+            <div class="card card card-default scrollspy border-radius-6 fixed-width">
+                <div class="card-content p-0 pb-2">
+                    <div class="email-header">
+                        <div class="left-icons">
+                            <span class="action-icons">
+                            </span>
+                        </div>
+                        <div class="list-content"></div>
+                    </div>
+                    <div class="collection email-collection">
+                        @{
+                            int row = 1;
+                            if (Model.storyFile != null)
+                            {
+                                foreach (var files in Model.storyFile)
+                                {
+
+                                    <div class="email-brief-info collection-item animate fadeUp delay-@row">
+                                        <h5>@Html.DisplayFor(model => files.SubmittedBy.Name)</h5>
+                                        <div class="list-left">
+                                        </div>
+                                        <div class="list-content">
+                                            <div class="list-title-area">
+                                                <div class="user-media">
+                                                    <img src="@files.SubmittedBy.AvatarUrl" alt=""
+                                                         class="circle z-depth-2 responsive-img avtar">
+                                                    <div class="list-title">@Html.DisplayFor(model => files.RequestedBy.Name)</div>
+                                                    <span>- File CreateAt: @Html.DisplayFor(model => files.CreatedAt)</span>
+                                                </div>
+                                            </div>
+                                            <div class="list-desc">
+                                                @Html.DisplayFor(model => files.Description)
+                                            </div>
+                                            <div class="attach-file">
+                                                <i class="material-icons">attach_file</i>
+                                            </div>
+                                            <div class="links">
+                                                <a href="@ImageService.GetPreSignedUrl(@files.Key)" target="_blank">
+                                                    <i class="material-icons">file_download</i>
+                                                </a>
+                                            </div>
+                                            <div class="title-right">
+                                                <span class="badge grey lighten-3">
+                                                    <i class="purple-text material-icons small-icons mr-2">
+                                                        fiber_manual_record
+                                                    </i>New
+                                                </span>
+                                            </div>
+
+                                            <div class="files">
+
+                                                @*@foreach (var file in files.SubmittedFiles)
+                                                    {
+
+                                                        <div class="file">
+                                                            @if (file.Type.StartsWith("image/"))
+                                                            {
+                                                                <img src="@file.GetResizedImageUrl(100, 100)" alt="@file.Title" title="@file.Title" /><br />
+                                                            }
+                                                            else
+                                                            {
+                                                                @file.Title
+                                                            }
+                                                        </div>
+                                                    }*@
+                                            </div>
+                                        </div>
+                                        <div class="list-right">
+                                            <div class="list-date"> @Html.DisplayFor(model => files.CreatedAt) </div>
+                                            <div class="delete-task">
+                                                <form asp-page-handler="delete" asp-page="Submission/Index" asp-route-id="@files.Id" method="post">
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    row++;
+                                }
+                            }
+                        }
+                        <div class="no-data-found collection-item">
+                            <h6 class="center-align font-weight-500">No Results Found</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add new email popup Ends-->
+<!-- email compose sidebar -->
+<div class="email-compose-sidebar">
+    <div class="card quill-wrapper">
+        <div class="card-content pt-0">
+            <div class="card-header display-flex pb-2">
+                <h3 class="card-title">NEW MESSAGE</h3>
+                <div class="close close-icon">
+                    <i class="material-icons">close</i>
+                </div>
+            </div>
+            <div class="divider"></div>
+            <!-- form start -->
+            <form class="edit-email-item mt-10 mb-10">
+                <div class="input-field">
+                    <input type="email" class="edit-email-item-title validate" id="edit-item-from" value="user@example.com"
+                           disabled>
+                    <label for="edit-item-from">From</label>
+                </div>
+                <div class="input-field">
+                    <input type="email" class="edit-email-item-date" id="edit-item-to">
+                    <label for="edit-item-to">To</label>
+                </div>
+                <div class="input-field">
+                    <input type="text" class="edit-email-item-date" id="edit-item-subject">
+                    <label for="edit-item-subject">Subject</label>
+                </div>
+                <div class="input-field">
+                    <input type="email" class="edit-email-item-date" id="edit-item-CC">
+                    <label for="edit-item-CC">CC</label>
+                </div>
+                <div class="input-field">
+                    <input type="email" class="edit-email-item-date" id="edit-item-BCC">
+                    <label for="edit-item-BCC">BCC</label>
+                </div>
+                <!-- Compose mail Quill editor -->
+                <div class="input-field">
+                    <div class="snow-container mt-2">
+                        <div class="compose-editor"></div>
+                        <div class="compose-quill-toolbar">
+                            <span class="ql-formats mr-0">
+                                <button class="ql-bold"></button>
+                                <button class="ql-italic"></button>
+                                <button class="ql-underline"></button>
+                                <button class="ql-link"></button>
+                                <button class="ql-image"></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="file-field input-field">
+                    <div class="btn btn-file">
+                        <span>Attach File</span>
+                        <input type="file">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                    </div>
+                </div>
+            </form>
+            <div class="card-action pl-0 pr-0 right-align">
+                <button type="reset" class="btn-small waves-effect waves-light cancel-email-item mr-1">
+                    <i class="material-icons left">close</i>
+                    <span>Cancel</span>
+                </button>
+                <button class="btn-small waves-effect waves-light send-email-item">
+                    <i class="material-icons left">send</i>
+                    <span>Send</span>
+                </button>
+            </div>
+            <!-- form start end-->
+        </div>
+    </div>
+</div>
+
+
+
+
+
