@@ -13,8 +13,8 @@ namespace StoryForce.Shared.ViewModels
         public string Title { get; set; }
 
         public string Key { get; set; }
-        
-        [Required]
+
+        //[Required]
         public string Description { get; set; }
 
         public string MimeType { get; set; }
