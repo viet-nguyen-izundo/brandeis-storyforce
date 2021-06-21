@@ -34,73 +34,73 @@
                     </div>
                     <div class="collection email-collection">
                         @{
-                            int row = 1;
-                            if (Model.storyFile != null)
-                            {
-                                foreach (var files in Model.storyFile)
+                            int row = 1;foreach (var item in Model.SubmittedByGroups)
                                 {
+                                    <h5 class="ml-2">- Submitted by:  @Html.DisplayFor(model => item.SubmittedBy.Name)</h5>
 
-                                    <div class="email-brief-info collection-item animate fadeUp delay-@row">
-                                        <h5>@Html.DisplayFor(model => files.SubmittedBy.Name)</h5>
-                                        <div class="list-left">
-                                        </div>
-                                        <div class="list-content">
-                                            <div class="list-title-area">
-                                                <div class="user-media">
-                                                    <img src="@files.SubmittedBy.AvatarUrl" alt=""
-                                                         class="circle z-depth-2 responsive-img avtar">
-                                                    <div class="list-title">@Html.DisplayFor(model => files.RequestedBy.Name)</div>
-                                                    <span>- File CreateAt: @Html.DisplayFor(model => files.CreatedAt)</span>
+                                    foreach (var files in item.Files)
+                                    {
+
+                                        <div class="email-brief-info collection-item animate fadeUp delay-@row">
+                                            <div class="list-left">
+                                            </div>
+                                            <div class="list-content">
+                                                <div class="list-title-area">
+                                                    <div class="user-media">
+                                                        <img src="@files.SubmittedBy.AvatarUrl" alt=""
+                                                             class="circle z-depth-2 responsive-img avtar">
+                                                        <div class="list-title">@Html.DisplayFor(model => files.RequestedBy.Name)</div>
+                                                        <span>- File CreateAt: @Html.DisplayFor(model => files.CreatedAt)</span>
+                                                    </div>
+                                                </div>
+                                                <div class="list-desc">
+                                                    @Html.DisplayFor(model => files.Description)
+                                                </div>
+                                                <div class="attach-file">
+                                                    <i class="material-icons">attach_file</i>
+                                                </div>
+                                                <div class="links">
+                                                    <a href="@ImageService.GetPreSignedUrl(@files.Key)" target="_blank">
+                                                        <i class="material-icons">file_download</i>
+                                                    </a>
+                                                </div>
+                                                <div class="title-right">
+                                                    <span class="badge grey lighten-3">
+                                                        <i class="purple-text material-icons small-icons mr-2">
+                                                            fiber_manual_record
+                                                        </i>New
+                                                    </span>
+                                                </div>
+
+                                                <div class="files">
+
+                                                    @*@foreach (var file in files.SubmittedFiles)
+                                                        {
+
+                                                            <div class="file">
+                                                                @if (file.Type.StartsWith("image/"))
+                                                                {
+                                                                    <img src="@file.GetResizedImageUrl(100, 100)" alt="@file.Title" title="@file.Title" /><br />
+                                                                }
+                                                                else
+                                                                {
+                                                                    @file.Title
+                                                                }
+                                                            </div>
+                                                        }*@
                                                 </div>
                                             </div>
-                                            <div class="list-desc">
-                                                @Html.DisplayFor(model => files.Description)
-                                            </div>
-                                            <div class="attach-file">
-                                                <i class="material-icons">attach_file</i>
-                                            </div>
-                                            <div class="links">
-                                                <a href="@ImageService.GetPreSignedUrl(@files.Key)" target="_blank">
-                                                    <i class="material-icons">file_download</i>
-                                                </a>
-                                            </div>
-                                            <div class="title-right">
-                                                <span class="badge grey lighten-3">
-                                                    <i class="purple-text material-icons small-icons mr-2">
-                                                        fiber_manual_record
-                                                    </i>New
-                                                </span>
-                                            </div>
-
-                                            <div class="files">
-
-                                                @*@foreach (var file in files.SubmittedFiles)
-                                                    {
-
-                                                        <div class="file">
-                                                            @if (file.Type.StartsWith("image/"))
-                                                            {
-                                                                <img src="@file.GetResizedImageUrl(100, 100)" alt="@file.Title" title="@file.Title" /><br />
-                                                            }
-                                                            else
-                                                            {
-                                                                @file.Title
-                                                            }
-                                                        </div>
-                                                    }*@
+                                            <div class="list-right">
+                                                <div class="list-date"> @Html.DisplayFor(model => files.CreatedAt) </div>
+                                                <div class="delete-task">
+                                                    <form asp-page-handler="delete" asp-page="Submission/Index" asp-route-id="@files.Id" method="post">
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="list-right">
-                                            <div class="list-date"> @Html.DisplayFor(model => files.CreatedAt) </div>
-                                            <div class="delete-task">
-                                                <form asp-page-handler="delete" asp-page="Submission/Index" asp-route-id="@files.Id" method="post">
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    row++;
+                                        row++;
+                                    }
                                 }
-                            }
                         }
                         <div class="no-data-found collection-item">
                             <h6 class="center-align font-weight-500">No Results Found</h6>

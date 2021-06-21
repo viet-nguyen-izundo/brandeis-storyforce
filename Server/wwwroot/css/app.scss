@@ -229,6 +229,12 @@ app {
 }
 
 body {
+    .top-row {
+        img.logo {
+            width: 150px;
+        }
+    }
+
     .hide {
         display: none;
     }
@@ -297,7 +303,6 @@ body {
         .card-image {
             position: relative;
             width: 100%;
-            height: 300px;
 
             .remove-file {
                 position: absolute;
@@ -305,6 +310,10 @@ body {
                 margin: 3px;
             }
         }
+    }
+
+    .mdc-text-field--filled {
+        height: 46px;
     }
 
     #previewFiles {
@@ -326,6 +335,10 @@ body {
 
     .modal {
         z-index: 1001;
+    }
+    .modal1 {
+        position: relative;
+        z-index: 9999;
     }
 
     a {
@@ -352,5 +365,11 @@ body {
 
     ::placeholder {
         color: #9e9e9e !important;
+    }
+
+    .input-field.col {
+        label {
+            left: 0;
+        }
     }
 }

@@ -12,7 +12,7 @@ using StoryForce.Shared.Models;
 namespace StoryForce.Server.Pages.Admin
 {
     public class ShowFileModel : PageModel
-    {       
+    {
         public UserManager<IdentityUser> _userManager;
         public SubmissionService _submissionService;
 
@@ -22,14 +22,26 @@ namespace StoryForce.Server.Pages.Admin
             _submissionService = submissionService;
         }
 
-        public IList<StoryFile> storyFile { get; set; }     
-        
+        public IEnumerable<SubmittedByGroup> SubmittedByGroups { get; set; }
+
         public async Task<ActionResult> OnGetAsync()
-        {            
-            var files = await this._submissionService.GetAsyncbyEmail(_userManager.GetUserName(User));            
-            storyFile = files.OrderByDescending(x=>x.CreatedAt).ToList();            
+        {
+            var files = await this._submissionService.GetAsyncbyEmail(_userManager.GetUserName(User));
+
+            SubmittedByGroups = from file in files
+                           group file by file.SubmittedBy.Email into submittedBy
+                           select new SubmittedByGroup() { SubmittedBy = files.First(x => x.SubmittedBy.Email == submittedBy.Key).SubmittedBy, Files = submittedBy.ToList()};
+
             return Page();
         }
 
+
+    }
+
+    public class SubmittedByGroup
+    {
+        public StoryForce.Shared.Models.Person SubmittedBy { get; set; }
+
+        public List<StoryFile> Files { get; set; }
     }
 }

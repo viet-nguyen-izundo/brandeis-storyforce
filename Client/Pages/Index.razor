@@ -12,11 +12,11 @@
 
 <div class="row">
     @*<h5 class="breadcrumbs-title">
-        Please use the form below to submit your files
-    </h5>*@
+            Please use the form below to submit your files
+        </h5>*@
 </div>
 <div class="row">
-    <EditForm Model="Submission" class="col s12" OnValidSubmit="@HandleSubmission">
+    <EditForm EditContext="editContext"  class="col s12">
         <ObjectGraphDataAnnotationsValidator />
         <ValidationSummary />
 
@@ -28,7 +28,7 @@
                     </h4>
                     <div class="row">
                         <div class="input-field col s12 m6">
-                            <InputText class="validate" @bind-Value="Submission.SubmittedBy.Name" placeholder="Full Name" />
+                            <InputText class="validate" @bind-Value="Submission.SubmittedBy.Name" placeholder="Full Name" @onkeypress="@KeyPress" />
                             <ValidationMessage For="@(() => Submission.SubmittedBy.Name)" />
                         </div>
                         <div class="input-field col s12 m6">
@@ -92,20 +92,31 @@
                     <div class="card">
                         @if (string.IsNullOrEmpty(file.PreviewUrl))
                         {
-                        <div class="card-image">
-                            <a class="btn-floating mb-1 waves-effect waves-light remove-file" @onclick="@(() => RemoveFile(file))">
-                                <i class="material-icons">clear</i>
-                            </a>
-                        </div>
+                            <div class="card-image">
+                                <a class="btn-floating mb-1 waves-effect waves-light remove-file" @onclick="@(() => RemoveFile(file))">
+                                    <i class="material-icons">clear</i>
+                                </a>
+                            </div>
                         }
                         else
                         {
-                        <div class="card-image" style="background: url('@file.PreviewUrl') no-repeat center center;background-size: cover;">
-                            <a class="btn-floating mb-1 waves-effect waves-light remove-file" @onclick="@(() => RemoveFile(file))">
-                                <i class="material-icons">clear</i>
-                            </a>
-                        </div>
+                            <div class="card-image" style="background: url('@file.PreviewUrl') no-repeat center center;background-size: cover;height: 300px;">
+                                <a class="btn-floating mb-1 waves-effect waves-light remove-file" @onclick="@(() => RemoveFile(file))">
+                                    <i class="material-icons">clear</i>
+                                </a>
+                            </div>
                         }
+
+                        <div id="modal2" class="modal show" style="display:@modalDisplayRequired; position:absolute; width: 800px!important; position: fixed">
+                            <div class="modal-content">
+                                <h4>Upload Progress</h4>
+                                <div class="success-message">The Description is required filed!</div>
+                            </div>
+                            <div class="modal-footer">
+                                <a class="modal-action modal-close waves-effect waves-green btn-flat" @onclick="@CloseValidateModalWindow">Close</a>
+                            </div>
+                        </div>
+
                         <div class="card-content" data-children-count="1">
                             <span class="card-title font-weight-400">@file.Title</span>
                             @if (file.StorageProvider == StorageProvider.Url)
@@ -120,17 +131,17 @@
                             </div>
                             <div class="row mb-10">
                                 Is this file associated with an event or holiday?
-                                <div class="input-field col m-0 s12 m12">
+                                <div class="input-field col m-0 s12 m12 mt-2">
                                     <MatAutocompleteList @bind-Value=@file.Event Label="Event Name..." Items=@Events TItem=@Event CustomStringSelector="@(e => string.IsNullOrEmpty(e.Name) ? string.Empty : e.Name)" />
                                 </div>
                             </div>
                             <div class="row mb-10">
                                 Who is featured?
-                                 
+
                                 @foreach (var (person, pi) in file.FeaturedPeople.Select((person, pi) => (person, pi)))
                                 {
                                     <div class="featured-person">
-                                        <div class="input-field col m-0 s12 m12">
+                                        <div class="input-field col m-0 s12 m12 mt-2">
                                             <InputSelect @bind-Value=person.Type>
                                                 <option value="">Select Type</option>
                                                 <option value="Student">Specific Student</option>
@@ -145,14 +156,14 @@
 
                                         @if (person.Type == PersonType.Student)
                                         {
-                                            <div class="input-field col m-0 s11 m11">
+                                            <div class="input-field col m-0 s11 m11 mt-2">
                                                 <MatAutocompleteList @bind-Value=@person.Name Label="Full Name..." Items=@Students.Select(s => s.Name) TItem="string" />
                                             </div>
                                         }
                                         else if (person.Type == PersonType.Staff)
                                         {
-                                            <div class="input-field col m-0 s11 m11">
-                                                <MatAutocompleteList @bind-Value=@person.Name Label="Full Name..." Items=@Staff.Select(s => s.Name) TItem="string"  />
+                                            <div class="input-field col m-0 s11 m11 mt-2">
+                                                <MatAutocompleteList @bind-Value=@person.Name Label="Full Name..." Items=@Staff.Select(s => s.Name) TItem="string" />
                                             </div>
                                         }
                                         else if (person.Type == PersonType.Class)
@@ -180,9 +191,11 @@
                                             </div>
                                         }
 
-                                        @if (!string.IsNullOrEmpty(person.Name))
+                                        @if (!string.IsNullOrEmpty(person.Name) || file.Class.HasValue)
                                         {
-                                            <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => AddFeaturedPerson(file))"><i class="material-icons dp48">add_circle_outline</i>Add Person</a>
+                                            <div class="col pt-2">
+                                                <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => AddFeaturedPerson(file))"><i class="material-icons dp48">add_circle_outline</i>Add Person</a>
+                                            </div>
                                         }
                                     </div>
                                 }
@@ -191,7 +204,7 @@
 
                             <div class="row">
                                 If this file was requested by a staff member, please specify who:
-                                <div class="input-field col s12 m12">
+                                <div class="input-field col s12 m12 mt-2">
                                     <MatAutocompleteList @bind-Value=@file.RequestedBy Label="Full Name" Items=@Staff TItem=@Person CustomStringSelector="@(p => p.Name)" />
                                 </div>
                             </div>
@@ -211,38 +224,38 @@
 
         <div class="row">
             <div class="input-field col s6">
-                <button class="btn cyan waves-effect waves-light left" onClick="window.location.reload();">
+                <a class="btn cyan waves-effect waves-light left" onClick="window.location.reload();">
                     Reset
-                </button>
-            </div>        
-
-            <div class="input-field col s6">
-                <button class="btn cyan waves-effect waves-light right" type="submit" id="submit-button">
-                    Submit <i class="material-icons right">send</i>
-                </button>
+                </a>
             </div>
+        </div>
+        <div class="input-field col s6">
+            <a class="btn cyan waves-effect waves-light right" @onclick="ClickHandler" id="submit-button" >
+                Submit <i class="material-icons right">send</i>
+            </a>
         </div>
     </EditForm>
-
-    <!-- Modal -->
-
-    <div id="modal1" class="modal @modalClass" style="display:@modalDisplay">
-        <div class="modal-content">
-            <h4>Upload Progress</h4>
-            <div class="progress @modalProgressClass">
-                <div class="indeterminate"></div>
-            </div>
-            <div class="success-message @successClass">Your files were uploaded successfully!</div>
-            <div class="@errorMessageClass">@submissionFailedMessage</div>
-        </div>
-        <div class="modal-footer @modalFooterClass">
-            <a class="modal-action modal-close waves-effect waves-green btn-flat" @onclick="@CloseModalWindow">Close</a>
-        </div>
-    </div>
-
-
-    @if (showBackdrop)
-    {
-        <div class="modal-backdrop fade show"></div>
-    }
 </div>
+
+<!-- Modal -->
+
+<div id="modal1" class="modal @modalClass" style="display:@modalDisplay">
+    <div class="modal-content">
+        <h4>Upload Progress</h4>
+        <div class="progress @modalProgressClass">
+            <div class="indeterminate"></div>
+        </div>
+        <div class="success-message @successClass">Your files were uploaded successfully!</div>
+        <div class="@errorMessageClass">@submissionFailedMessage</div>
+    </div>
+    <div class="modal-footer @modalFooterClass">
+        <a class="modal-action modal-close waves-effect waves-green btn-flat" @onclick="@CloseModalWindow">Close</a>
+    </div>
+</div>
+
+
+
+@if (showBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
