@@ -10,10 +10,14 @@ namespace StoryForce.Server.Controllers
     public class SendMailController : Controller
     {
         private readonly SendMailJobService _sendMailJobService;
+
+        private readonly SubmissionService _submissionService;
       
-        public SendMailController(SendMailJobService sendMailJobService)
+        public SendMailController(SendMailJobService sendMailJobService, SubmissionService submissionService)
         {            
             _sendMailJobService = sendMailJobService ;
+            _submissionService = submissionService;
+
         }
 
         [HttpPost]
@@ -21,6 +25,14 @@ namespace StoryForce.Server.Controllers
         {
             await _sendMailJobService.SendEmailAsync(sendMailRequest);
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> getByEmail(string email)
+        {
+            var task = await _submissionService.GetAsyncbyEmail(email);
+            if (task == null) return BadRequest();
+            return Ok(task);
         }
     }
 }

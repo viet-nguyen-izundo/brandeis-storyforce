@@ -31,6 +31,7 @@ namespace StoryForce.Server.Controllers
         private readonly StoryFileService _storyFileService;
         private readonly PeopleService _peopleService;
         private readonly EventService _eventService;
+        private readonly SendMailJobService _sendMailJobService;
         private readonly IConfiguration _configuration;
         readonly string[] scopes = { DriveService.Scope.Drive };
         DriveService _gDriveService;
@@ -42,7 +43,9 @@ namespace StoryForce.Server.Controllers
             , SubmissionService submissionService
             , StoryFileService storyFileService
             , PeopleService peopleService
-            , EventService eventService)
+            , EventService eventService,
+            SendMailJobService sendMailJobService
+            )
         {
             _configuration = configration;
             _submissionService = submissionService;
@@ -50,6 +53,7 @@ namespace StoryForce.Server.Controllers
             _peopleService = peopleService;
             _gDriveService = InitGoogleDriveService();
             _eventService = eventService;
+            this._sendMailJobService = sendMailJobService;
             _fileService = new FileService();
             _webClient = new WebClient();
             this.UPLOAD_DIRECTORY = Path.Combine(Path.GetTempPath(), "uploads");
@@ -116,6 +120,24 @@ namespace StoryForce.Server.Controllers
             await _storyFileService.CreateMultipleAsync(converted.SubmittedFiles);
 
             await _submissionService.CreateAsync(converted);
+
+            var staffs = await this._peopleService.GetAsync();
+            var requestedPersons = submission.UploadFiles.Select(x => x.RequestedBy.Email).Distinct().Select(r => staffs.FirstOrDefault(s => s.Email == r)); ;
+
+            foreach (var requestedPerson in requestedPersons)
+            {
+                if (requestedPerson == null) continue;
+
+                await this._sendMailJobService.SendEmailAsync(new SendMailRequest()
+                {
+                    To = requestedPerson.Email,
+                    Subject = "[StoryForce] Requested documents was uploaded",
+                    Content = @$"Dear {requestedPerson.Name}, 
+                                <br>
+                                The documents you request was uploaded, please check it out <a href='{Request.Scheme}://{Request.Host}/showFile'>here</a>"
+                });
+
+            }
 
             return CreatedAtRoute("GetSubmission", new { id = converted.Id }, converted);
         }

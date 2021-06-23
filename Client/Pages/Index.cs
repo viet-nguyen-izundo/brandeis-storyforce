@@ -23,7 +23,7 @@ using Sentry;
 using StoryForce.Client.UI;
 using StoryForce.Shared.ViewModels;
 using UploadFile = StoryForce.Shared.ViewModels.UploadFile;
-
+using Microsoft.AspNetCore.Components.Web;
 
 namespace StoryForce.Client.Pages
 {
@@ -42,6 +42,7 @@ namespace StoryForce.Client.Pages
         private string successClass = "hide";
         private string modalFooterClass = "hide";
         private string modalDisplay = "none";
+        private string modalDisplayRequired = "none";
         private string modalProgressClass = string.Empty;
         private string errorMessageClass = "hide";
         private string submissionFailedMessage = string.Empty;
@@ -79,6 +80,8 @@ namespace StoryForce.Client.Pages
             }
         }
 
+       
+
         public Index()
         {
             this.ResetPageData();
@@ -104,7 +107,28 @@ namespace StoryForce.Client.Pages
             //    new Event {Name = "Third Event", CreatedAt = DateTime.UtcNow, Id = "3"}
             //};
         }
+        private void KeyPress(KeyboardEventArgs args)
+        {
+            if (args.Key == "Enter" || args.Code == "Enter")
+            {
+                return;
+            }
+        }
+        
+        private async Task ClickHandler()
+        {
+            var isInValid = this.Submission.UploadFiles.Any(x => string.IsNullOrEmpty(x.Description));
+            if (isInValid)
+            {
+                ShowModalWindow();
+                modalDisplayRequired = "block";
+                this.ShowUploadSuccessMessage();
+                return;
+            }
 
+            await this.HandleSubmission(editContext);
+        }
+        
         private void ResetPageData()
         {
             this.Submission = new BlazorFilesSubmission();
@@ -126,9 +150,11 @@ namespace StoryForce.Client.Pages
                 this.Submission.SubmittedBy.Email = email;
             }
         }
+        private EditContext editContext;
 
         protected override async Task OnInitializedAsync()
         {
+            editContext = new(Submission);
             this._interop = new Interop(JS);
             SentrySdk.Init(Configuration.GetSection("Sentry:Dsn").Value);
             action = AddGoogleFile;
@@ -328,7 +354,7 @@ namespace StoryForce.Client.Pages
             await OnFileRemoved.InvokeAsync(file);
         }
 
-        protected async Task LoadFile(UploadFile file)
+        protected async Task Loadile(UploadFile file)
         {
             max = file.Size.Value;
 
@@ -386,6 +412,14 @@ namespace StoryForce.Client.Pages
             showBackdrop = false;
             this.StateHasChanged();
         }
+        
+        private void CloseValidateModalWindow()
+        {
+            modalDisplayRequired = "none";
+            modalClass = "";
+            showBackdrop = false;
+            this.StateHasChanged();
+        }
 
         private void ShowUploadSuccessMessage()
         {
@@ -403,7 +437,7 @@ namespace StoryForce.Client.Pages
             this.modalProgressClass = "hide";
             this.successClass = "hide";
             this.StateHasChanged();
-        }
+        }       
 
         private async Task SaveDataToLocalStorage()
         {
@@ -489,31 +523,8 @@ namespace StoryForce.Client.Pages
 
             this.ShowUploadSuccessMessage();
             this.ResetPageData();
-            await this.PopulateUserDataFromLocalStorage();
+            await this.PopulateUserDataFromLocalStorage();        
 
-            var requestedPersons =
-                model.UploadFiles.Select(x => x.RequestedBy).Distinct();
-
-            foreach (var requestedPerson in requestedPersons)
-            {
-                if (requestedPerson == null) continue;
-
-                var sendmailResponse = await Http.PostAsJsonAsync("api/SendMail", new SendMailRequest()
-                {
-                    To = requestedPerson.Email,
-                    Subject = "[StoryForce] Requested documents was uploaded",
-                    Content = @$"Dear {requestedPerson.Name}, 
-                                <br>
-                                The documents you request was uploaded, please check it out <a href='{NavigationManager.Uri}'>here</a>"
-                });
-                if (!sendmailResponse.IsSuccessStatusCode)
-                {
-                    SentrySdk.CaptureException(new Exception(submissionResponse.ReasonPhrase));
-                    this.ShowErrorMessage();
-                    return;
-                }
-            }
-            
         }
 
         private async Task SaveStringToLocalStorage(string key, string value)
@@ -528,7 +539,6 @@ namespace StoryForce.Client.Pages
         private async Task<string> GetStringFromLocalStorage(string key)
         {
             return await LocalStorage.GetItemAsync<string>(key);
-        }           
-
+        }       
     }
 }

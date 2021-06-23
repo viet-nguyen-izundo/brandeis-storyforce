@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using StoryForce.Shared.Models;
+using StoryForce.Shared.ViewModels;
 
 namespace StoryForce.Server.Services
 {
@@ -11,7 +12,7 @@ namespace StoryForce.Server.Services
     {
         private readonly IMongoCollection<Submission> _submissions;
         private readonly IMongoCollection<StoryFile> _storyFiles;
-        private readonly MongoClient _client;
+        private readonly MongoClient _client;       
 
         public SubmissionService(IMongoDbDatabaseSettings settings)
         {
@@ -27,6 +28,11 @@ namespace StoryForce.Server.Services
 
         public async Task<Submission> GetAsync(string id) =>
             (await _submissions.FindAsync<Submission>(s => s.Id == id)).FirstOrDefault();
+
+
+        //GetStoryFile by Email
+        public async Task<List<StoryFile>> GetAsyncbyEmail(string email) =>
+            (await _storyFiles.FindAsync<StoryFile>(s => s.RequestedBy.Email == email)).ToList();
 
         public async Task<Submission> CreateAsync(Submission submission)
         {
@@ -59,6 +65,6 @@ namespace StoryForce.Server.Services
                 Console.WriteLine("Error deleting Submission and its StoryFiles: " + e.Message);
                 await session.AbortTransactionAsync();
             }
-        }
+        }        
     }
 }
