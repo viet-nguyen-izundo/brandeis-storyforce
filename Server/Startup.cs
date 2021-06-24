@@ -46,6 +46,10 @@ namespace StoryForce.Server
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddDbContext<PgDbContext>(options =>
+                options.UseNpgsql("Host=localhost;Port=5432;Database=StoryForce2;Username=postgres;Password=Bmbsoft@2021"));
+
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -66,6 +70,12 @@ namespace StoryForce.Server
             services.AddSingleton<StoryFileService>();
             services.AddSingleton<PeopleService>();
             services.AddSingleton<EventService>();
+
+            services.AddTransient<ISubmissionService, SubmissionServicePg>();
+            services.AddTransient<IStoryFileService, StoryFileServicePg>();
+            services.AddTransient<IPeopleService, PeopleServicePg>();
+            services.AddTransient<IEventService, EventServicePg>();
+
             services.AddSingleton<ImageService>();
 
             services.Configure<SendGridOptions>(Configuration.GetSection("SendGrid"));

@@ -1,14 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
-using System.Net.Mime;
-using System.Runtime.InteropServices.ComTypes;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.WebUtilities;
 using MongoDB.Bson;
 using StoryForce.Shared.Models;
 
@@ -58,7 +51,7 @@ namespace StoryForce.Shared.ViewModels
             var createdAt = DateTime.UtcNow;
             return new Submission
             {
-                Id = submissionId,
+                //Id = submissionId,
                 SubmittedBy = this.SubmittedBy,
                 Title = $"{this.SubmittedBy.Name}-{createdAt.ToShortTimeString()} {createdAt.ToShortDateString()}",
                 Description = $"{UploadFiles.Count} files by {this.SubmittedBy.Name}",
@@ -73,7 +66,7 @@ namespace StoryForce.Shared.ViewModels
                     DownloadUrl = file.DownloadUrl,
                     ThumbnailUrl = file.ThumbnailUrl,
                     UpdatedAt = createdAt,
-                    SubmissionId = submissionId,
+                    //SubmissionId = submissionId,
                     SubmittedBy = this.SubmittedBy,
                     FeaturedPeople = file.FeaturedPeople,
                     RequestedBy = this.RequestedBy

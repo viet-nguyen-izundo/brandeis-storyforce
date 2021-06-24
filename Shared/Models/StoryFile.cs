@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Net;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -21,6 +23,7 @@ namespace StoryForce.Shared.Models
 
         public List<Note> Notes { get; set; }
 
+        [EnumDataType(typeof(ApprovalStatusEnum))]
         public ApprovalStatusEnum Status { get; set; }
 
         public List<Comment> Comments { get; set; }
@@ -37,13 +40,26 @@ namespace StoryForce.Shared.Models
 
         public List<AuditDetail> History { get; set; }
 
-        public string SubmissionId { get; set; }
+        
+        public int SubmissionId { get; set; }
+
+        public Submission Submission { get; set; }
+
+        public int? ApprovedSubmissionId { get; set; }
+
+        public Submission ApprovedSubmission { get; set; }
+        
+        public int? RejectedSubmissionId { get; set; }
+
+        public Submission RejectedSubmission { get; set; }
+
 
         public string DownloadUrl { get; set; }
 
         public int? Class { get; set; }
 
         [BsonIgnore]
+        [NotMapped]
         public string GoogleFileId
         {
             get
@@ -62,6 +78,7 @@ namespace StoryForce.Shared.Models
         public long? Size { get; set; }
 
         [BsonIgnore]
+        [NotMapped]
         public string SizeText
         {
             get
@@ -85,6 +102,7 @@ namespace StoryForce.Shared.Models
         public string Type { get; set; }
 
         [BsonIgnore]
+        [NotMapped]
         public string ImageData { get; set; }
 
         public DateTime UploadedAt { get; set; }
@@ -95,7 +113,7 @@ namespace StoryForce.Shared.Models
 
         public Person RequestedBy { get; set; }
 
-        public Administrator UpdatedBy { get; set; }
+        public Person UpdatedBy { get; set; }
 
         public List<Story> BelongsTo { get; set; }
 

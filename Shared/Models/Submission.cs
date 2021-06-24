@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using MongoDB.Bson.Serialization.Attributes;
@@ -14,28 +15,34 @@ namespace StoryForce.Shared.Models
             this.FeaturedPeople = new List<Person>();
         }
 
+        public int SubmittedById { get; set; }
+
         public Person SubmittedBy { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
-        
-        public Administrator ReviewedBy { get; set; }
 
-        public Administrator ApprovedBy { get; set; }
+        public int? ReviewedById { get; set; }
+
+        public Person ReviewedBy { get; set; }
+
+        public int? ApprovedById { get; set; }
+
+        public Person ApprovedBy { get; set; }
 
         public string Title { get; set; }
 
         public string Description { get; set; }
 
-        public List<Person> FeaturedPeople { get; set; }
+        public ICollection<Person> FeaturedPeople { get; set; }
 
         public Event Event { get; set; }
 
-        public List<AuditDetail> History { get; set; }
-
-        public List<StoryFile> SubmittedFiles { get; set; }
-
-        public List<StoryFile> ApprovedFiles { get; set; }
-
-        public List<StoryFile> RejectedFiles { get; set; }
+        public ICollection<AuditDetail> History { get; set; }
+        
+        public ICollection<StoryFile> SubmittedFiles { get; set; }
+        
+        public ICollection<StoryFile> ApprovedFiles { get; set; }
+        
+        public ICollection<StoryFile> RejectedFiles { get; set; }
     }
 }

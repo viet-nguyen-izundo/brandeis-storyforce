@@ -32,14 +32,14 @@ namespace StoryForce.Server.Pages.Admin.Submission
         [BindProperty]
         public StoryForce.Shared.Dtos.SubmissionDto Submission { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(string id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             var submission = await this._submissionService.GetAsync(id);
             this.Submission = SubmissionDto.ConvertFromEntity(submission);
             return Page();
         }
 
-        public async Task<IActionResult> OnPostDeleteAsync(string id)
+        public async Task<IActionResult> OnPostDeleteAsync(int id)
         {
             await this._submissionService.RemoveWithFilesAsync(id);
             return new RedirectToPageResult("/Admin/Index");
