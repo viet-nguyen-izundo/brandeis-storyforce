@@ -31,7 +31,7 @@ namespace StoryForce.Server.Services
 
 
         //GetStoryFile by Email
-        public async Task<List<StoryFile>> GetAsyncbyEmail(string email) =>
+        public async Task<List<StoryFile>> GetByRequestedByEmailAsync(string email) =>
             (await _storyFiles.FindAsync<StoryFile>(s => s.RequestedBy.Email == email)).ToList();
 
         public async Task<Submission> CreateAsync(Submission submission)
