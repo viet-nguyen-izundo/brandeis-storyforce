@@ -53,6 +53,7 @@ namespace StoryForce.Client.Pages
         private Interop _interop;
         private string _fileKeyPrefix;
         private string[] _googleDocTypes;
+        private string filenameVali = string.Empty;
 
         [Inject]
         public IConfiguration Configuration { get; set; }
@@ -120,8 +121,13 @@ namespace StoryForce.Client.Pages
             var isInValid = this.Submission.UploadFiles.Any(x => string.IsNullOrEmpty(x.Description));
             if (isInValid)
             {
+                foreach( var item in  this.Submission.UploadFiles.Where(m => m.Description == null))
+                {
+                    filenameVali +=  item.Title + ",";                    
+                }                
                 ShowModalWindow();
                 modalDisplayRequired = "block";
+                modalDisplay = "none";
                 this.ShowUploadSuccessMessage();
                 return;
             }

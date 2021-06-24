@@ -26,7 +26,7 @@ namespace StoryForce.Server.Pages.Admin
 
         public async Task<ActionResult> OnGetAsync()
         {
-            var files = await this._submissionService.GetAsyncbyEmail(_userManager.GetUserName(User));
+            var files = await this._submissionService.GetByRequestedByEmailAsync(_userManager.GetUserName(User));
 
             SubmittedByGroups = from file in files
                            group file by file.SubmittedBy.Email into submittedBy
