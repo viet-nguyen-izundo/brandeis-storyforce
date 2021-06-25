@@ -12,10 +12,8 @@ namespace StoryForce.Shared.ViewModels
         public BlazorFilesSubmission()
         {
             this.SubmittedBy = new Person();
-            this.RequestedBy = new Person();
             this.FileMetaDataList = new List<FileMeta>();
             this.UploadFiles = new List<UploadFile>();
-            this.Event = new Event();            
         }
 
         [Required]
@@ -47,12 +45,9 @@ namespace StoryForce.Shared.ViewModels
 
         public Submission ConvertToEntity()
         {
-            var submissionId = ObjectId.GenerateNewId().ToString();
             var createdAt = DateTime.UtcNow;
             return new Submission
             {
-                //Id = submissionId,
-                SubmittedBy = this.SubmittedBy,
                 Title = $"{this.SubmittedBy.Name}-{createdAt.ToShortTimeString()} {createdAt.ToShortDateString()}",
                 Description = $"{UploadFiles.Count} files by {this.SubmittedBy.Name}",
                 CreatedAt = createdAt,
@@ -66,7 +61,6 @@ namespace StoryForce.Shared.ViewModels
                     DownloadUrl = file.DownloadUrl,
                     ThumbnailUrl = file.ThumbnailUrl,
                     UpdatedAt = createdAt,
-                    //SubmissionId = submissionId,
                     SubmittedBy = this.SubmittedBy,
                     FeaturedPeople = file.FeaturedPeople,
                     RequestedBy = this.RequestedBy

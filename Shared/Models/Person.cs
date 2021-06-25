@@ -19,11 +19,19 @@ namespace StoryForce.Shared.Models
 
         public ICollection<Submission> FeaturedSubmissions { get; set; }
 
+        public ICollection<StoryFile> FeaturedStoryFile { get; set; }
+
         public ICollection<Submission> SubmittedSubmissions { get; set; }
 
         public ICollection<Submission> ReviewedBySubmissions { get; set; }
 
         public ICollection<Submission> ApprovedSubmissions { get; set; }
+
+        public ICollection<StoryFile> SubmittedStoryFiles { get; set; }
+
+        public ICollection<StoryFile> RequestedStoryFiles { get; set; }
+        
+        public ICollection<StoryFile> UpdatedStoryFiles { get; set; }
 
         public string Role { get; set; }
     }

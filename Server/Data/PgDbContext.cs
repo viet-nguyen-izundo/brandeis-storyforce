@@ -39,32 +39,52 @@ namespace StoryForce.Server.Data
 
             modelBuilder.Entity<Submission>()
                 .HasMany(submission => submission.ApprovedFiles)
-                .WithOne(sf => sf.ApprovedSubmission)
-                .HasForeignKey(sf => sf.ApprovedSubmissionId);
+                .WithOne(sf => sf.ApprovedSubmission);
 
             modelBuilder.Entity<Submission>()
                 .HasMany(submission => submission.RejectedFiles)
-                .WithOne(sf => sf.RejectedSubmission)
-                .HasForeignKey(sf => sf.RejectedSubmissionId);
+                .WithOne(sf => sf.RejectedSubmission);
 
             modelBuilder.Entity<Submission>()
                 .HasMany(submission => submission.FeaturedPeople)
-                .WithMany(sf => sf.FeaturedSubmissions);
+                .WithMany(person => person.FeaturedSubmissions);
 
             modelBuilder.Entity<Submission>()
                 .HasOne(submission => submission.SubmittedBy)
-                .WithMany(person => person.SubmittedSubmissions)
-                .HasForeignKey(s => s.SubmittedById);
+                .WithMany(person => person.SubmittedSubmissions);
 
             modelBuilder.Entity<Submission>()
                 .HasOne(submission => submission.ReviewedBy)
-                .WithMany(person => person.ReviewedBySubmissions)
-                .HasForeignKey(s => s.ReviewedById);
+                .WithMany(person => person.ReviewedBySubmissions);
 
             modelBuilder.Entity<Submission>()
                 .HasOne(submission => submission.ApprovedBy)
-                .WithMany(person => person.ApprovedSubmissions)
-                .HasForeignKey(s => s.ApprovedById);
+                .WithMany(person => person.ApprovedSubmissions);
+
+            modelBuilder.Entity<Person>()
+                .HasMany(person=> person.FeaturedStoryFile)
+                .WithMany(sf => sf.FeaturedPeople);
+
+            modelBuilder.Entity<StoryFile>()
+                .HasOne(sf => sf.SubmittedBy)
+                .WithMany(person => person.SubmittedStoryFiles);
+            
+            modelBuilder.Entity<StoryFile>()
+                .HasOne(sf => sf.RequestedBy)
+                .WithMany(person => person.RequestedStoryFiles);
+
+            modelBuilder.Entity<StoryFile>()
+                .HasOne(sf => sf.UpdatedBy)
+                .WithMany(person => person.UpdatedStoryFiles);
+
+            modelBuilder.Entity<Person>()
+                .HasMany(person => person.FeaturedStoryFile)
+                .WithMany(sf => sf.FeaturedPeople);
+
+            modelBuilder.Entity<Person>()
+                .HasMany(person => person.FeaturedStoryFile)
+                .WithMany(sf => sf.FeaturedPeople);
+
         }
     }
 }

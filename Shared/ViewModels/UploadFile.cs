@@ -48,7 +48,7 @@ namespace StoryForce.Shared.ViewModels
 
         public UploadFile()
         {
-            this.FeaturedPeople = new List<Person> { new () };
+            this.FeaturedPeople = new List<Person>();
             this.Event = new();
         }
     }

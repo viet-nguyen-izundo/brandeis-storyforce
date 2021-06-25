@@ -85,7 +85,9 @@ namespace StoryForce.Server
 
             services.AddMatBlazor();
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
             services.AddRazorPages();
 
             services.AddAuthentication()
