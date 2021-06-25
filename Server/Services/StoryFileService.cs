@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using StoryForce.Shared.Models;
 
 namespace StoryForce.Server.Services
 {
-    public class StoryFileService : IStoryFileService
+    public class StoryFileService
     {
         private readonly IMongoCollection<StoryFile> _storyFiles;
 

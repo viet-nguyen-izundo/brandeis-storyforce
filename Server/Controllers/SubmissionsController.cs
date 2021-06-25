@@ -67,7 +67,7 @@ namespace StoryForce.Server.Controllers
             return submissions.Select(submission => SubmissionDto.ConvertFromEntity(submission)).ToList();
         }
 
-        [HttpGet("{id:length(24)}", Name = "GetSubmission")]
+        [HttpGet("{id}", Name = "GetSubmission")]
         public async Task<ActionResult<SubmissionDto>> Get(int id)
         {
             var submission = await _submissionService.GetAsync(id);
@@ -85,43 +85,28 @@ namespace StoryForce.Server.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = 2147483648)] //2GB:1024 * 1024 * 1024 * 2
         public async Task<ActionResult<SubmissionDto>> CreateFromSimple(BlazorFilesSubmission submission)
         {
-            var events = await _eventService.GetAsync();
-            var people = await _peopleService.GetAsync();
-            var converted = submission.ConvertToEntity();
-            var submitter = await _peopleService.CreateAsync(converted.SubmittedBy);
-            converted.SubmittedBy = submitter;
+            var convertedSubmission = submission.ConvertToEntity();
 
-            var insertedSubmission = await _submissionService.CreateAsync(converted);
+            convertedSubmission.SubmittedBy = await _peopleService.GetByEmailOrNameAndYearAsync(submission.SubmittedBy.Email, submission.SubmittedBy.Name, null) ?? submission.SubmittedBy;
 
-            foreach (var file in submission.UploadFiles)
+            convertedSubmission.FeaturedPeople = await Task.WhenAll(convertedSubmission
+                .FeaturedPeople
+                .Select(async person => await _peopleService.GetByEmailOrNameAndYearAsync(person.Email, person.Name, null) ?? person));
+
+            foreach (var storyFile in convertedSubmission.SubmittedFiles)
             {
-                var storyFile = converted.SubmittedFiles.SingleOrDefault(f => f.Title == file.Title);
-
-                storyFile.UpdatedAt = converted.CreatedAt;
-                storyFile.SubmissionId = insertedSubmission.Id;
-                storyFile.SubmittedBy = submitter;
-                storyFile.Event = file.Event;
-                storyFile.RequestedBy = file.RequestedBy;
-                storyFile.Class = file.Class;
-
-                foreach (var person in storyFile.FeaturedPeople)
+                storyFile.SubmittedBy = convertedSubmission.SubmittedBy;
+                if (storyFile.RequestedBy != null)
                 {
-                    var featured = people.Find(p => p.Name == person.Name);
-                    if (featured is null)
-                    {
-                        continue;
-                    }
-                    person.Id = featured.Id;
-                    person.Email = featured.Email;
-                    person.Type = featured.Type;
-                    person.ClassOfYear = featured.ClassOfYear;
-                    person.AvatarUrl = featured.AvatarUrl;
+                    storyFile.RequestedBy = await _peopleService.GetAsync(storyFile.RequestedBy.Id);
                 }
+
+                storyFile.FeaturedPeople = await Task.WhenAll(storyFile
+                    .FeaturedPeople
+                    .Select(async person => await _peopleService.GetByEmailOrNameAndYearAsync(person.Email, person.Name, null) ?? person));
             }
 
-            await _storyFileService.CreateMultipleAsync(converted.SubmittedFiles.ToList());
-
-
+            var insertedSubmission = await _submissionService.CreateAsync(convertedSubmission);
 
             var requestedPeople = submission.UploadFiles.Select(x => x.RequestedBy).ToArray();
 
@@ -145,7 +130,7 @@ namespace StoryForce.Server.Controllers
                 }
             }
 
-            return CreatedAtRoute("GetSubmission", new { id = converted.Id }, converted);
+            return CreatedAtRoute("GetSubmission", new { id = insertedSubmission.Id }, insertedSubmission);
         }
 
         [HttpPost("blazor")]
@@ -399,7 +384,7 @@ namespace StoryForce.Server.Controllers
             return CreatedAtRoute("GetSubmission", new { id = converted.Id }, converted);
         }
 
-        [HttpPut("{id:length(24)}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, SubmissionDto updatedSubmission)
         {
             var submission = await _submissionService.GetAsync(id);
@@ -414,7 +399,7 @@ namespace StoryForce.Server.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id:length(24)}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var submission = await _submissionService.GetAsync(id);

@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Net;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Web;
-using Amazon.S3.Model.Internal.MarshallTransformations;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
@@ -34,13 +31,12 @@ namespace StoryForce.Shared.Models
 
         public List<Tag> Tags { get; set; }
 
-        public List<Person> FeaturedPeople { get; set; }
+        public ICollection<Person> FeaturedPeople { get; set; }
 
         public List<string> Keywords { get; set; }
 
         public List<AuditDetail> History { get; set; }
 
-        
         public int SubmissionId { get; set; }
 
         public Submission Submission { get; set; }
