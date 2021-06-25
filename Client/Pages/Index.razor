@@ -16,7 +16,7 @@
         </h5>*@
 </div>
 <div class="row">
-    <EditForm EditContext="editContext"  class="col s12">
+    <EditForm EditContext="editContext" class="col s12">
         <ObjectGraphDataAnnotationsValidator />
         <ValidationSummary />
 
@@ -90,6 +90,15 @@
             {
                 <div class="col s12 m6 l4">
                     <div class="card">
+                        <div id="modal2" class="modal show" style="display:@modalDisplayRequired; width: 800px!important">
+                            <div class="modal-content">
+                                <h4 style="color:red">Error</h4>
+                                <div class="success-message"> Files: @filenameVali.TrimEnd(',') <br /> - The Description is required filed!</div>                                
+                            </div>
+                            <div class="modal-footer">
+                                <a class="modal-action modal-close waves-effect waves-green btn-flat" @onclick="@CloseValidateModalWindow">Close</a>
+                            </div>
+                        </div>
                         @if (string.IsNullOrEmpty(file.PreviewUrl))
                         {
                             <div class="card-image">
@@ -107,15 +116,6 @@
                             </div>
                         }
 
-                        <div id="modal2" class="modal show" style="display:@modalDisplayRequired; position:absolute; width: 800px!important; position: fixed">
-                            <div class="modal-content">
-                                <h4 style="color:red">Error</h4>
-                                <div class="success-message"> Files: @filenameVali.TrimEnd(',') <br/> - The Description is required filed!</div>
-                            </div>
-                            <div class="modal-footer">
-                                <a class="modal-action modal-close waves-effect waves-green btn-flat" @onclick="@CloseValidateModalWindow">Close</a>
-                            </div>
-                        </div>
 
                         <div class="card-content" data-children-count="1">
                             <span class="card-title font-weight-400">@file.Title</span>
