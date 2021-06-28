@@ -435,6 +435,7 @@ namespace StoryForce.Client.Pages
         {
             modalDisplayRequired = "none";
             modalClass = "";
+            filenameVali = string.Empty;
             showBackdrop = false;
             this.StateHasChanged();
         }
