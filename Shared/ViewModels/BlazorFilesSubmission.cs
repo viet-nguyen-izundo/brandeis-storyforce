@@ -63,7 +63,8 @@ namespace StoryForce.Shared.ViewModels
                     UpdatedAt = createdAt,
                     SubmittedBy = this.SubmittedBy,
                     FeaturedPeople = file.FeaturedPeople,
-                    RequestedBy = this.RequestedBy
+                    RequestedBy = file.RequestedBy,
+                    Event = file.Event
                 }).ToList(),
             };
         }

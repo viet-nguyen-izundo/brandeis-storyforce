@@ -104,11 +104,11 @@ namespace StoryForce.Server.Controllers
                 storyFile.FeaturedPeople = await Task.WhenAll(storyFile
                     .FeaturedPeople
                     .Select(async person => await _peopleService.GetByEmailOrNameAndYearAsync(person.Email, person.Name, null) ?? person));
-            }
 
-            if (convertedSubmission.Event != null && !string.IsNullOrEmpty(convertedSubmission.Event.Name))
-            {
-                convertedSubmission.Event = await _eventService.GetByNameAsync(convertedSubmission.Event.Name) ?? submission.Event;
+                if (storyFile.Event != null && !string.IsNullOrEmpty(storyFile.Event.Name))
+                {
+                    storyFile.Event = await _eventService.GetByNameAsync(storyFile.Event.Name) ?? storyFile.Event;
+                }
             }
 
             var insertedSubmission = await _submissionService.CreateAsync(convertedSubmission);

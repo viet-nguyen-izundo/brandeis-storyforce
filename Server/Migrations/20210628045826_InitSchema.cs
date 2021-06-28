@@ -5,10 +5,50 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace StoryForce.Server.Migrations
 {
-    public partial class initSchema : Migration
+    public partial class InitSchema : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Category",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ParentCategoryId = table.Column<int>(type: "integer", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Category", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Category_Category_ParentCategoryId",
+                        column: x => x.ParentCategoryId,
+                        principalTable: "Category",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Persons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    ClassOfYear = table.Column<int>(type: "integer", nullable: true),
+                    AvatarUrl = table.Column<string>(type: "text", nullable: true),
+                    Type = table.Column<int>(type: "integer", nullable: true),
+                    Role = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Persons", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Stories",
                 columns: table => new
@@ -21,6 +61,38 @@ namespace StoryForce.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Stories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CategoryStoryFile",
+                columns: table => new
+                {
+                    CategoriesId = table.Column<int>(type: "integer", nullable: false),
+                    StoryFilesId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryStoryFile", x => new { x.CategoriesId, x.StoryFilesId });
+                    table.ForeignKey(
+                        name: "FK_CategoryStoryFile_Category_CategoriesId",
+                        column: x => x.CategoriesId,
+                        principalTable: "Category",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -53,32 +125,22 @@ namespace StoryForce.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StoryFiles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Category",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ParentCategoryId = table.Column<int>(type: "integer", nullable: true),
-                    StoryFileId = table.Column<int>(type: "integer", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Category", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Category_Category_ParentCategoryId",
-                        column: x => x.ParentCategoryId,
-                        principalTable: "Category",
+                        name: "FK_StoryFiles_Persons_RequestedById",
+                        column: x => x.RequestedById,
+                        principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Category_StoryFiles_StoryFileId",
-                        column: x => x.StoryFileId,
-                        principalTable: "StoryFiles",
+                        name: "FK_StoryFiles_Persons_SubmittedById",
+                        column: x => x.SubmittedById,
+                        principalTable: "Persons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_StoryFiles_Persons_UpdatedById",
+                        column: x => x.UpdatedById,
+                        principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -150,29 +212,51 @@ namespace StoryForce.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Persons",
+                name: "PersonStoryFile",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Email = table.Column<string>(type: "text", nullable: true),
-                    ClassOfYear = table.Column<int>(type: "integer", nullable: true),
-                    AvatarUrl = table.Column<string>(type: "text", nullable: true),
-                    Type = table.Column<int>(type: "integer", nullable: true),
-                    Role = table.Column<string>(type: "text", nullable: true),
-                    StoryFileId = table.Column<int>(type: "integer", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    FeaturedPeopleId = table.Column<int>(type: "integer", nullable: false),
+                    FeaturedStoryFileId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Persons", x => x.Id);
+                    table.PrimaryKey("PK_PersonStoryFile", x => new { x.FeaturedPeopleId, x.FeaturedStoryFileId });
                     table.ForeignKey(
-                        name: "FK_Persons_StoryFiles_StoryFileId",
-                        column: x => x.StoryFileId,
+                        name: "FK_PersonStoryFile_Persons_FeaturedPeopleId",
+                        column: x => x.FeaturedPeopleId,
+                        principalTable: "Persons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PersonStoryFile_StoryFiles_FeaturedStoryFileId",
+                        column: x => x.FeaturedStoryFileId,
                         principalTable: "StoryFiles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StoryFileTag",
+                columns: table => new
+                {
+                    StoryFilesId = table.Column<int>(type: "integer", nullable: false),
+                    TagsId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StoryFileTag", x => new { x.StoryFilesId, x.TagsId });
+                    table.ForeignKey(
+                        name: "FK_StoryFileTag_StoryFiles_StoryFilesId",
+                        column: x => x.StoryFilesId,
+                        principalTable: "StoryFiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StoryFileTag_Tags_TagsId",
+                        column: x => x.TagsId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -200,33 +284,12 @@ namespace StoryForce.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tags",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    StoryFileId = table.Column<int>(type: "integer", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tags", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Tags_StoryFiles_StoryFileId",
-                        column: x => x.StoryFileId,
-                        principalTable: "StoryFiles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Submissions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SubmittedById = table.Column<int>(type: "integer", nullable: false),
+                    SubmittedById = table.Column<int>(type: "integer", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     ReviewedById = table.Column<int>(type: "integer", nullable: true),
                     ApprovedById = table.Column<int>(type: "integer", nullable: true),
@@ -261,7 +324,7 @@ namespace StoryForce.Server.Migrations
                         column: x => x.SubmittedById,
                         principalTable: "Persons",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -331,9 +394,9 @@ namespace StoryForce.Server.Migrations
                 column: "ParentCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Category_StoryFileId",
-                table: "Category",
-                column: "StoryFileId");
+                name: "IX_CategoryStoryFile_StoryFilesId",
+                table: "CategoryStoryFile",
+                column: "StoryFilesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_StoryFileId",
@@ -351,9 +414,9 @@ namespace StoryForce.Server.Migrations
                 column: "StoryFileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Persons_StoryFileId",
-                table: "Persons",
-                column: "StoryFileId");
+                name: "IX_PersonStoryFile_FeaturedStoryFileId",
+                table: "PersonStoryFile",
+                column: "FeaturedStoryFileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PersonSubmission_FeaturedSubmissionsId",
@@ -396,6 +459,11 @@ namespace StoryForce.Server.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_StoryFileTag_TagsId",
+                table: "StoryFileTag",
+                column: "TagsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StoryStoryFile_FilesId",
                 table: "StoryStoryFile",
                 column: "FilesId");
@@ -420,40 +488,19 @@ namespace StoryForce.Server.Migrations
                 table: "Submissions",
                 column: "SubmittedById");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Tags_StoryFileId",
-                table: "Tags",
-                column: "StoryFileId");
+            migrationBuilder.AddForeignKey(
+                name: "FK_CategoryStoryFile_StoryFiles_StoryFilesId",
+                table: "CategoryStoryFile",
+                column: "StoryFilesId",
+                principalTable: "StoryFiles",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_StoryFiles_Events_EventId",
                 table: "StoryFiles",
                 column: "EventId",
                 principalTable: "Events",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_StoryFiles_Persons_RequestedById",
-                table: "StoryFiles",
-                column: "RequestedById",
-                principalTable: "Persons",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_StoryFiles_Persons_SubmittedById",
-                table: "StoryFiles",
-                column: "SubmittedById",
-                principalTable: "Persons",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_StoryFiles_Persons_UpdatedById",
-                table: "StoryFiles",
-                column: "UpdatedById",
-                principalTable: "Persons",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
 
@@ -488,15 +535,11 @@ namespace StoryForce.Server.Migrations
                 name: "FK_Events_StoryFiles_StoryFileId",
                 table: "Events");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_Persons_StoryFiles_StoryFileId",
-                table: "Persons");
-
             migrationBuilder.DropTable(
                 name: "AuditDetails");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "CategoryStoryFile");
 
             migrationBuilder.DropTable(
                 name: "Comments");
@@ -505,10 +548,19 @@ namespace StoryForce.Server.Migrations
                 name: "Notes");
 
             migrationBuilder.DropTable(
+                name: "PersonStoryFile");
+
+            migrationBuilder.DropTable(
                 name: "PersonSubmission");
 
             migrationBuilder.DropTable(
+                name: "StoryFileTag");
+
+            migrationBuilder.DropTable(
                 name: "StoryStoryFile");
+
+            migrationBuilder.DropTable(
+                name: "Category");
 
             migrationBuilder.DropTable(
                 name: "Tags");

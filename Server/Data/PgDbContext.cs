@@ -70,12 +70,28 @@ namespace StoryForce.Server.Data
                 .WithMany(person => person.SubmittedStoryFiles);
             
             modelBuilder.Entity<StoryFile>()
+                .HasOne(sf => sf.Event)
+                .WithMany(ev => ev.StoryFiles);
+            
+            modelBuilder.Entity<StoryFile>()
                 .HasOne(sf => sf.RequestedBy)
                 .WithMany(person => person.RequestedStoryFiles);
 
             modelBuilder.Entity<StoryFile>()
                 .HasOne(sf => sf.UpdatedBy)
                 .WithMany(person => person.UpdatedStoryFiles);
+
+            modelBuilder.Entity<StoryFile>()
+                .HasMany(sf => sf.Categories)
+                .WithMany(cat => cat.StoryFiles);
+
+            modelBuilder.Entity<StoryFile>()
+                .HasMany(sf => sf.Tags)
+                .WithMany(tag => tag.StoryFiles);
+
+            modelBuilder.Entity<Person>()
+                .HasMany(person => person.FeaturedStoryFile)
+                .WithMany(sf => sf.FeaturedPeople);
 
             modelBuilder.Entity<Person>()
                 .HasMany(person => person.FeaturedStoryFile)

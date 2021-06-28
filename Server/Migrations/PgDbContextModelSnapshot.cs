@@ -20,6 +20,21 @@ namespace StoryForce.Server.Migrations
                 .HasAnnotation("ProductVersion", "5.0.7")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+            modelBuilder.Entity("CategoryStoryFile", b =>
+                {
+                    b.Property<int>("CategoriesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StoryFilesId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CategoriesId", "StoryFilesId");
+
+                    b.HasIndex("StoryFilesId");
+
+                    b.ToTable("CategoryStoryFile");
+                });
+
             modelBuilder.Entity("PersonStoryFile", b =>
                 {
                     b.Property<int>("FeaturedPeopleId")
@@ -48,6 +63,21 @@ namespace StoryForce.Server.Migrations
                     b.HasIndex("FeaturedSubmissionsId");
 
                     b.ToTable("PersonSubmission");
+                });
+
+            modelBuilder.Entity("StoryFileTag", b =>
+                {
+                    b.Property<int>("StoryFilesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TagsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("StoryFilesId", "TagsId");
+
+                    b.HasIndex("TagsId");
+
+                    b.ToTable("StoryFileTag");
                 });
 
             modelBuilder.Entity("StoryForce.Shared.Models.AuditDetail", b =>
@@ -91,14 +121,9 @@ namespace StoryForce.Server.Migrations
                     b.Property<int?>("ParentCategoryId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("StoryFileId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ParentCategoryId");
-
-                    b.HasIndex("StoryFileId");
 
                     b.ToTable("Category");
                 });
@@ -340,7 +365,7 @@ namespace StoryForce.Server.Migrations
                     b.Property<int?>("ReviewedById")
                         .HasColumnType("integer");
 
-                    b.Property<int>("SubmittedById")
+                    b.Property<int?>("SubmittedById")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
@@ -375,12 +400,7 @@ namespace StoryForce.Server.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<int?>("StoryFileId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("StoryFileId");
 
                     b.ToTable("Tags");
                 });
@@ -398,6 +418,21 @@ namespace StoryForce.Server.Migrations
                     b.HasIndex("FilesId");
 
                     b.ToTable("StoryStoryFile");
+                });
+
+            modelBuilder.Entity("CategoryStoryFile", b =>
+                {
+                    b.HasOne("StoryForce.Shared.Models.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StoryForce.Shared.Models.StoryFile", null)
+                        .WithMany()
+                        .HasForeignKey("StoryFilesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PersonStoryFile", b =>
@@ -430,6 +465,21 @@ namespace StoryForce.Server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("StoryFileTag", b =>
+                {
+                    b.HasOne("StoryForce.Shared.Models.StoryFile", null)
+                        .WithMany()
+                        .HasForeignKey("StoryFilesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StoryForce.Shared.Models.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("StoryForce.Shared.Models.AuditDetail", b =>
                 {
                     b.HasOne("StoryForce.Shared.Models.StoryFile", null)
@@ -446,10 +496,6 @@ namespace StoryForce.Server.Migrations
                     b.HasOne("StoryForce.Shared.Models.Category", "ParentCategory")
                         .WithMany("SubCategories")
                         .HasForeignKey("ParentCategoryId");
-
-                    b.HasOne("StoryForce.Shared.Models.StoryFile", null)
-                        .WithMany("Categories")
-                        .HasForeignKey("StoryFileId");
 
                     b.Navigation("ParentCategory");
                 });
@@ -482,7 +528,7 @@ namespace StoryForce.Server.Migrations
                         .HasForeignKey("ApprovedSubmissionId");
 
                     b.HasOne("StoryForce.Shared.Models.Event", "Event")
-                        .WithMany()
+                        .WithMany("StoryFiles")
                         .HasForeignKey("EventId");
 
                     b.HasOne("StoryForce.Shared.Models.Submission", "RejectedSubmission")
@@ -538,9 +584,7 @@ namespace StoryForce.Server.Migrations
 
                     b.HasOne("StoryForce.Shared.Models.Person", "SubmittedBy")
                         .WithMany("SubmittedSubmissions")
-                        .HasForeignKey("SubmittedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SubmittedById");
 
                     b.Navigation("ApprovedBy");
 
@@ -549,13 +593,6 @@ namespace StoryForce.Server.Migrations
                     b.Navigation("ReviewedBy");
 
                     b.Navigation("SubmittedBy");
-                });
-
-            modelBuilder.Entity("StoryForce.Shared.Models.Tag", b =>
-                {
-                    b.HasOne("StoryForce.Shared.Models.StoryFile", null)
-                        .WithMany("Tags")
-                        .HasForeignKey("StoryFileId");
                 });
 
             modelBuilder.Entity("StoryStoryFile", b =>
@@ -578,6 +615,11 @@ namespace StoryForce.Server.Migrations
                     b.Navigation("SubCategories");
                 });
 
+            modelBuilder.Entity("StoryForce.Shared.Models.Event", b =>
+                {
+                    b.Navigation("StoryFiles");
+                });
+
             modelBuilder.Entity("StoryForce.Shared.Models.Person", b =>
                 {
                     b.Navigation("ApprovedSubmissions");
@@ -595,8 +637,6 @@ namespace StoryForce.Server.Migrations
 
             modelBuilder.Entity("StoryForce.Shared.Models.StoryFile", b =>
                 {
-                    b.Navigation("Categories");
-
                     b.Navigation("Comments");
 
                     b.Navigation("Events");
@@ -604,8 +644,6 @@ namespace StoryForce.Server.Migrations
                     b.Navigation("History");
 
                     b.Navigation("Notes");
-
-                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("StoryForce.Shared.Models.Submission", b =>
