@@ -65,7 +65,7 @@ namespace StoryForce.Client.Pages
         public ILocalStorageService LocalStorage { get; set; }
 
         public BlazorFilesSubmission Submission { get; set; }
-
+        
         public UploadByUrl NewUploadByUrl { get; set; }
 
         public IEnumerable<Person> Students { get; set; }
