@@ -80,7 +80,7 @@ namespace StoryForce.Shared.Dtos
                     SubmittedBy = this.SubmittedBy,
                     CreatedAt = this.CreatedAt,
                     ReviewedBy = this.ReviewedBy,
-                    UpdatedAt = this.UpdatedAt,
+                    UpdatedAt = this.UpdatedAt                    
                 };
         }
 

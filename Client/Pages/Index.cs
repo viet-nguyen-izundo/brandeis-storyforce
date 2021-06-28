@@ -482,8 +482,18 @@ namespace StoryForce.Client.Pages
                     this._fileKeyPrefix);
             }
 
-            // remove blank featured people
-            this.Submission.UploadFiles.ForEach(file => file.FeaturedPeople.RemoveAll(person => string.IsNullOrEmpty(person.Name) && !file.Class.HasValue));
+            
+            this.Submission.UploadFiles.ForEach(file =>
+            {
+                // remove blank featured people
+                file.FeaturedPeople.RemoveAll(person => string.IsNullOrEmpty(person.Name) && !file.Class.HasValue);
+
+                //Add Notes
+                if (!string.IsNullOrEmpty(Submission.NoteFiles.Text))
+                    file.Notes.Add(Submission.NoteFiles);                    
+                if (!string.IsNullOrEmpty(file.UploadNote.Text))
+                    file.Notes.Add(file.UploadNote);                
+            });
 
             // Upload Url-based files
             var uploadByUrlsFiles =
@@ -510,7 +520,6 @@ namespace StoryForce.Client.Pages
                 file.MimeType = MimeTypesMap.GetMimeType(fileName);
                 file.Description = file.Description;
                 file.Size = 0;
-
                 urlFiles.Add(new UploadByUrl
                 {
                     DownloadUrl = file.DownloadUrl,

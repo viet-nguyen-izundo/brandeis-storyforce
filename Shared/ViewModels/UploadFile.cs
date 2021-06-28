@@ -46,11 +46,17 @@ namespace StoryForce.Shared.ViewModels
 
         public Person RequestedBy { get; set; }
 
+        public List<Note> Notes { get; set; }
+
         public UploadFile()
         {
             this.FeaturedPeople = new List<Person>();
             this.Event = new();
+            this.Notes = new List<Note>();
+            this.UploadNote = new();
         }
+
+        public Note UploadNote { get; set; }
     }
 
     public static class MyExtensions
