@@ -5,6 +5,6 @@ namespace StoryForce.Server.Services
 {
     public interface ISubmissionService : IDataService<Submission>
     {
-        Task RemoveWithFilesAsync(int id);
+        Task RemoveWithFilesAsync(int id);       
     }
 }

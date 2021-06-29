@@ -5,6 +5,7 @@
     ViewData["Title"] = "Submission Details";
 }
 @inject ImageService ImageService
+@*@inject INoteService NoteService*@
 @section HeadScripts
 {
     <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/css/pages/app-email-content.css">
@@ -68,37 +69,63 @@
                             <hr>
                             <!-- Email Footer -->
                             <div class="email-footer">
-                                <h6 class="footer-title"> (@Model.Submission.SubmittedFiles.Count)</h6>
-                                <div class="footer-action">
-                                    <div class="attachment-list">
-                                        @foreach (var file in Model.Submission.SubmittedFiles)
-                                        {
-                                        <div class="attachment">
-                                            @if (file.Type.StartsWith("image/"))
-                                                {
-                                            <img src="@file.GetResizedImageUrl(200, 200)" alt="@file.Title" class="responsive-img attached-image">
-                                                }
-                                            <div class="title">@file.Title</div>
-                                            <div class="description">@file.Description</div>
-                                            <div class="size">
-                                                @if (file.Size > 0)
-                                                    {
-                                                <span class="grey-text">(@file.SizeText)</span>
-                                                    }
-                                            </div>
-                                            <div class="links">
-                                                <a href="@ImageService.GetPreSignedUrl(file.Key)" class="right" target="_blank">
-                                                    <i class="material-icons">file_download</i>
-                                                </a>
-                                            </div>
-                                        </div>
-                                        }
-                                    </div>
+                                <div>
+                                    <h6 class="footer-title"> (@Model.Submission.SubmittedFiles.Count)</h6>
                                     <div class="footer-buttons">
                                         <form asp-page-handler="delete" asp-route-id="@Model.Submission.Id" method="post">
                                             <button class="btn delete mb-1"><i class="material-icons left">delete</i><span>Delete</span></button>
                                         </form>
                                     </div>
+                                </div>
+                                
+                                <div class="footer-action">
+                                    <div class="attachment-list">
+                                        @foreach (var file in Model.Submission.SubmittedFiles)
+                                        {
+                                            <div class="attachment">
+                                                @if (file.Type.StartsWith("image/"))
+                                                {
+                                                    <img src="@file.GetResizedImageUrl(200, 200)" alt="@file.Title" class="responsive-img attached-image">
+                                                }
+                                                <div class="title">@file.Title</div>
+                                                <div class="description">@file.Description</div>
+                                                <div class="size">
+                                                    @if (file.Size > 0)
+                                                    {
+                                                        <span class="grey-text">(@file.SizeText)</span>
+                                                    }
+                                                </div>
+                                                <div class="links text-center">
+                                                    <a href="@ImageService.GetPreSignedUrl(file.Key)" class="right" target="_blank">
+                                                        <i class="material-icons">file_download</i>
+                                                    </a>
+                                                </div>
+                                                <div class="note">
+                                                    <div class="row">
+                                                        <div class="col s8"><input type="text" placeholder="Note" bind="@file.Notes" /></div>
+                                                        <div class="col s4"><button class="btn waves-effect waves-light"><i class="material-icons left">save</i><span>Save</span></button></div>
+                                                    </div>
+                                                    <br />
+                                                    <p>Notes:</p>
+                                                    @if (file.Notes != null)
+                                                    {
+                                                        foreach (var item in file.Notes)
+                                                        {
+                                                            <div>@item.Text</div>
+                                                            <div><a href="#" class="mr-3">Edit</a><a href="NoteService.RemoveWithFilesAsync(item.Id)">Delete</a></div>
+                                                            <br />
+                                                            @*<a onclick="NoteService.RemoveWithFilesAsync(item.Id)">Delete</a>
+                                    <form asp-page-handler="delete" asp-route-id="@item.Id" method="post">
+                                        <button class="btn delete mb-1"><i class="material-icons left">delete</i><span>Delete</span></button>
+                                    </form>*@
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                            <br />
+                                        }
+                                    </div>
+
                                 </div>
                                 <div class="reply-box d-none">
                                     <form action="#">

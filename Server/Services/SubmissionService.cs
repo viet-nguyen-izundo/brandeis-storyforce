@@ -70,6 +70,8 @@ namespace StoryForce.Server.Services
                 Console.WriteLine("Error deleting Submission and its StoryFiles: " + e.Message);
                 await session.AbortTransactionAsync();
             }
-        }        
+        }   
+        
+        
     }
 }

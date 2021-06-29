@@ -12,7 +12,7 @@ namespace StoryForce.Shared.Dtos
         public SubmissionDto()
         {
             this.SubmittedFiles = new List<StoryFile>();
-            this.FeaturedPeople = new List<Person>();
+            this.FeaturedPeople = new List<Person>();            
         }
 
         public string CreatedAtShortString => this.CreatedAt.ToString("h:mm tt M/d/yy");
@@ -30,7 +30,7 @@ namespace StoryForce.Shared.Dtos
         public string Description { get; set; }
 
         public List<Note> Notes { get; set; }
-
+        
         public ApprovalStatusEnum Status { get; set; }
 
         public List<StoryFile> SubmittedFiles { get; set; }
@@ -45,7 +45,7 @@ namespace StoryForce.Shared.Dtos
 
         public Event Event { get; set; }
 
-        public List<Tag> Tags { get; set; }
+        public List<Tag> Tags { get; set; }        
 
         public List<Person> FeaturedPeople
         {
@@ -102,7 +102,7 @@ namespace StoryForce.Shared.Dtos
                     SubmittedBy = entity.SubmittedBy,
                     CreatedAt = entity.CreatedAt,
                     ReviewedBy = entity.ReviewedBy,
-                    UpdatedAt = entity.UpdatedAt,
+                    UpdatedAt = entity.UpdatedAt,                    
                 };
         }
 

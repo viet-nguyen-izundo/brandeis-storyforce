@@ -23,12 +23,12 @@ namespace StoryForce.Server.Services
                 .Submissions
                 .Include(x => x.ApprovedFiles)
                 .Include(x => x.RejectedFiles)
-                .Include(x => x.SubmittedFiles)
+                .Include(x => x.SubmittedFiles).ThenInclude(m=>m.Notes).AsNoTracking()
                 .Include(x => x.SubmittedBy)
                 .Include(x => x.ReviewedBy)
                 .Include(x => x.ApprovedBy)
                 .Include(x => x.Event)
-                .Include(x => x.History)
+                .Include(x => x.History)                
                 .ToListAsync();
         }
 
@@ -38,12 +38,12 @@ namespace StoryForce.Server.Services
                 .Submissions
                 .Include(x => x.ApprovedFiles)
                 .Include(x => x.RejectedFiles)
-                .Include(x => x.SubmittedFiles)
+                .Include(x => x.SubmittedFiles).ThenInclude(m => m.Notes).AsNoTracking()
                 .Include(x => x.SubmittedBy)
                 .Include(x => x.ReviewedBy)
                 .Include(x => x.ApprovedBy)
                 .Include(x => x.Event)
-                .Include(x => x.History)
+                .Include(x => x.History)                              
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
 
