@@ -13,9 +13,7 @@ namespace StoryForce.Shared.ViewModels
         {
             this.SubmittedBy = new Person();
             this.FileMetaDataList = new List<FileMeta>();
-            this.UploadFiles = new List<UploadFile>();
-            this.NoteUpload = new List<Note>();
-            this.NoteFiles = new();
+            this.UploadFiles = new List<UploadFile>();            
         }
 
         [Required]
@@ -43,11 +41,7 @@ namespace StoryForce.Shared.ViewModels
         [ValidateComplexType]
         public Person SubmittedBy { get; set; }
 
-        public Person RequestedBy { get; set; }
-
-        public List<Note> NoteUpload { get; set; }
-
-        public Note NoteFiles { get; set; }
+        public Person RequestedBy { get; set; }       
 
         public Submission ConvertToEntity()
         {
@@ -70,8 +64,7 @@ namespace StoryForce.Shared.ViewModels
                     SubmittedBy = this.SubmittedBy,
                     FeaturedPeople = file.FeaturedPeople,
                     RequestedBy = file.RequestedBy,
-                    Event = file.Event,
-                    Notes = file.Notes
+                    Event = file.Event                    
                 }).ToList(),
             };
         }

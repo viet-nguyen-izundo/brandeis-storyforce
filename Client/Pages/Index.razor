@@ -51,9 +51,7 @@
                             Load files from your current device, Google Drive, or other online locations<br />
                             You may load multiple files at once. We recommend you load videos, written documents, and sound files, one at a time to make the upload easier.
                         </div>
-                    </div>
-                    <h4 class="card-title">Note:</h4>                    
-                    <InputText class="validate" @bind-Value="Submission.NoteFiles.Text" placeholder="Note"></InputText>                 
+                    </div>                    
 
                     <div class="row">
                         <div class="col s12 m4 l4">
@@ -244,11 +242,7 @@
                                     <a class="btn-flat waves-effect blue-text text-darken-3 duplicate-data p-0" @onclick="@(() => DuplicateFileAttributes(file))">Copy Info to All Other Files</a>
                                     <br /><i>You can make changes to individual files</i>
                                 </div>
-                            }
-                        <div class="row">
-                            <p>Note:</p>
-                            <InputText class="validate" @bind-Value="file.UploadNote.Text" placeholder="Note"></InputText>
-                            </div>
+                            }                        
                         </div>
                     </div>
                 </div>

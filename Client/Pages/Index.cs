@@ -486,13 +486,7 @@ namespace StoryForce.Client.Pages
             this.Submission.UploadFiles.ForEach(file =>
             {
                 // remove blank featured people
-                file.FeaturedPeople.RemoveAll(person => string.IsNullOrEmpty(person.Name) && !file.Class.HasValue);
-
-                //Add Notes
-                if (!string.IsNullOrEmpty(Submission.NoteFiles.Text))
-                    file.Notes.Add(Submission.NoteFiles);                    
-                if (!string.IsNullOrEmpty(file.UploadNote.Text))
-                    file.Notes.Add(file.UploadNote);                
+                file.FeaturedPeople.RemoveAll(person => string.IsNullOrEmpty(person.Name) && !file.Class.HasValue);                             
             });
 
             // Upload Url-based files

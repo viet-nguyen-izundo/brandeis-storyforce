@@ -52,11 +52,9 @@ namespace StoryForce.Shared.ViewModels
         {
             this.FeaturedPeople = new List<Person>();
             this.Event = new();
-            this.Notes = new List<Note>();
-            this.UploadNote = new();
+            this.Notes = new List<Note>();            
         }
-
-        public Note UploadNote { get; set; }
+        
     }
 
     public static class MyExtensions
