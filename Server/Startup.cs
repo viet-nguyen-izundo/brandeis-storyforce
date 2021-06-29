@@ -48,7 +48,7 @@ namespace StoryForce.Server
                     Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDbContext<PgDbContext>(options =>
-                options.UseNpgsql("Host=localhost;Port=5432;Database=StoryForce2;Username=postgres;Password=Bmbsoft@2021"));
+                options.UseNpgsql(Configuration.GetConnectionString("PostgreConnection")));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
