@@ -18,39 +18,35 @@ namespace StoryForce.Server.Pages.Admin.Submission
     public class DetailsModel : PageModel
     {
         private ISubmissionService _submissionService;
-        private readonly IConfiguration _configuration;       
+        private readonly IConfiguration _configuration;
         private IAmazonS3 _s3Client;
-        private readonly IStoryFileService _storyFileService;
-        private string _s3BucketName;       
-         
-        public DetailsModel(ISubmissionService submissionService, IConfiguration configuration, IAmazonS3 s3Client, IStoryFileService storyFileService)
+        private readonly INoteService _noteService;
+        private string _s3BucketName;
+        public DetailsModel(ISubmissionService submissionService, IConfiguration configuration, IAmazonS3 s3Client, INoteService noteService)
         {
             this._submissionService = submissionService;
             this._configuration = configuration;
             this._s3BucketName = this._configuration.GetSection("AWS:S3:BucketName").Value;
             this._s3Client = s3Client;
-            this._storyFileService = storyFileService;           
-                 
+            _noteService = noteService;
         }
 
         [BindProperty]
         public StoryForce.Shared.Dtos.SubmissionDto Submission { get; set; }
 
+        private int _submissionId;
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            var submission = await this._submissionService.GetAsync(id);
-            //foreach( var item in submission.SubmittedFiles)
-            //{
-            //    item.Notes = (await _storyFileService.GetAsync(item.Id)).Notes; 
-            //}
+            _submissionId = id;
+            var submission = await this._submissionService.GetAsync(_submissionId);
             this.Submission = SubmissionDto.ConvertFromEntity(submission);
             return Page();
         }
 
-        //public async Task<IActionResult> DeleteNotes(int id)
-        //{
-        //    await this._noteService.RemoveWithFilesAsync(id);
-        //    return new RedirectToPageResult("/Admin/Index");
-        //}        
+        public async Task<IActionResult> OnPostDeleteAsync(int id)
+        {
+            await this._submissionService.RemoveWithFilesAsync(id);
+            return new RedirectToPageResult("/Admin/Index");
+        }
     }
 }

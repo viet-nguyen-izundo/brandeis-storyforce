@@ -66,15 +66,7 @@ namespace StoryForce.Server
             services.AddSingleton<IMongoDbDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<MongoDbDatabaseSettings>>().Value);
 
-            services.AddSingleton<SubmissionService>();
-            services.AddSingleton<StoryFileService>();
-            services.AddSingleton<PeopleService>();
-            services.AddSingleton<EventService>();
-
-            services.AddTransient<ISubmissionService, SubmissionServicePg>();
-            services.AddTransient<IStoryFileService, StoryFileServicePg>();
-            services.AddTransient<IPeopleService, PeopleServicePg>();
-            services.AddTransient<IEventService, EventServicePg>();
+            services.AddDataServices();
 
             services.AddSingleton<ImageService>();
 
