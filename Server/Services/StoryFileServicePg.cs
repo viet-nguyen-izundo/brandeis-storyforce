@@ -31,6 +31,7 @@ namespace StoryForce.Server.Services
                 .Include(x => x.Categories)
                 .Include(x => x.Comments)
                 .Include(x => x.Notes)
+                .Include(x => x.Tags)
                 .ToListAsync();
         }
 
@@ -49,6 +50,7 @@ namespace StoryForce.Server.Services
                 .Include(x => x.Categories)
                 .Include(x => x.Comments)
                 .Include(x => x.Notes)
+                .Include(x => x.Tags)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 

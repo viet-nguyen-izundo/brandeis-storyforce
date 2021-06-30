@@ -16,6 +16,7 @@ namespace StoryForce.Server.Services
             services.AddTransient<IPeopleService, PeopleServicePg>();
             services.AddTransient<IEventService, EventServicePg>();
             services.AddTransient<INoteService, NoteServicePg>();
+            services.AddTransient<ITagService, TagServicePg>();
             return services;
         }
     }

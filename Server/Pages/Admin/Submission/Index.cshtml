@@ -103,8 +103,8 @@
                                                 </div>
                                                 <div class="note">
                                                     <div class="row new-note">
-                                                        <div class="col s8"><input type="text" placeholder="Note" class="new-note-input" /></div>
-                                                        <div class="col s4"><button class="btn waves-effect waves-light new-note-button" data-file-id="@file.Id" ><i class="material-icons left">save</i><span>Save</span></button></div>
+                                                        <div class="col s10"><input type="text" placeholder="Note" class="new-note-input" /></div>
+                                                        <div class="col s2"><button class="btn waves-effect waves-light new-note-button" data-file-id="@file.Id"><span>Save</span></button></div>
                                                     </div>
                                                     <br />
                                                     <p>Notes:</p>
@@ -112,26 +112,91 @@
                                                     {
                                                         foreach (var item in file.Notes)
                                                         {
-                                                            <div class="row note-item">
+                                                            <div class="row note-item mt-3">
                                                                 <div class="col s4 note-text">@item.Text</div>
                                                                 <div class="col s4 note-input" style="display: none;">
                                                                     <input type="text" placeholder="Note" value="@item.Text" />
                                                                 </div>
                                                                 <div class="col s4">
                                                                     <button class="btn-small edit mb-1 teal lighten-2 edit-note-button" data-note-id="@item.Id">
-                                                                        <i class="material-icons left">edit</i>
+                                                                        <span>Edit</span>
                                                                     </button>
                                                                 </div>
 
                                                                 <div class="col s4">
                                                                     <button class="btn-small mb-1 delete-note-button" data-note-id="@item.Id">
-                                                                        <i class="material-icons left">delete</i>
+                                                                        <span>Delte</span>
                                                                     </button>
                                                                 </div>
                                                             </div>
                                                         }
                                                     }
                                                 </div>
+                                                @*Tags*@
+                                                <p class="mt-5">Add Tags</p>
+                                                <div id="div_tags_type row">
+                                                    Tags Type:
+                                                    <select class="show" id="tagstype">
+                                                        <option value="">Select type tags</option>
+                                                        <option value="brandtags">Brand tags</option>
+                                                        <option value="processtags">Specific Student</option>
+                                                    </select>
+                                                </div>
+                                                <div id="div_brand_tags" class="new-tags">
+                                                    Tags Value
+                                                    <div class="row" id="brand_tags">
+                                                        <div class="col s12">
+                                                            <div class="row">
+                                                                <div class="input-field col s12">                                                                    
+                                                                    <input type="text" id="autocomplete-input" class="autocomplete_brand">
+                                                                    <label for="autocomplete-input">Input Tags</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @*<select id="brand_tags" class="value_tags">
+                                                            <option value="">Select Tags</option>
+                                                            <option value="ConfidentLeader">Confident Leader (Outcome)</option>
+                                                            <option value="JoyfulLearner">Joyful Learner (Outcome)</option>
+                                                            <option value="GlobalCitizen">Global Citizen (Outcome)</option>
+                                                            <option value="Curriculum">Curriculum (Process)</option>
+                                                            <option value="Culture">Culture (Process)</option>
+                                                            <option value="Character">Character (Process)</option>
+                                                            <option value="NewTags">New tags</option>
+                                                        </select>*@
+                                                    <div class="col s4"><button class="btn waves-effect waves-light new-tags-button" data-file-id="@file.Id"><i class="material-icons left">save</i><span>Save</span></button></div>
+                                                </div>
+                                                <div id="div_process_tags" class="new-tags">
+                                                    Tags Value
+                                                    <div class="row" id="process_tags">
+                                                        <div class="col s12">
+                                                            <div class="row">
+                                                                <div class="input-field col s12">                                                                    
+                                                                    <input type="text" id="autocomplete-input1" class="autocomplete_brand">
+                                                                    <label for="autocomplete-input">Input Tags</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @*<select id="process_tags" class="value_tags">
+                                                        <option value="">Select Tags</option>
+                                                        <option value="Pending">Pending</option>
+                                                        <option value="InternalUseOnly-NotForPublicView">Internal use only - Not for public view</option>
+                                                        <option value="PotentialForNewsletterMedia">Potential for newsletter, media</option>
+                                                        <option value="InEditingProcess">In editing process</option>
+                                                        <option value="EditedForMediaUse">Edited for Media Use</option>
+                                                        <option value="UsedInMedia">Used in Media</option>
+                                                        <option value="NewTags">New tags</option>
+                                                    </select>*@
+                                                    <div class="col s4"><button class="btn waves-effect waves-light new-tags-button" data-file-id="@file.Id"><i class="material-icons left">save</i><span>Save</span></button></div>
+                                                </div>
+                                                <div id="newTags">
+                                                    <form asp-page-handler="savetags" asp-route-id="" method="get">
+                                                        <input type="text" />
+                                                        <button class="btn delete mb-1"><i class="material-icons left">savetags</i><span>Save Tags</span></button>
+                                                    </form>
+                                                </div>
+
                                             </div>
                                             <br />
                                         }
@@ -203,12 +268,26 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
 <script>
+
     $(document).ready(function () {
+
+            $('input.autocomplete_brand').autocomplete({
+                data: {
+                    "Confident Leader (Outcome)": null,
+                    "Joyful Learner (Outcome)": null,
+                    "Global Citizen (Outcome)": null,
+                    "Curriculum (Process)": null,
+                    "Culture (Process)": null,
+                    "Character (Process)": null
+                },
+            });
+
+
+        //Note
         $(".attachment-list").on("click", ".edit-note-button", function () {
             console.log("note-id", $(this).data("note-id"));
             var mode = $(this).find('i').text();
-            if(mode === 'save')
-            {
+            if (mode === 'save') {
                 $.ajax({
                     url: '/api/note/' + $(this).data("note-id"),
                     type: 'PUT',
@@ -276,6 +355,63 @@
 
         });
 
+        //Tags
+
+        $("#div_brand_tags").hide();
+        $("#div_process_tags").hide();
+        $("#newTags").hide();
+
+        $("#tagstype").change(function () {
+            let select = $("#tagstype").val();
+            if (select == "brandtags") {
+                $("#div_brand_tags").show();
+                $("#div_process_tags").hide();
+                $("#newTags").hide();
+            }
+            else if (select == "processtags") {
+                $("#div_brand_tags").hide();
+                $("#div_process_tags").show();
+                $("#newTags").hide();
+            }
+        })
+
+        $("#brand_tags").change(function () {
+            let value = $("#brand_tags").val();
+            if (value == "NewTags") {
+                $("#newTags").show();
+            }
+            else {
+                $("#newTags").hide();
+            }
+        })
+
+        $("#process_tags").change(function () {
+            let value = $("#brand_tags").val();
+            if (value == "NewTags") {
+                $("#newTags").show();
+            }
+            else {
+                $("#newTags").hide();
+            }
+        })
+
+        $(".attachment-list").on("click", ".new-tags-button", function () {
+            var newTagsText = $(this).parents('.new-tags').find('.autocomplete_brand').val();
+            console.log(newTagsText)
+            $.ajax({
+                url: '/api/tag',
+                type: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify({
+                    name: newTagsText,
+                    @*username: '@User?.Identity?.Name',*@
+                    storyFileId: $(this).data("file-id")
+                })
+            }).then(function (res) {
+                window.location.reload();
+            });
+
+        });
     });
 </script>
 
