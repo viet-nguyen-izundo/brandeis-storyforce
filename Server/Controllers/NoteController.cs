@@ -44,7 +44,7 @@ namespace StoryForce.Server.Controllers
         [HttpPost]
         public async Task<ActionResult> Post(CreateNoteDto note)
         {
-             var createdNote = await _noteService.CreateAsync(note.ToEntity());
+            var createdNote = await _noteService.CreateAsync(note.ToEntity());
             if (note.SubmissionId != 0)
             {
                 var submission = await _submissionService.GetAsync(note.SubmissionId);
