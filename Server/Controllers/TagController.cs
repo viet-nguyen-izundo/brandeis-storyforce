@@ -46,7 +46,19 @@ namespace StoryForce.Server.Controllers
         [HttpPost]
         public async Task<ActionResult> Post(CreateTagDto tagDto)
         {
-            var createdTag = await _tagsService.CreateAsync(tagDto.ToEntity());
+            var createdTag = new Tag();
+            var createdTag1 = await _tagsService.GetAsync();
+            var check = createdTag1.Find(m => m.Name == tagDto.Name);
+            if (check != null)
+            {
+                return BadRequest($"Tag with name '{tagDto.Name}' areadly exited.");
+            }
+            else
+            {
+                createdTag = await _tagsService.CreateAsync(tagDto.ToEntity());
+            }
+            //var createdTag = await _tagsService.CreateAsync(tagDto.ToEntity());
+                   
             //if (tagDto.SubmissionId != 0)
             //{
             //    var submission = await _submissionService.GetAsync(tagDto.SubmissionId);
