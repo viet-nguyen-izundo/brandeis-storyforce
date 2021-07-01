@@ -119,12 +119,14 @@
                                                                 </div>
                                                                 <div class="col s4">
                                                                     <button class="btn-small edit mb-1 teal lighten-2 edit-note-button" data-note-id="@item.Id">
+                                                                        <i class="material-icons left">edit</i>
                                                                         <span>Edit</span>
                                                                     </button>
                                                                 </div>
 
                                                                 <div class="col s4">
                                                                     <button class="btn-small mb-1 delete-note-button" data-note-id="@item.Id">
+                                                                        <i class="material-icons left">delete</i>
                                                                         <span>Delte</span>
                                                                     </button>
                                                                 </div>
@@ -147,8 +149,8 @@
                                                     <div class="row" id="brand_tags">
                                                         <div class="col s12">
                                                             <div class="row">
-                                                                <div class="input-field col s12">                                                                    
-                                                                    <input type="text" id="autocomplete-input" class="autocomplete_brand">
+                                                                <div class="input-field col s12">
+                                                                    <input type="text" id="autocomplete-input-brand" class="autocomplete_brand">
                                                                     <label for="autocomplete-input">Input Tags</label>
                                                                 </div>
                                                             </div>
@@ -171,31 +173,31 @@
                                                     <div class="row" id="process_tags">
                                                         <div class="col s12">
                                                             <div class="row">
-                                                                <div class="input-field col s12">                                                                    
-                                                                    <input type="text" id="autocomplete-input1" class="autocomplete_brand">
+                                                                <div class="input-field col s12">
+                                                                    <input type="text" id="autocomplete-input-process" class="autocomplete_process">
                                                                     <label for="autocomplete-input">Input Tags</label>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     @*<select id="process_tags" class="value_tags">
-                                                        <option value="">Select Tags</option>
-                                                        <option value="Pending">Pending</option>
-                                                        <option value="InternalUseOnly-NotForPublicView">Internal use only - Not for public view</option>
-                                                        <option value="PotentialForNewsletterMedia">Potential for newsletter, media</option>
-                                                        <option value="InEditingProcess">In editing process</option>
-                                                        <option value="EditedForMediaUse">Edited for Media Use</option>
-                                                        <option value="UsedInMedia">Used in Media</option>
-                                                        <option value="NewTags">New tags</option>
-                                                    </select>*@
+                                                            <option value="">Select Tags</option>
+                                                            <option value="Pending">Pending</option>
+                                                            <option value="InternalUseOnly-NotForPublicView">Internal use only - Not for public view</option>
+                                                            <option value="PotentialForNewsletterMedia">Potential for newsletter, media</option>
+                                                            <option value="InEditingProcess">In editing process</option>
+                                                            <option value="EditedForMediaUse">Edited for Media Use</option>
+                                                            <option value="UsedInMedia">Used in Media</option>
+                                                            <option value="NewTags">New tags</option>
+                                                        </select>*@
                                                     <div class="col s4"><button class="btn waves-effect waves-light new-tags-button" data-file-id="@file.Id"><i class="material-icons left">save</i><span>Save</span></button></div>
                                                 </div>
-                                                <div id="newTags">
-                                                    <form asp-page-handler="savetags" asp-route-id="" method="get">
-                                                        <input type="text" />
-                                                        <button class="btn delete mb-1"><i class="material-icons left">savetags</i><span>Save Tags</span></button>
-                                                    </form>
-                                                </div>
+                                                @*<div id="newTags">
+                                                        <form asp-page-handler="savetags" asp-route-id="" method="get">
+                                                            <input type="text" />
+                                                            <button class="btn delete mb-1"><i class="material-icons left">savetags</i><span>Save Tags</span></button>
+                                                        </form>
+                                                    </div>*@
 
                                             </div>
                                             <br />
@@ -271,19 +273,7 @@
 
     $(document).ready(function () {
 
-            $('input.autocomplete_brand').autocomplete({
-                data: {
-                    "Confident Leader (Outcome)": null,
-                    "Joyful Learner (Outcome)": null,
-                    "Global Citizen (Outcome)": null,
-                    "Curriculum (Process)": null,
-                    "Culture (Process)": null,
-                    "Character (Process)": null
-                },
-            });
-
-
-        //Note
+        //------Note------
         $(".attachment-list").on("click", ".edit-note-button", function () {
             console.log("note-id", $(this).data("note-id"));
             var mode = $(this).find('i').text();
@@ -355,45 +345,70 @@
 
         });
 
-        //Tags
+        //------Tags------
 
         $("#div_brand_tags").hide();
         $("#div_process_tags").hide();
-        $("#newTags").hide();
+        /*$("#newTags").hide();*/
 
         $("#tagstype").change(function () {
             let select = $("#tagstype").val();
             if (select == "brandtags") {
                 $("#div_brand_tags").show();
                 $("#div_process_tags").hide();
-                $("#newTags").hide();
+                /*$("#newTags").hide();*/
             }
             else if (select == "processtags") {
                 $("#div_brand_tags").hide();
                 $("#div_process_tags").show();
-                $("#newTags").hide();
+                /* $("#newTags").hide();*/
+            }
+            else if (select == "") {
+                $("#div_brand_tags").hide();
+                $("#div_process_tags").hide();
             }
         })
 
-        $("#brand_tags").change(function () {
-            let value = $("#brand_tags").val();
-            if (value == "NewTags") {
-                $("#newTags").show();
-            }
-            else {
-                $("#newTags").hide();
-            }
-        })
+        //$("#brand_tags").change(function () {
+        //    let value = $("#brand_tags").val();
+        //    if (value == "NewTags") {
+        //        $("#newTags").show();
+        //    }
+        //    else {
+        //        $("#newTags").hide();
+        //    }
+        //})
 
-        $("#process_tags").change(function () {
-            let value = $("#brand_tags").val();
-            if (value == "NewTags") {
-                $("#newTags").show();
-            }
-            else {
-                $("#newTags").hide();
-            }
-        })
+        //$("#process_tags").change(function () {
+        //    let value = $("#brand_tags").val();
+        //    if (value == "NewTags") {
+        //        $("#newTags").show();
+        //    }
+        //    else {
+        //        $("#newTags").hide();
+        //    }
+        //})
+
+        $('input.autocomplete_brand').autocomplete({
+            data: {
+                "Confident Leader (Outcome)": null,
+                "Joyful Learner (Outcome)": null,
+                "Global Citizen (Outcome)": null,
+                "Curriculum (Process)": null,
+                "Culture (Process)": null,
+                "Character (Process)": null
+            },
+        });
+        $('input.autocomplete_process').autocomplete({
+            data: {
+                "Pending": null,
+                "Internal use only - Not for public view": null,
+                "Potential for newsletter, media": null,
+                "In editing process": null,
+                "Edited for Media Use": null,
+                "Used in Media": null
+            },
+        });
 
         $(".attachment-list").on("click", ".new-tags-button", function () {
             var newTagsText = $(this).parents('.new-tags').find('.autocomplete_brand').val();
