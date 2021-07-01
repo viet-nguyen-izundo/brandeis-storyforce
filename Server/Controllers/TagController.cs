@@ -35,23 +35,23 @@ namespace StoryForce.Server.Controllers
             return await _tagsService.GetAsync();
         }
 
-        // GET api/<Note>/5
+        // GET api/<Tag>/5
         [HttpGet("{id}", Name = "GetTag")]
         public async Task<ActionResult<Tag>> Get(int id)
         {
             return await _tagsService.GetAsync(id);
         }
 
-        // POST api/<Note>
+        // POST api/<Tag>
         [HttpPost]
         public async Task<ActionResult> Post(CreateTagDto tagDto)
         {
             var createdTag = new Tag();
-            var createdTag1 = await _tagsService.GetAsync();
-            var check = createdTag1.Find(m => m.Name == tagDto.Name);
-            if (check != null)
+            var ListTagCheck = await _tagsService.GetAsync();
+            var check = ListTagCheck.Find(m => m.Name == tagDto.Name);
+            if (check != null || tagDto.Name =="")
             {
-                return BadRequest($"Tag with name '{tagDto.Name}' areadly exited.");
+                return BadRequest($"Error tag name because areadly exited or null");
             }
             else
             {
@@ -79,9 +79,9 @@ namespace StoryForce.Server.Controllers
             return CreatedAtRoute("GetTag", new { id = createdTag.Id }, createdTag);
         }
 
-        //    // PUT api/<Note>/5
+        //    // PUT api/<Tag>/5
         //    [HttpPut("{id}")]
-        //    public async Task<ActionResult> Put(int id, EditNoteDto note)
+        //    public async Task<ActionResult> Put(int id, EditTagDto note)
         //    {
         //        var noteInDb = await _tagsService.GetAsync(id);
         //        if (noteInDb == null || note.Id != id)
@@ -118,7 +118,7 @@ namespace StoryForce.Server.Controllers
             }
         }
 
-        //public class EditNoteDto
+        //public class EditTagDto
         //{
         //    public int Id { get; set; }
         //    public string Text { get; set; }
