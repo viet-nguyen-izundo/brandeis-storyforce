@@ -53,7 +53,8 @@ namespace StoryForce.Server.Controllers
                 submission.NoteFile.Add(createdNote);
                 await _submissionService.UpdateAsync(submission.Id, submission);
             }
-            else {
+            else 
+            {
                 var storyFile = await _storyFileService.GetAsync(note.StoryFileId);
                 if (storyFile == null)
                     return BadRequest($"Story file with id '{note.StoryFileId}' not found.");

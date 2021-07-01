@@ -334,9 +334,10 @@
                             'Deleted!',
                             "The note was deleted",
                             'success'
-                        );
-
-                        window.location.reload();
+                        ).then(function() {
+                            window.location.reload();
+                        });
+                        
                     });
 
                 }
