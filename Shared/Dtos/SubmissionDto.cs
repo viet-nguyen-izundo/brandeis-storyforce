@@ -80,7 +80,8 @@ namespace StoryForce.Shared.Dtos
                     SubmittedBy = this.SubmittedBy,
                     CreatedAt = this.CreatedAt,
                     ReviewedBy = this.ReviewedBy,
-                    UpdatedAt = this.UpdatedAt                    
+                    UpdatedAt = this.UpdatedAt,
+                    NoteFile = this.Notes
                 };
         }
 
@@ -102,7 +103,8 @@ namespace StoryForce.Shared.Dtos
                     SubmittedBy = entity.SubmittedBy,
                     CreatedAt = entity.CreatedAt,
                     ReviewedBy = entity.ReviewedBy,
-                    UpdatedAt = entity.UpdatedAt,                    
+                    UpdatedAt = entity.UpdatedAt,     
+                    Notes = entity.NoteFile.ToList()
                 };
         }
 

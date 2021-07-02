@@ -112,8 +112,8 @@ namespace StoryForce.Server.Controllers
             return new Note()
             {
                 Text = this.Text,
-                UserName =  this.Username,
-                CreatedAt = DateTime.Now
+                UserName = this.Username,
+                CreatedAt = DateTime.Now,                
             };
         }
     }
