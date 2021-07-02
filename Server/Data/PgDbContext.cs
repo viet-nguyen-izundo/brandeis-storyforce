@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using StoryForce.Shared.Models;
 
 namespace StoryForce.Server.Data
 {
-    public class PgDbContext : DbContext
+    public class PgDbContext : IdentityDbContext<Person, IdentityRole<int>, int>
     {
         public DbSet<Tag> Tags { get; set; }
 
