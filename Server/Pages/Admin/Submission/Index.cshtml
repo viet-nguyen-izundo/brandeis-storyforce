@@ -88,7 +88,7 @@
                                         </div>
                                         @foreach (var note in Model.Submission.Notes)
                                         {
-                                            <div class="row note-item-group" style="width:50%">
+                                            <div class="row note-item-group mt-1" style="width:50%">
                                                 <div class="col s7 note-text" style="width:65%; margin-left:1%">@note.Text</div>
                                                 <div class="col s7 note-input" style="display: none; width:66%">
                                                     @*<input type="text" placeholder="Note" value="@item.Text" />*@
@@ -160,7 +160,7 @@
                                                                         <textarea style="border: none; border-bottom: 1px solid">@item.Text</textarea>
                                                                     </div>
                                                                     <div class="col s2">
-                                                                        <button class="btn-small edit mb-1 teal lighten-2 edit-note-button" data-note-id="@item.Id" style="width:100%">
+                                                                        <button class="btn-small edit mb-1 teal lighten-2 edit-note-group-button" data-note-id="@item.Id" style="width:100%">
                                                                             <i class="material-icons left" style="width: 0px; margin-left: -45%">edit</i>
                                                                             <span style=" margin-right: -40%">Edit</span>
                                                                         </button>
@@ -353,6 +353,31 @@
                 $(this).find('span').text('Save');
                 $(this).parents('.note-item').find('.note-text').hide();
                 $(this).parents('.note-item').find('.note-input').show();
+            }
+
+        });
+
+        $(".note-group").on("click", ".edit-note-button", function () {
+            console.log("note-id", $(this).data("note-id"));
+            var mode = $(this).find('i').text();
+            if (mode === 'save') {
+                $.ajax({
+                    url: '/api/note/' + $(this).data("note-id"),
+                    type: 'PUT',
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        text: $(this).parents('.note-item-group').find('.note-input textarea').val(),
+                        id: $(this).data("note-id")
+                    })
+                }).then(function (res) {
+                    window.location.reload();
+                });
+            }
+            else {
+                $(this).find('i').text('save');
+                $(this).find('span').text('Save');
+                $(this).parents('.note-item-group').find('.note-text').hide();
+                $(this).parents('.note-item-group').find('.note-input').show();
             }
 
         });
