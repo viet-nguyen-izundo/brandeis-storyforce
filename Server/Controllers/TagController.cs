@@ -48,7 +48,7 @@ namespace StoryForce.Server.Controllers
         {
             var createdTag = new Tag();
             var ListTagCheck = await _tagsService.GetAsync();
-            var check = ListTagCheck.Find(m => m.Name == tagDto.Name);
+            var check = ListTagCheck.Find(m => m.Name == tagDto.Name);            
             if (check != null || tagDto.Name =="")
             {
                 return BadRequest($"Error tag name because areadly exited or null");
@@ -79,29 +79,28 @@ namespace StoryForce.Server.Controllers
             return CreatedAtRoute("GetTag", new { id = createdTag.Id }, createdTag);
         }
 
-        //    // PUT api/<Tag>/5
-        //    [HttpPut("{id}")]
-        //    public async Task<ActionResult> Put(int id, EditTagDto note)
-        //    {
-        //        var noteInDb = await _tagsService.GetAsync(id);
-        //        if (noteInDb == null || note.Id != id)
-        //            return BadRequest($"Note with id '{id}' not found.");
-        //        noteInDb.Text = note.Text;
-        //        await _noteService.UpdateAsync(id, noteInDb);
-        //        return NoContent();
-        //    }
+        // PUT api/<Tag>/5
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, EditTagDto tag)
+        {
+            var tagInDb = await _tagsService.GetAsync(id);
+            if (tagInDb == null || tag.Id != id)
+                return BadRequest($"Tag with id '{id}' not found.");
+            tagInDb.Name = tag.Name;
+            await _tagsService.UpdateAsync(id, tagInDb);
+            return NoContent();
+        }
 
-        //    // DELETE api/<Note>/5
-        //    [HttpDelete("{id}")]
-        //    public async Task<ActionResult> Delete(int id)
-        //    {
-        //        var noteInDb = await _noteService.GetAsync(id);
-        //        if (noteInDb == null)
-        //            return BadRequest($"Note with id '{id}' not found.");
-        //        await _noteService.RemoveAsync(id);
-        //        return NoContent();
-        //    }
-        //}
+        // DELETE api/<Tag>/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var tagInDb = await _tagsService.GetAsync(id);
+            if (tagInDb == null)
+                return BadRequest($"Tag with id '{id}' not found.");
+            await _tagsService.RemoveAsync(id);
+            return NoContent();
+        }        
 
         public class CreateTagDto
         {
@@ -118,11 +117,11 @@ namespace StoryForce.Server.Controllers
             }
         }
 
-        //public class EditTagDto
-        //{
-        //    public int Id { get; set; }
-        //    public string Text { get; set; }
+        public class EditTagDto
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
 
-        //}
+        }
     }
 }
