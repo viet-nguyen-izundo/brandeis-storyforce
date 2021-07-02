@@ -90,7 +90,7 @@
                                                     {
                                                         <img src="@file.GetResizedImageUrl(200, 200)" alt="@file.Title" class="responsive-img attached-image">
                                                     }
-                                                    <div class="title">@file.Title</div>
+                                                    <div class="title" style="font-size:25px">@file.Title</div>
                                                     <div class="description">@file.Description</div>
                                                     <div class="size">
                                                         @if (file.Size > 0)
@@ -105,31 +105,38 @@
                                                     </div>
                                                     <div class="note" style="width:100%">
                                                         <div class="row new-note">
-                                                            <div class="col s10"><input type="text" placeholder="Note" class="new-note-input" style="width: 100%" /></div>
-                                                            <div class="col s2"><button class="btn waves-effect waves-light new-note-button" data-file-id="@file.Id"><span>Save</span></button></div>
+                                                            <div class="col s10" style="width: 80%">
+                                                                <textarea type="text" placeholder=" Input Note" class="new-note-input" style="border: none; border-bottom: 1px solid"></textarea>
+                                                            </div>
+                                                            <div class="col s2" style="width:19%">
+                                                                <button class="btn-small edit mb-1 teal lighten-2 new-note-button" data-file-id="@file.Id" style="width: 90%">
+                                                                    <i class="material-icons left" style="margin-left: -40%; width:0%">save</i><span style="margin-left: 30%">Save</span>
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                         <br />
-                                                        <p><i>Notes:</i></p>
                                                         @if (file.Notes != null)
                                                         {
+                                                            <p><i>Notes:</i></p>
                                                             foreach (var item in file.Notes)
                                                             {
-                                                                <div class="row note-item mt-3">
-                                                                    <div class="col s7 note-text">@item.Text</div>
-                                                                    <div class="col s7 note-input" style="display: none;">
-                                                                        <input type="text" placeholder="Note" value="@item.Text" />
+                                                                <div class="row note-item mt-2">
+                                                                    <div class="col s7 note-text" style="width:65%">@item.Text</div>
+                                                                    <div class="col s7 note-input" style="display: none; width:66%">
+                                                                        @*<input type="text" placeholder="Note" value="@item.Text" />*@
+                                                                        <textarea style="border: none; border-bottom: 1px solid">@item.Text</textarea>
                                                                     </div>
                                                                     <div class="col s2">
-                                                                        <button class="btn-small edit mb-1 teal lighten-2 edit-note-button" data-note-id="@item.Id">
-                                                                            <i class="material-icons left">edit</i>
-                                                                            <span>Edit</span>
+                                                                        <button class="btn-small edit mb-1 teal lighten-2 edit-note-button" data-note-id="@item.Id" style="width:100%">
+                                                                            <i class="material-icons left" style="width: 0px; margin-left: -45%">edit</i>
+                                                                            <span style=" margin-right: -40%">Edit</span>
                                                                         </button>
                                                                     </div>
 
                                                                     <div class="col s2" style="text-align: end">
-                                                                        <button class="btn-small mb-1 delete-note-button" data-note-id="@item.Id">
-                                                                            <i class="material-icons left">delete</i>
-                                                                            <span>Delte</span>
+                                                                        <button class="btn-small mb-1 delete-note-button" data-note-id="@item.Id" style="width:100%">
+                                                                            <i class="material-icons left" style="width: 0px; margin-left: -45%">delete</i>
+                                                                            <span style=" margin-right: -40%">Delete</span>
                                                                         </button>
                                                                     </div>
                                                                 </div>
@@ -146,28 +153,23 @@
                                                         </select>
                                                     </div>
                                                     <div id="div_brand_tags" class="new-tags-brand" style="display: none; width: 85%; margin-left: -15%">
-                                                        Tags Value
                                                         <div class="row" id="brand_tags">
                                                             <div class="col s12">
                                                                 <div class="row">
                                                                     <div class="input-field col s12">
-                                                                        <input type="text" id="autocomplete-input-brand" class="autocomplete_brand">
-                                                                        <label for="autocomplete-input">Input Tags Brand</label>
+                                                                        <textarea type="text" id="autocomplete-input-brand" class="autocomplete_brand" style=" margin-left: -1%; border:none; border-bottom: 1px solid"></textarea>
+                                                                        <label for="autocomplete-input">Input tags type brand</label>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="col s4"><button class="btn waves-effect waves-light new-tags-button" data-file-id="@file.Id"><i class="material-icons left">save</i><span>Save</span></button></div>
                                                     </div>
-                                                    <div id="div_process_tags" class="new-tags-process" style="display:none; width: 85%; margin-left: -15%">                                                        
+                                                    <div id="div_process_tags" class="new-tags-process" style="display:none; width: 91%;">
                                                         <div class="row" id="process_tags">
-                                                            <div class="col s12">
-                                                                <div class="row">
-                                                                    <div class="input-field col s12">
-                                                                        <input type="text" id="autocomplete-input-process" class="autocomplete_process">
-                                                                        <label for="autocomplete-input">Input Tags Process</label>
-                                                                    </div>
-                                                                </div>
+                                                            <div class="input-field">
+                                                                <textarea type="text" id="autocomplete-input-process" class="autocomplete_process" style=" margin-left: -1%; border:none; border-bottom: 1px solid"></textarea>
+                                                                <label for="autocomplete-input">Input tags type process</label>
                                                             </div>
                                                         </div>
                                                         @*<select id="process_tags" class="value_tags">
@@ -180,18 +182,25 @@
                                                                 <option value="UsedInMedia">Used in Media</option>
                                                                 <option value="NewTags">New tags</option>
                                                             </select>*@
-                                                        <div class="col s4">
-                                                            <button class="btn waves-effect waves-light new-tags-button" data-file-id="@file.Id"><span>Save Tags</span></button>
-                                                            <button class="btn lighten-2 add-process-tags-button" data-file-id="@file.Id"><span>Add Note</span></button>
+                                                        <div style="text-align:right">
+                                                            <button class="btn-small edit mb-1 teal lighten-2 new-tags-button" data-file-id="@file.Id" style="width:15%">
+                                                                <i class="material-icons left" style="width: 0px; margin-left: -65%">save</i>
+                                                                <span>Save Tags</span>
+                                                            </button>
+                                                            <button class="btn-small edit mb-1 teal lighten-2 add-process-tags-button" data-file-id="@file.Id" style=" width: 21%;">
+                                                                <i class="material-icons left" style="width: 0px; margin-left: -30%">add</i>
+                                                                <span>Add Note</span>
+                                                            </button>
                                                         </div>
                                                     </div>
-                                                    <div class="note-tag-process" style="display:none">
+                                                    <div class="note-tag-process" style="display:none; text-align: right; width:98%; margin-left:-1%">
                                                         <input type="text" placeholder="Note tags process" class="new-note-process" />
-                                                        <button class="btn waves-effect waves-light new-note-process-button" data-file-id="@file.Id"><span>Save Note Process</span></button>
-                                                        <button class="btn waves-effect waves-light close-tags-process-button"><span>Close</span></button>
+                                                        <button class="btn-small edit teal lighten-2 new-note-process-button" data-file-id="@file.Id"><i class="material-icons left">save</i><span>Save Note</span></button>
+                                                        <button class="btn-small waves-effect waves-light close-tags-process-button"><i class="material-icons left">close</i><span>Close</span></button>
                                                     </div>
                                                 </div>
                                                 row++;
+                                                <hr style="width:1550px; margin-top:5%" />
                                             }
                                         }
                                     </div>
@@ -275,7 +284,7 @@
                     type: 'PUT',
                     contentType: "application/json",
                     data: JSON.stringify({
-                        text: $(this).parents('.note-item').find('.note-input input').val(),
+                        text: $(this).parents('.note-item').find('.note-input textarea').val(),
                         id: $(this).data("note-id")
                     })
                 }).then(function (res) {
@@ -284,6 +293,7 @@
             }
             else {
                 $(this).find('i').text('save');
+                $(this).find('span').text('Save');
                 $(this).parents('.note-item').find('.note-text').hide();
                 $(this).parents('.note-item').find('.note-input').show();
             }
@@ -345,7 +355,6 @@
         /*$("#newTags").hide();*/
 
         $(".tagstype").change(function () {
-            debugger
             let select = $(this).find("option:selected").val();
             if (select == "brandtags") {
                 $(this).parents(".attachment").find('.new-tags-brand').css("display", "block");
