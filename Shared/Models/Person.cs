@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace StoryForce.Shared.Models
 {
-    public class Person : DatabaseEntity
+    public class Person : IdentityUser<int>
     {
         public string Name { get; set; }
 
-        public string Email { get; set; }
+        public override string Email { get; set; }
 
         [Display(Name = "Year")]
         public int? ClassOfYear { get; set; }
@@ -32,8 +33,7 @@ namespace StoryForce.Shared.Models
         public ICollection<StoryFile> RequestedStoryFiles { get; set; }
         
         public ICollection<StoryFile> UpdatedStoryFiles { get; set; }
-
-        public string Role { get; set; }
+        
     }
 
     public enum PersonType
