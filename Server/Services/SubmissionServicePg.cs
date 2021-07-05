@@ -50,6 +50,22 @@ namespace StoryForce.Server.Services
                 .Include(x=>x.NoteFile)              
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
+        public async Task<List<Submission>> GetBySubmittedByIdAsync(int id)      
+             => await _dbContext
+                .Submissions
+                .Include(x => x.ApprovedFiles)
+                .Include(x => x.RejectedFiles)
+                .Include(x => x.SubmittedFiles).ThenInclude(m => m.Notes)
+                .Include(x => x.SubmittedBy)
+                .Include(x => x.ReviewedBy)
+                .Include(x => x.ApprovedBy)
+                .Include(x => x.Event)
+                .Include(x => x.History)                   
+                .Include(x=>x.SubmittedFiles).ThenInclude(m=>m.Tags)              
+                .Include(x=>x.NoteFile)              
+                .Where(m=>m.SubmittedBy.Id == id)
+                .ToListAsync();
+       
 
         public async Task RemoveWithFilesAsync(int id)
         {

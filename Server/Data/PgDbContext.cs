@@ -37,15 +37,18 @@ namespace StoryForce.Server.Data
             modelBuilder.Entity<Submission>()
                 .HasMany(submission => submission.SubmittedFiles)
                 .WithOne(sf => sf.Submission)
-                .HasForeignKey(sf => sf.SubmissionId);
+                .HasForeignKey(sf => sf.SubmissionId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Submission>()
                 .HasMany(submission => submission.ApprovedFiles)
-                .WithOne(sf => sf.ApprovedSubmission);
+                .WithOne(sf => sf.ApprovedSubmission)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Submission>()
                 .HasMany(submission => submission.RejectedFiles)
-                .WithOne(sf => sf.RejectedSubmission);
+                .WithOne(sf => sf.RejectedSubmission)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Submission>()
                 .HasMany(submission => submission.FeaturedPeople)
@@ -53,15 +56,18 @@ namespace StoryForce.Server.Data
 
             modelBuilder.Entity<Submission>()
                 .HasOne(submission => submission.SubmittedBy)
-                .WithMany(person => person.SubmittedSubmissions);
+                .WithMany(person => person.SubmittedSubmissions)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Submission>()
                 .HasOne(submission => submission.ReviewedBy)
-                .WithMany(person => person.ReviewedBySubmissions);
+                .WithMany(person => person.ReviewedBySubmissions)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Submission>()
                 .HasOne(submission => submission.ApprovedBy)
-                .WithMany(person => person.ApprovedSubmissions);
+                .WithMany(person => person.ApprovedSubmissions)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Person>()
                 .HasMany(person=> person.FeaturedStoryFile)
@@ -69,19 +75,24 @@ namespace StoryForce.Server.Data
 
             modelBuilder.Entity<StoryFile>()
                 .HasOne(sf => sf.SubmittedBy)
-                .WithMany(person => person.SubmittedStoryFiles);
-            
+                .WithMany(person => person.SubmittedStoryFiles)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<StoryFile>()
                 .HasOne(sf => sf.Event)
-                .WithMany(ev => ev.StoryFiles);
-            
+                .WithMany(ev => ev.StoryFiles)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<StoryFile>()
                 .HasOne(sf => sf.RequestedBy)
-                .WithMany(person => person.RequestedStoryFiles);
+                .WithMany(person => person.RequestedStoryFiles)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<StoryFile>()
                 .HasOne(sf => sf.UpdatedBy)
-                .WithMany(person => person.UpdatedStoryFiles);
+                .WithMany(person => person.UpdatedStoryFiles)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
             modelBuilder.Entity<StoryFile>()
                 .HasMany(sf => sf.Categories)

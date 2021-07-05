@@ -47,11 +47,11 @@ namespace StoryForce.Server.Controllers
         public async Task<ActionResult> Post(CreateTagDto tagDto)
         {
             var createdTag = new Tag();
-            var ListTagCheck = await _tagsService.GetAsync();
-            var check = ListTagCheck.Find(m => m.Name == tagDto.Name);            
-            if (check != null || tagDto.Name =="")
+            //var ListTagCheck = await _tagsService.GetAsync();
+            //var check = ListTagCheck.Find(m => m.Name == tagDto.Name);            
+            if (tagDto.Name =="")
             {
-                return BadRequest($"Error tag name because areadly exited or null");
+                return BadRequest($"Error tag name because null");
             }
             else
             {

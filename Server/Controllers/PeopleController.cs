@@ -14,10 +14,14 @@ namespace StoryForce.Server.Controllers
     public class PeopleController : ControllerBase
     {
         private readonly IPeopleService _peopleService;
+        private readonly IStoryFileService _storyFileService;
+        private readonly ISubmissionService _submissionService;
 
-        public PeopleController(IPeopleService peopleService)
+        public PeopleController(IPeopleService peopleService, IStoryFileService storyFileService, ISubmissionService submissionService)
         {
             this._peopleService = peopleService;
+            this._storyFileService = storyFileService;
+            this._submissionService = submissionService;
         }
 
         [HttpGet]
@@ -79,6 +83,33 @@ namespace StoryForce.Server.Controllers
             };
 
             await this._peopleService.CreateMultipleAsync(people);
+        }        
+
+        // DELETE api/<People>/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var peopleInDb = await _peopleService.GetAsync(id);
+            if (peopleInDb == null)
+                return BadRequest($"People with id '{id}' not found.");
+            var storyFile = _storyFileService.GetBySubmittedByIdAsync(peopleInDb.Id);
+            if (storyFile != null)
+            {
+                foreach (var story in await storyFile)
+                {
+                    await _storyFileService.RemoveAsync(story);
+                }               
+            }
+            var submission = _submissionService.GetBySubmittedByIdAsync(peopleInDb.Id);
+            if (submission != null)
+            {
+                foreach (var sub in await submission)
+                {
+                    await _submissionService.RemoveAsync(sub);
+                }
+            }
+            await _peopleService.RemoveAsync(id);
+            return NoContent();
         }
     }
 }

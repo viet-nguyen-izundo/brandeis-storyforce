@@ -70,5 +70,21 @@ namespace StoryForce.Server.Services
                 .Include(x => x.Notes)
                 .Where(s => s.RequestedBy.Email == email)
                 .ToListAsync();
+        public async Task<List<StoryFile>> GetBySubmittedByIdAsync(int submittedById)
+            => await _dbContext.StoryFiles
+                .Include(x => x.Events)
+                .Include(x => x.Submission)
+                .Include(x => x.ApprovedSubmission)
+                .Include(x => x.FeaturedPeople)
+                .Include(x => x.SubmittedBy)
+                .Include(x => x.RequestedBy)
+                .Include(x => x.UpdatedBy)
+                .Include(x => x.BelongsTo)
+                .Include(x => x.Event)
+                .Include(x => x.Categories)
+                .Include(x => x.Comments)
+                .Include(x => x.Notes)
+                .Where(s => s.SubmittedBy.Id == submittedById || s.RequestedBy.Id == submittedById)
+                .ToListAsync();
     }
 }

@@ -14,11 +14,11 @@ namespace StoryForce.Server
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseSentry(options =>
-                    {
-                        //Disable Sentry Debug message
-                        options.Debug = false;
-                    });
+                    //webBuilder.UseSentry(options =>
+                    //{
+                    //    //Disable Sentry Debug message
+                    //    options.Debug = false;
+                    //});
                     webBuilder.UseStartup<Startup>();
                 });
     }
