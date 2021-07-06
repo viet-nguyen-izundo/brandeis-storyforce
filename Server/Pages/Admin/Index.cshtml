@@ -14,20 +14,22 @@
     <div class="content-area content-right">
         <div class="app-wrapper">
             <div class="app-search">
-                <i class="material-icons mr-2 search-icon">search</i>
+                <i class="material-icons mr-2 search-icon" style="cursor:pointer">search</i>
                 <input type="text" placeholder="Search Submissions" class="app-filter" id="email_filter">
             </div>
-            <div class="row" style="width:max-content">
+            @*<div class="row" style="width:max-content">
                 <div class="col s12">
                     <div class="row">
                         <div class="input-field col s12" style="flex-direction: column">
-                            <input type="text" class="autocomplete_search_tags">
-                            <i class="material-icons mr-2 search-icon" style="cursor:pointer">search</i>
-                            <label for="autocomplete-input">Search by tags</label>
+                            <form action="/" method="post">
+                                <input type="text" class="autocomplete_search_tags">
+                                <i class="material-icons mr-2 search-icon search-by-tag">search</i>
+                                <label for="autocomplete-input">Search by tags</label>
+                            </form>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>*@
             <div class="card card card-default scrollspy border-radius-6 fixed-width">
                 <div class="card-content p-0 pb-2">
                     <div class="email-header">
@@ -229,4 +231,5 @@
                 "Used in Media": null
             },
         });
+    });
 </script>

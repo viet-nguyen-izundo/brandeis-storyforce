@@ -26,11 +26,12 @@ namespace StoryForce.Server.Pages.Admin.Person
             this._configuration = configuration;
             this._peopleService = peopleService;
         }
-        public IList<StoryForce.Shared.Models.Person> People { get; set; }
+        public IList<StoryForce.Shared.Models.Person> User { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
-            People = await this._peopleService.GetAsync();
+            var per = await this._peopleService.GetAsync();
+            User = (IList<StoryForce.Shared.Models.Person>)per.OrderByDescending(m => m.Id);
             return Page();
         }
     }

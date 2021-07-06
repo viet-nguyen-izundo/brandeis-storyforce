@@ -16,7 +16,7 @@ namespace StoryForce.Shared.Models
         public string AvatarUrl { get; set; }
 
         [EnumDataType(typeof(PersonType))]
-        public PersonType? Type { get; set; }
+        public PersonType? Type { get; set; }        
 
         public ICollection<Submission> FeaturedSubmissions { get; set; }
 
@@ -32,7 +32,7 @@ namespace StoryForce.Shared.Models
 
         public ICollection<StoryFile> RequestedStoryFiles { get; set; }
         
-        public ICollection<StoryFile> UpdatedStoryFiles { get; set; }
+        public ICollection<StoryFile> UpdatedStoryFiles { get; set; }       
         
     }
 

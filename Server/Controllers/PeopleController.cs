@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using StoryForce.Server.Services;
 using StoryForce.Shared.Dtos;
 using StoryForce.Shared.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using OfficeOpenXml;
 
 namespace StoryForce.Server.Controllers
 {
@@ -111,5 +114,51 @@ namespace StoryForce.Server.Controllers
             await _peopleService.RemoveAsync(id);
             return NoContent();
         }
+
+        //public async Task<ActionResult> ImportUser(IFormFile file)
+        //{
+        //    var list = new List<Person>();
+        //    if (file != null)
+        //    {
+        //        using (var stream = new MemoryStream())
+        //        {
+        //            await file.CopyToAsync(stream);
+        //            using (var package = new ExcelPackage(stream))
+        //            {
+        //                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+        //                var rowcount = worksheet.Dimension.Rows;
+        //                for (int row = 2; row <= rowcount; row++)
+        //                {
+        //                    list.Add(new Person
+        //                    {                                
+        //                        Name = worksheet.Cells[row, 1].Value.ToString().Trim(),
+        //                        Email = worksheet.Cells[row, 2].Value.ToString().Trim(),
+        //                        ClassOfYear = Int32.Parse(worksheet.Cells[row, 3].Value.ToString()),
+        //                        PhoneNumber = worksheet.Cells[row, 4].Value.ToString().Trim(),
+        //                        UserName = worksheet.Cells[row, 5].Value.ToString().Trim(),
+        //                    });
+        //                }
+        //            }
+        //        }
+        //        foreach (var item in list)
+        //        {
+        //            var per = await _peopleService.GetByEmailAsync(item.Email);
+        //            if(per != null)
+        //            {
+        //                per.Name = item.Name;
+        //                per.Email = item.Email;
+        //                per.ClassOfYear = item.ClassOfYear;
+        //                per.PhoneNumber = item.PhoneNumber;
+        //                per.UserName = item.UserName;
+        //                await _peopleService.UpdateAsync(item.Id, per);
+        //            }
+        //            else
+        //            {
+        //                await _peopleService.CreateAsync(item);
+        //            }                    
+        //        }
+        //    }
+        //    return RedirectToAction("/usermanagement");
+        //}
     }
 }

@@ -387,6 +387,7 @@
         });
 
         $(".attachment-list").on("click", ".new-note-button", function () {
+            debugger
             var newNoteText = $(this).parents('.new-note').find('.new-note-input').val();
             $.ajax({
                 url: '/api/note',

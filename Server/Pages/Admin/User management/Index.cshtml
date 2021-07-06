@@ -3,7 +3,7 @@
 @model StoryForce.Server.Pages.Admin.Person.User_management
 @{
     ViewData["Title"] = "User Management";
-    Layout = "~/Pages/Shared/_LayoutUserManagement.cshtml";
+    @*Layout = "~/Pages/Shared/_LayoutUserManagement.cshtml";*@
 }
 <style>
     table, th, td {
@@ -49,6 +49,10 @@
                 <i class="material-icons left" style="width: 0px; margin-left: -45%">add</i>
                 <span style=" margin-right: -40%">Add</span>
             </a>
+            <a href="/usermanagement/importuser" class="btn-small edit mb-1 teal lighten-2" style="width:19%">
+                <i class="material-icons left" style="width: 0px; margin-left: -11%">add</i>
+                <span style=" margin-right: 3%">Import User to Excel</span>
+            </a>
             <span class="header">Table User</span>
             <table style="width:100%">
                 <thead>
@@ -70,20 +74,20 @@
                     }
                     @if (Model != null)
                     {
-                        foreach (var people in Model.People)
+                        foreach (var user in Model.User)
                         {
                             <tr>
                                 <td>@index</td>
-                                <td>@(!string.IsNullOrEmpty(people.Name) ? people.Name : null)</td>
-                                <td>@(!string.IsNullOrEmpty(people.Email) ? people.Email : null)</td>
-                                <td>@people.ClassOfYear</td>
-                                <td>@(!string.IsNullOrEmpty(people.AvatarUrl) ? people.AvatarUrl : null)</td>
-                                <td>@people.Type</td>
-                                <td>@(!string.IsNullOrEmpty(people.PhoneNumber) ? people.PhoneNumber : null)</td>
-                                <td>@(!string.IsNullOrEmpty(people.UserName) ? people.UserName : null)</td>
+                                <td>@(!string.IsNullOrEmpty(user.Name) ? user.Name : null)</td>
+                                <td>@(!string.IsNullOrEmpty(user.Email) ? user.Email : null)</td>
+                                <td>@user.ClassOfYear</td>
+                                <td>@(!string.IsNullOrEmpty(user.AvatarUrl) ? user.AvatarUrl : null)</td>
+                                <td>@user.Type</td>
+                                <td>@(!string.IsNullOrEmpty(user.PhoneNumber) ? user.PhoneNumber : null)</td>
+                                <td>@(!string.IsNullOrEmpty(user.UserName) ? user.UserName : null)</td>
                                 <td>
-                                    <a href="/usermanagement/@people.Id">Edit</a>
-                                    <a class="delete-people" data-id-people="@people.Id" href="#">Delete</a>
+                                    <a href="/usermanagement/@user.Id">Edit</a>
+                                    <a class="delete-people" data-id-people="@user.Id" href="#">Delete</a>
                                 </td>
                             </tr>
                             index++;

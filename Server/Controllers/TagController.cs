@@ -41,6 +41,12 @@ namespace StoryForce.Server.Controllers
         {
             return await _tagsService.GetAsync(id);
         }
+        
+        [HttpGet("{value}")]
+        public async Task<ActionResult<Tag>> GetAsync(string searchValluer)
+        {
+            return null;
+        }
 
         // POST api/<Tag>
         [HttpPost]
@@ -101,7 +107,6 @@ namespace StoryForce.Server.Controllers
             await _tagsService.RemoveAsync(id);
             return NoContent();
         }        
-
         public class CreateTagDto
         {
             public string Name { get; set; }

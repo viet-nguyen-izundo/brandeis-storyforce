@@ -96,5 +96,18 @@ namespace StoryForce.Server.Services
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task<Person> GetByEmailAsync(string email)
+        {
+            if (!string.IsNullOrEmpty(email))
+            {
+                return await _dbContext.Persons.FirstOrDefaultAsync(s => s.Email == email);
+            }
+            return null;
+        }
+
+        public async Task<List<Person>> GetByAllAsync()
+        {
+            return await _dbContext.Persons.ToListAsync();
+        }
     }
 }
