@@ -23,12 +23,19 @@
                             <label>Description</label>
                             <input asp-for="StoryFile.Description" required>
                         </div>
-                        <select>
-                            @foreach (var item in Model.RequestByPerson)
-                            {
-                                <option>@item.Name</option>
-                            }
-                        </select>
+                        <div class="col s5">
+                            <label>Is this file associated with an event or holiday?</label>
+                            <input asp-for="@Model.StoryFile.Event.Name" required>
+                        </div>
+                        <div class="col s5">
+                            <label>Description</label>
+                            <input asp-for="StoryFile.Description" required>
+                        </div>
+                        <div class="col s5">
+                            <label>If this file was requested by a staff member, please specify who:</label>
+                            <input asp-for="@Model.StoryFile.RequestedBy.Name" required>
+                        </div>
+
                         <div style="text-align:right; width:20%">
                             <button class="btn-small edit teal lighten-2 save-user" style="width: 32%" type="submit">
                                 <i class="material-icons left" style="margin-left: -40%; width:0%">save</i><span style="margin-left: 30%">Save</span>

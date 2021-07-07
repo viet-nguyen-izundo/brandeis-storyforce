@@ -30,8 +30,7 @@ namespace StoryForce.Server.Pages.Admin.Person
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var per = await this._peopleService.GetAsync();
-            User = (IList<StoryForce.Shared.Models.Person>)per.OrderByDescending(m => m.Id);
+            User = await this._peopleService.GetAsync();            
             return Page();
         }
     }

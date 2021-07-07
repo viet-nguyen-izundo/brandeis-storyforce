@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using StoryForce.Server.Services;
 using StoryForce.Shared.Dtos;
 using StoryForce.Shared.Models;
+using StoryForce.Shared.ViewModels;
 
 namespace StoryForce.Server.Pages.Admin
 {
@@ -19,27 +20,26 @@ namespace StoryForce.Server.Pages.Admin
     {
         private readonly IStoryFileService _storyFileService;
         private readonly IPeopleService _peopleService;
+        private readonly ISubmissionService _submissionService;
 
-        public StoryFileDetail(IStoryFileService storyFileService, IPeopleService peopleService)
+        public StoryFileDetail(IStoryFileService storyFileService, IPeopleService peopleService, ISubmissionService submissionService)
         {
             this._storyFileService = storyFileService;
             this._peopleService = peopleService;
-            StoryFile = new();
+            StoryFile = new();            
+            this._submissionService = submissionService;
         }
 
         [BindProperty]
         public StoryForce.Shared.Models.StoryFile StoryFile { get; set; }
-
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            StoryFile = await this._storyFileService.GetAsync(id);
-            var listPerson = await this._peopleService.GetByAllAsync();
-            //RequestByPerson = listPerson.FindAll(m=>m.Type == 2);
+            StoryFile = await this._storyFileService.GetAsync(id);             
             return Page();
         }
 
         [BindProperty]
-        public StoryForce.Shared.Models.StoryFile File { get; set; }
+        public StoryForce.Shared.Models.StoryFile File { get; set; }      
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -50,21 +50,13 @@ namespace StoryForce.Server.Pages.Admin
             if (File.Id > 0)
             {
                 var file = await _storyFileService.GetAsync(File.Id);
-                file.Description = StoryFile.Description;
-                //file.Email = User.Email;
-                //file.ClassOfYear = User.ClassOfYear;                
-                await _storyFileService.UpdateAsync(file.Id, file);
+                file.Description = StoryFile.Description;                           
+                await _storyFileService.UpdateAsync(file.Id, file);                
             }
-            return Redirect("");
+            return Page();
         }
 
         [BindProperty]
         public IList<StoryForce.Shared.Models.Person> RequestByPerson { get; set; }
-        //public async Task<IActionResult> OnGetAsync()
-        //{
-        //    var listPerson = await this._peopleService.GetAsync();
-        //    RequestByPerson = (IList<StoryForce.Shared.Models.Person>)listPerson.Select(m => m.Type = (PersonType?)2);
-        //    return Page();
-        //}
     }
 }

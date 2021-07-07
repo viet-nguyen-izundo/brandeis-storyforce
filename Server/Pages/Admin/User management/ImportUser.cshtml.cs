@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OfficeOpenXml;
 using StoryForce.Server.Services;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace StoryForce.Server.Pages.Admin
 {
@@ -17,10 +16,13 @@ namespace StoryForce.Server.Pages.Admin
 
         public ImportUserModel(IPeopleService peopleService)
         {
-            this._peopleService = peopleService;            
+            this._peopleService = peopleService;
         }
+
+        public IList<ListCellNull> ListErr { get; set; }
         public async Task<ActionResult> OnPostAsync(IFormFile file)
         {
+            var listNull = new List<ListCellNull>();
             var list = new List<StoryForce.Shared.Models.Person>();
             if (file != null)
             {
@@ -31,38 +33,67 @@ namespace StoryForce.Server.Pages.Admin
                     {
                         ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                         var rowcount = worksheet.Dimension.Rows;
+                        var colCount = worksheet.Dimension.Columns;
                         for (int row = 2; row <= rowcount; row++)
                         {
-                            list.Add(new StoryForce.Shared.Models.Person
+                            for (int col = 1; col <= colCount; col++)
                             {
-                                Name = worksheet.Cells[row, 1].Value.ToString().Trim(),
-                                Email = worksheet.Cells[row, 2].Value.ToString().Trim(),
-                                ClassOfYear = Int32.Parse(worksheet.Cells[row, 3].Value.ToString()),
-                                PhoneNumber = worksheet.Cells[row, 4].Value.ToString().Trim(),
-                                UserName = worksheet.Cells[row, 5].Value.ToString().Trim(),
-                            });
+                                if (worksheet.Cells[row, col].Value == null)
+                                {
+                                    listNull.Add(new ListCellNull
+                                    {
+                                        Value = "Row: " + row + " column: " + col + " has null value!"
+                                    });
+                                }
+                            }
                         }
-                    }
-                }
-                foreach (var item in list)
-                {
-                    var per = await _peopleService.GetByEmailAsync(item.Email);
-                    if (per != null)
-                    {
-                        per.Name = item.Name;
-                        per.Email = item.Email;
-                        per.ClassOfYear = item.ClassOfYear;
-                        per.PhoneNumber = item.PhoneNumber;
-                        per.UserName = item.UserName;
-                        await _peopleService.UpdateAsync(per.Id, per);
-                    }
-                    else
-                    {
-                        await _peopleService.CreateAsync(item);
+
+                        if (listNull.Count > 0)
+                        {
+                            ListErr = listNull;
+                            return Page();
+                        }
+                        else
+                        {
+                            for (int row = 2; row <= rowcount; row++)
+                            {
+                                list.Add(new StoryForce.Shared.Models.Person
+                                {
+                                    Name = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                                    Email = worksheet.Cells[row, 2].Value.ToString().Trim(),
+                                    ClassOfYear = Int32.Parse(worksheet.Cells[row, 3].Value.ToString()),
+                                    PhoneNumber = worksheet.Cells[row, 4].Value.ToString().Trim(),
+                                    UserName = worksheet.Cells[row, 5].Value.ToString().Trim(),
+                                });
+                            }
+                            foreach (var item in list)
+                            {
+                                var per = await _peopleService.GetByEmailAsync(item.Email);
+                                if (per != null)
+                                {
+                                    per.Name = item.Name;
+                                    per.Email = item.Email;
+                                    per.ClassOfYear = item.ClassOfYear;
+                                    per.PhoneNumber = item.PhoneNumber;
+                                    per.UserName = item.UserName;
+                                    await _peopleService.UpdateAsync(per.Id, per);
+                                }
+                                else
+                                {
+                                    await _peopleService.CreateAsync(item);
+                                }
+                            }
+                        }
+                        return Redirect("/usermanagement");
                     }
                 }
             }
-            return Redirect("/usermanagement");
+            return Page();
+        }
+
+        public class ListCellNull
+        {
+            public string Value { get; set; }
         }
     }
 }
