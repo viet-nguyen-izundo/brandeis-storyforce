@@ -35,9 +35,7 @@ namespace StoryForce.Server.Pages.Admin
         }
 
         public IList<SubmissionDto> Submissions { get; set; }
-        public IList<StoryForce.Shared.Models.Submission> submissionSearch { get; set; }
-        public IList<StoryForce.Shared.Models.StoryFile> storyFile { get; set; }
-        public Search value { get; set; }
+        public IList<StoryForce.Shared.Models.Submission> submissionSearch { get; set; }            
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -53,36 +51,35 @@ namespace StoryForce.Server.Pages.Admin
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(Search search)
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-            else
-            {
-                submissionSearch = await _submissionService.GetBySubmittedByInputValueAsync(search.value);
-                storyFile = await _storyFileService.GetByStoryFileByInputValueAsync(search.value);
-            }
-            return Page();
-        }
-        protected string GetPreSignedUrl(string fileName)
-        {
-            var s3bucketName = this._configuration.GetSection("AWS:S3:BucketName").Value;
-            var url = this._s3Client.GetPreSignedURL(
-                new GetPreSignedUrlRequest
-                {
-                    BucketName = s3bucketName,
-                    Key = fileName,
-                    Verb = HttpVerb.GET,
-                    Expires = DateTime.UtcNow.AddHours(2)
-                });
+        //public async Task<IActionResult> OnPostAsync(Search search)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return Page();
+        //    }
+        //    else
+        //    {
+        //        submissionSearch = await _submissionService.GetBySubmittedByInputValueAsync(search.value);                
+        //    }
+        //    return Page();
+        //}
+        //protected string GetPreSignedUrl(string fileName)
+        //{
+        //    var s3bucketName = this._configuration.GetSection("AWS:S3:BucketName").Value;
+        //    var url = this._s3Client.GetPreSignedURL(
+        //        new GetPreSignedUrlRequest
+        //        {
+        //            BucketName = s3bucketName,
+        //            Key = fileName,
+        //            Verb = HttpVerb.GET,
+        //            Expires = DateTime.UtcNow.AddHours(2)
+        //        });
 
-            return url;
-        }
-        public class Search
-        {
-            public string value { get; set; }
-        }
+        //    return url;
+        //}
+        //public class Search
+        //{
+        //    public string value { get; set; }
+        //}
     }
 }

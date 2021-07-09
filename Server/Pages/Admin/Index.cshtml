@@ -14,61 +14,12 @@
     <div class="content-area content-right abc">
         <div class="app-wrapper">
             <div class="app-search">
-                <form method="post">
-                    <input type="text" placeholder="Search Submissions" class="app-filter search-value" id="search-value" asp-for="@Model.value">
-                    <button type="submit"><i class="material-icons mr-2 search-icon" style="cursor:pointer">search</i> </button>
-                </form>
-                @if (Model.submissionSearch != null)
-                {
-                    <p>Submission</p>
-                    foreach (var sub in Model.submissionSearch)
-                    {
-                        <div class="user-media">
-                            <img src="@(!string.IsNullOrEmpty(sub.SubmittedBy.AvatarUrl) ? sub.SubmittedBy.AvatarUrl : null)" alt=""
-                                 class="circle z-depth-2 responsive-img avtar">
-                            <div class="list-title">@Html.DisplayFor(model => sub.Title)</div>
-                        </div>
-                        <div class="list-desc">
-                            @Html.DisplayFor(model => sub.Description)
-                        </div>
-                        <div class="list-right">
-                            <div class="list-date"> @Html.DisplayFor(model => sub.CreatedAt) </div>
-                        </div>
-                    }
-                }
-                @if (Model.storyFile != null)
-                {
-                    <p>StoryFile:</p>
-                    foreach (var story in Model.storyFile)
-                    {
-                        <div class="file">
-                            @if (story.Type.StartsWith("image/"))
-                            {
-                                <img src="@story.GetResizedImageUrl(100, 100)" alt="@story.Title" title="@story.Title" /><br />
-                            }
-                            else
-                            {
-                                @story.Title
-                            }
-                            <div>@(!string.IsNullOrEmpty(story.Description) ? story.Description : null)</div>
-                            <div>@(!string.IsNullOrEmpty(story.DownloadUrl) ? story.DownloadUrl : null)</div>
-                            @*<a href="@ImageService.G(file.Key)" class="right" target="_blank">
-                                <i class="material-icons">file_download</i>
-                            </a>*@
-                        </div>
-                        <div class="tags">
-                            @if (story.Tags != null)
-                            {
-                                <p>Tags:</p>
-                                @foreach (var tag in story.Tags)
-                                {
-                                    <div>@tag.Name</div>
-                                }
-                            }
-                        </div>
-                    }
-                }
-
+                <i class="material-icons mr-2 search-icon" style="cursor:pointer">search</i>
+                <input type="text" placeholder="Search Submissions" class="app-filter search-value" @*id="email_filter"*@>
+            </div>
+            <div id="result-search">
+            </div>
+            <div id="result-search1">
             </div>
             <div class="card card card-default scrollspy border-radius-6 fixed-width">
                 <div class="card-content p-0 pb-2">
@@ -97,72 +48,69 @@
                     <div class="collection email-collection">
                         @{
                             int row = 1;
-                            if (Model.Submissions != null)
+                            foreach (var submission in Model.Submissions)
                             {
-                                foreach (var submission in Model.Submissions)
-                                {
-                                    <div class="email-brief-info collection-item animate fadeUp delay-@row">
-                                        <div class="list-left">
-                                            <label>
-                                                <input type="checkbox" name="foo" />
-                                                <span></span>
-                                            </label>
-                                            <div class="favorite">
-                                                <i class="material-icons button-favorite">star_border</i>
-                                            </div>
-                                            <div class="email-label">
-                                                <i class="material-icons">label_outline</i>
-                                            </div>
+                                <div class="email-brief-info collection-item animate fadeUp delay-@row">
+                                    <div class="list-left">
+                                        <label>
+                                            <input type="checkbox" name="foo" />
+                                            <span></span>
+                                        </label>
+                                        <div class="favorite">
+                                            <i class="material-icons button-favorite">star_border</i>
                                         </div>
-                                        <a asp-page="/Admin/Submission/Index" asp-route-id="@submission.Id" class="list-content">
-                                            <div class="list-title-area">
-                                                <div class="user-media">
-                                                    <img src="@submission.SubmittedBy.AvatarUrl" alt=""
-                                                         class="circle z-depth-2 responsive-img avtar">
-                                                    <div class="list-title">@Html.DisplayFor(model => submission.Title)</div>
-                                                </div>
-                                                <div class="title-right">
-                                                    <span class="badge grey lighten-3">
-                                                        <i class="purple-text material-icons small-icons mr-2">
-                                                            fiber_manual_record
-                                                        </i>New
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="list-desc">
-                                                @Html.DisplayFor(model => submission.Description)
-                                            </div>
-                                            <div class="files">
-                                                <div class="attach-file">
-                                                    <i class="material-icons">attach_file</i>
-                                                </div>
-                                                @foreach (var file in submission.SubmittedFiles)
-                                                {
-
-                                                    <div class="file">
-                                                        @if (file.Type.StartsWith("image/"))
-                                                        {
-                                                            <img src="@file.GetResizedImageUrl(100, 100)" alt="@file.Title" title="@file.Title" /><br />
-                                                        }
-                                                        else
-                                                        {
-                                                            @file.Title
-                                                        }
-                                                    </div>
-                                                }
-                                            </div>
-                                        </a>
-                                        <div class="list-right">
-                                            <div class="list-date"> @Html.DisplayFor(model => submission.CreatedAtShortString) </div>
-                                            <div class="delete-task">
-                                                <form asp-page-handler="delete" asp-page="Submission/Index" asp-route-id="@submission.Id" method="post">
-                                                    <button><i class="material-icons">delete</i></button>
-                                                </form>
-                                            </div>
+                                        <div class="email-label">
+                                            <i class="material-icons">label_outline</i>
                                         </div>
                                     </div>
-                                    row++;
-                                }
+                                    <a asp-page="/Admin/Submission/Index" asp-route-id="@submission.Id" class="list-content">
+                                        <div class="list-title-area">
+                                            <div class="user-media">
+                                                <img src="@submission.SubmittedBy.AvatarUrl" alt=""
+                                                     class="circle z-depth-2 responsive-img avtar">
+                                                <div class="list-title">@Html.DisplayFor(model => submission.Title)</div>
+                                            </div>
+                                            <div class="title-right">
+                                                <span class="badge grey lighten-3">
+                                                    <i class="purple-text material-icons small-icons mr-2">
+                                                        fiber_manual_record
+                                                    </i>New
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="list-desc">
+                                            @Html.DisplayFor(model => submission.Description)
+                                        </div>
+                                        <div class="files">
+                                            <div class="attach-file">
+                                                <i class="material-icons">attach_file</i>
+                                            </div>
+                                            @foreach (var file in submission.SubmittedFiles)
+                                            {
+
+                                                <div class="file">
+                                                    @if (file.Type.StartsWith("image/"))
+                                                    {
+                                                        <img src="@file.GetResizedImageUrl(100, 100)" alt="@file.Title" title="@file.Title" /><br />
+                                                    }
+                                                    else
+                                                    {
+                                                        @file.Title
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    </a>
+                                    <div class="list-right">
+                                        <div class="list-date"> @Html.DisplayFor(model => submission.CreatedAtShortString) </div>
+                                        <div class="delete-task">
+                                            <form asp-page-handler="delete" asp-page="Submission/Index" asp-route-id="@submission.Id" method="post">
+                                                <button><i class="material-icons">delete</i></button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                row++;
                             }
                         }
                         <div class="no-data-found collection-item">
@@ -258,8 +206,55 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
 <script>
     $(document).ready(function () {
-        $(".header-search-wrapper").on("change", ".header-search-input", function () {
-            $.parents(".header-search-wrapper").find('.ps--active-y').css("display", "none");
+        $(".app-search").on("change", ".search-value", function () {
+            var searchVal = $('.search-value').val();
+            $.ajax({
+                url: '/api/search',
+                type: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify({
+                    value: searchVal
+                })
+            }).then(function (res) {
+                if (res) {
+
+                    let resultSearch = $("#result-search");
+
+                    let resultSearch1 = $("#result-search1");
+
+                    resultSearch.html("");
+
+                    var html = '';
+
+                    resultSearch1.html("");
+
+                    var html1 = '';
+
+                    for (var i = 0; i < res.result.length; i++) {
+                        var title = res.result[i].title;
+                        var description = res.result[i].description;
+                        
+                        html += "<div style='background:white'>"
+                            + title + "</br >"
+                            + description
+                            
+                            + "</div>";
+
+                        for (var j = 0; j < res.result[i].submittedFiles.length; j++) {
+                            var titleStory = res.result[i].submittedFiles[j].title;
+                            html1 += "<div style='background:white'>"
+                                
+                                + titleStory
+                                + "</div>";
+                            resultSearch1.append(html1)
+                        }
+                        resultSearch.append(html)
+                    }
+
+
+                }
+            });
+
         });
     });
 </script>

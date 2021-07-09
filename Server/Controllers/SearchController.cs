@@ -20,7 +20,8 @@ namespace StoryForce.Server.Controllers
             this._storyFileService = storyFileService;
             this._submissionService = submissionService;            
         }
-        [HttpPost]
+        
+        [HttpPost]        
         public async Task<IActionResult> Post(Search search)
         {   
             var submission = _submissionService.GetBySubmittedByInputValueAsync(search.Value);
