@@ -40,6 +40,9 @@
                 <i class="material-icons mr-2 search-icon">search</i>
                 <input type="text" placeholder="Search User" class="app-filter">
             </div>
+            <div>
+
+            </div>
         </div>
     </div>
     <div class="row table-user">
@@ -57,14 +60,11 @@
             <table style="width:100%">
                 <thead>
                     <tr style="background-color: #C0C0C0">
-                        <th style="width:5%">Oder</th>
+                        <th style="width:5%">Sort Order</th>
                         <th style="width:15%">Name</th>
                         <th style="width:15%">Email</th>
                         <th style="width:5%">ClassOfYear</th>
-                        <th style="width:15%">AvatarUrl</th>
-                        <th style="width:10%">Type</th>
                         <th style="width:15%">PhoneNumber</th>
-                        <th style="width:10%">UserName</th>
                         <th style="width:10%">Control</th>
                     </tr>
                 </thead>
@@ -81,10 +81,7 @@
                                 <td>@(!string.IsNullOrEmpty(user.Name) ? user.Name : null)</td>
                                 <td>@(!string.IsNullOrEmpty(user.Email) ? user.Email : null)</td>
                                 <td>@user.ClassOfYear</td>
-                                <td>@(!string.IsNullOrEmpty(user.AvatarUrl) ? user.AvatarUrl : null)</td>
-                                <td>@user.Type</td>
                                 <td>@(!string.IsNullOrEmpty(user.PhoneNumber) ? user.PhoneNumber : null)</td>
-                                <td>@(!string.IsNullOrEmpty(user.UserName) ? user.UserName : null)</td>
                                 <td>
                                     <a href="/usermanagement/@user.Id">Edit</a>
                                     <a class="delete-people" data-id-people="@user.Id" href="#">Delete</a>
@@ -130,7 +127,7 @@
                 }
             });
 
-
         });
+
     })
 </script>

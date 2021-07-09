@@ -30,7 +30,7 @@ namespace StoryForce.Server.Pages.Admin.Person
 
         public async Task<IActionResult> OnGetAsync()
         {
-            User = await this._peopleService.GetAsync();            
+            User = await this._peopleService.GetAsync();
             return Page();
         }
     }

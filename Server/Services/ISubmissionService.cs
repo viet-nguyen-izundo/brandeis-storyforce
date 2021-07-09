@@ -8,5 +8,6 @@ namespace StoryForce.Server.Services
     {
         Task RemoveWithFilesAsync(int id);
         Task<List<Submission>> GetBySubmittedByIdAsync(int submittedId);
+        Task<List<Submission>> GetBySubmittedByInputValueAsync(string  value);
     }
 }

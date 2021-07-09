@@ -28,7 +28,7 @@ namespace StoryForce.Server.Pages.Admin.Submission
             this._configuration = configuration;
             this._s3BucketName = this._configuration.GetSection("AWS:S3:BucketName").Value;
             this._s3Client = s3Client;
-            _noteService = noteService;
+            _noteService = noteService;            
         }
 
         [BindProperty]

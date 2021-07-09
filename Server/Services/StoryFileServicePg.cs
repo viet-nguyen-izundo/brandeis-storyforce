@@ -70,6 +70,17 @@ namespace StoryForce.Server.Services
                 .Include(x => x.Notes)
                 .Where(s => s.RequestedBy.Email == email)
                 .ToListAsync();
+
+        public async Task<List<StoryFile>> GetByStoryFileByInputValueAsync(string value)
+        {
+            var list = _dbContext.StoryFiles.Include(x => x.Tags).Where(m => m.Title.ToLower().Contains(value.ToLower())
+            || m.Description.ToLower().Contains(value.ToLower())
+            || m.Tags.Any(t => t.Name.ToLower().Contains(value.ToLower()))).ToList();            
+
+            return list;
+        }
+
+
         public async Task<List<StoryFile>> GetBySubmittedByIdAsync(int submittedById)
             => await _dbContext.StoryFiles
                 .Include(x => x.Events)

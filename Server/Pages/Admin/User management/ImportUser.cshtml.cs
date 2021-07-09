@@ -62,8 +62,7 @@ namespace StoryForce.Server.Pages.Admin
                                     Name = worksheet.Cells[row, 1].Value.ToString().Trim(),
                                     Email = worksheet.Cells[row, 2].Value.ToString().Trim(),
                                     ClassOfYear = Int32.Parse(worksheet.Cells[row, 3].Value.ToString()),
-                                    PhoneNumber = worksheet.Cells[row, 4].Value.ToString().Trim(),
-                                    UserName = worksheet.Cells[row, 5].Value.ToString().Trim(),
+                                    PhoneNumber = worksheet.Cells[row, 4].Value.ToString().Trim()                                   
                                 });
                             }
                             foreach (var item in list)
@@ -74,8 +73,7 @@ namespace StoryForce.Server.Pages.Admin
                                     per.Name = item.Name;
                                     per.Email = item.Email;
                                     per.ClassOfYear = item.ClassOfYear;
-                                    per.PhoneNumber = item.PhoneNumber;
-                                    per.UserName = item.UserName;
+                                    per.PhoneNumber = item.PhoneNumber;                                    
                                     await _peopleService.UpdateAsync(per.Id, per);
                                 }
                                 else

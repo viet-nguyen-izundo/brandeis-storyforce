@@ -51,7 +51,7 @@ namespace StoryForce.Server.Pages.Admin.Person
                 User.PhoneNumber = User.PhoneNumber;
                 //User.PhoneNumberConfirmed = User.PhoneNumberConfirmed;
                 //User.TwoFactorEnabled = User.TwoFactorEnabled;
-                User.UserName = User.UserName;
+                //User.UserName = User.UserName;
                 await _peopleService.CreateAsync(User);
             }
             return Redirect("/usermanagement");

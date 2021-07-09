@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using StoryForce.Server.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,17 +8,29 @@ using System.Threading.Tasks;
 
 namespace StoryForce.Server.Controllers
 {
-    public class SearchController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize]
+    public class SearchController : ControllerBase
     {
-        public IActionResult Index()
-        {
-            return View();
+        private readonly IStoryFileService _storyFileService;
+        private readonly ISubmissionService _submissionService;
+        public SearchController(IStoryFileService storyFileService, ISubmissionService submissionService)
+        {           
+            this._storyFileService = storyFileService;
+            this._submissionService = submissionService;            
         }
-
         [HttpPost]
-        public IActionResult SearchFile(string value)
+        public async Task<IActionResult> Post(Search search)
+        {   
+            var submission = _submissionService.GetBySubmittedByInputValueAsync(search.Value);
+            //var storyFile = _storyFileService.GetByStoryFileByInputValueAsync(search.Value);           
+            return Ok(submission);
+        }
+        public class Search
         {
-            return View();
+            public string Value { get; set; }
+           
         }
     }
 }

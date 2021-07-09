@@ -48,9 +48,9 @@ namespace StoryForce.Server.Pages.Admin.Person
             {
                 var person = await _peopleService.GetAsync(Person.Id);
                 person.Name = User.Name;
-                //person.Email = User.Email;
+                person.Email = User.Email;
                 person.ClassOfYear = User.ClassOfYear;
-                person.AvatarUrl = User.AvatarUrl;
+                //person.AvatarUrl = User.AvatarUrl;
                 //person.Type = User.Type;
                 //person.SecurityStamp = User.SecurityStamp;
                 //person.AccessFailedCount = User.AccessFailedCount;
@@ -61,10 +61,10 @@ namespace StoryForce.Server.Pages.Admin.Person
                 //person.NormalizedEmail = User.NormalizedEmail;
                 //person.NormalizedUserName = User.NormalizedUserName;
                 //person.PasswordHash = User.PasswordHash;
-                //person.PhoneNumber = User.PhoneNumber;
+                person.PhoneNumber = User.PhoneNumber;
                 //person.PhoneNumberConfirmed = User.PhoneNumberConfirmed;
                 //person.TwoFactorEnabled = User.TwoFactorEnabled;
-                person.UserName = User.UserName;
+                //person.UserName = User.UserName;
                 await _peopleService.UpdateAsync(Person.Id, person);
             }            
             return Redirect("/usermanagement");

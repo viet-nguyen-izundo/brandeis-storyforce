@@ -76,5 +76,10 @@ namespace StoryForce.Server.Services
         {
             throw new NotImplementedException();
         }
+
+        public Task<List<Submission>> GetBySubmittedByInputValueAsync(string value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
