@@ -92,13 +92,14 @@
                                             <div class="attach-file">
                                                 <i class="material-icons">attach_file</i>
                                             </div>
+                                    
                                             @foreach (var file in submission.SubmittedFiles)
                                             {
 
                                                 <div class="file">
                                                     @if (file.Type.StartsWith("image/"))
                                                     {
-                                                        <img src="@file.GetResizedImageUrl(100, 100)" alt="@file.Title" title="@file.Title" /><br />
+                                                        <img src="@file.GetResizedImageUrl(100, 100)" alt="@file.Title" title="@file.Title"/><br/>
                                                     }
                                                     else
                                                     {
