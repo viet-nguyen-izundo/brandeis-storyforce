@@ -32,10 +32,12 @@ namespace StoryForce.Server.Pages.Admin
             this._storyFileService = storyFileService;
             this._s3Client = s3Client;
             this._webClient = new WebClient();
+            storyFiles = new List<StoryForce.Shared.Models.StoryFile>();
         }
 
+
         public IList<SubmissionDto> Submissions { get; set; }
-        public IList<StoryForce.Shared.Models.Submission> submissionSearch { get; set; }            
+        public IList<StoryForce.Shared.Models.StoryFile> storyFiles { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -50,19 +52,16 @@ namespace StoryForce.Server.Pages.Admin
             //}
             return Page();
         }
+        public string value { get; set; }
 
-        //public async Task<IActionResult> OnPostAsync(Search search)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return Page();
-        //    }
-        //    else
-        //    {
-        //        submissionSearch = await _submissionService.GetBySubmittedByInputValueAsync(search.value);                
-        //    }
-        //    return Page();
-        //}
+        public async Task<IActionResult> OnPostAsync(string value)
+        {
+            if (value == "" || value == null)
+            {
+                OnGetAsync();
+            }
+            return Redirect("/searchresult/" + value);
+        }
         //protected string GetPreSignedUrl(string fileName)
         //{
         //    var s3bucketName = this._configuration.GetSection("AWS:S3:BucketName").Value;
@@ -76,10 +75,6 @@ namespace StoryForce.Server.Pages.Admin
         //        });
 
         //    return url;
-        //}
-        //public class Search
-        //{
-        //    public string value { get; set; }
-        //}
+        //}        
     }
 }

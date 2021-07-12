@@ -14,12 +14,14 @@
     <div class="content-area content-right abc">
         <div class="app-wrapper">
             <div class="app-search">
-                <i class="material-icons mr-2 search-icon" style="cursor:pointer">search</i>
-                <input type="text" placeholder="Search Submissions" class="app-filter search-value" @*id="email_filter"*@>
+                <form method="post">
+                    <button type="submit">
+                        <i class="material-icons mr-2 search-icon" style="cursor:pointer; margin-top: 22px;">search</i>
+                    </button>
+                    <input type="text" placeholder="Search Submissions" class="app-filter search-value" asp-for="@Model.value" >
+                </form>
             </div>
             <div id="result-search">
-            </div>
-            <div id="result-search1">
             </div>
             <div class="card card card-default scrollspy border-radius-6 fixed-width">
                 <div class="card-content p-0 pb-2">
@@ -44,79 +46,82 @@
                         <div class="email-action">
                             <span class="email-options"><i class="material-icons grey-text">more_vert</i></span>
                         </div>
-                    </div>
-                    <div class="collection email-collection">
-                        @{
-                            int row = 1;
-                            foreach (var submission in Model.Submissions)
-                            {
-                                <div class="email-brief-info collection-item animate fadeUp delay-@row">
-                                    <div class="list-left">
-                                        <label>
-                                            <input type="checkbox" name="foo" />
-                                            <span></span>
-                                        </label>
-                                        <div class="favorite">
-                                            <i class="material-icons button-favorite">star_border</i>
-                                        </div>
-                                        <div class="email-label">
-                                            <i class="material-icons">label_outline</i>
-                                        </div>
-                                    </div>
-                                    <a asp-page="/Admin/Submission/Index" asp-route-id="@submission.Id" class="list-content">
-                                        <div class="list-title-area">
-                                            <div class="user-media">
-                                                <img src="@submission.SubmittedBy.AvatarUrl" alt=""
-                                                     class="circle z-depth-2 responsive-img avtar">
-                                                <div class="list-title">@Html.DisplayFor(model => submission.Title)</div>
+                    </div>                    
+                    @if (Model.Submissions != null)
+                    {
+                        <div class="collection email-collection">
+                            @{
+                                int row = 1;
+                                foreach (var submission in Model.Submissions)
+                                {
+                                    <div class="email-brief-info collection-item animate fadeUp delay-@row">
+                                        <div class="list-left">
+                                            <label>
+                                                <input type="checkbox" name="foo" />
+                                                <span></span>
+                                            </label>
+                                            <div class="favorite">
+                                                <i class="material-icons button-favorite">star_border</i>
                                             </div>
-                                            <div class="title-right">
-                                                <span class="badge grey lighten-3">
-                                                    <i class="purple-text material-icons small-icons mr-2">
-                                                        fiber_manual_record
-                                                    </i>New
-                                                </span>
+                                            <div class="email-label">
+                                                <i class="material-icons">label_outline</i>
                                             </div>
                                         </div>
-                                        <div class="list-desc">
-                                            @Html.DisplayFor(model => submission.Description)
-                                        </div>
-                                        <div class="files">
-                                            <div class="attach-file">
-                                                <i class="material-icons">attach_file</i>
-                                            </div>
-                                            @foreach (var file in submission.SubmittedFiles)
-                                            {
-
-                                                <div class="file">
-                                                    @if (file.Type.StartsWith("image/"))
-                                                    {
-                                                        <img src="@file.GetResizedImageUrl(100, 100)" alt="@file.Title" title="@file.Title" /><br />
-                                                    }
-                                                    else
-                                                    {
-                                                        @file.Title
-                                                    }
+                                        <a asp-page="/Admin/Submission/Index" asp-route-id="@submission.Id" class="list-content">
+                                            <div class="list-title-area">
+                                                <div class="user-media">
+                                                    <img src="@submission.SubmittedBy.AvatarUrl" alt=""
+                                                         class="circle z-depth-2 responsive-img avtar">
+                                                    <div class="list-title">@Html.DisplayFor(model => submission.Title)</div>
                                                 </div>
-                                            }
-                                        </div>
-                                    </a>
-                                    <div class="list-right">
-                                        <div class="list-date"> @Html.DisplayFor(model => submission.CreatedAtShortString) </div>
-                                        <div class="delete-task">
-                                            <form asp-page-handler="delete" asp-page="Submission/Index" asp-route-id="@submission.Id" method="post">
-                                                <button><i class="material-icons">delete</i></button>
-                                            </form>
+                                                <div class="title-right">
+                                                    <span class="badge grey lighten-3">
+                                                        <i class="purple-text material-icons small-icons mr-2">
+                                                            fiber_manual_record
+                                                        </i>New
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="list-desc">
+                                                @Html.DisplayFor(model => submission.Description)
+                                            </div>
+                                            <div class="files">
+                                                <div class="attach-file">
+                                                    <i class="material-icons">attach_file</i>
+                                                </div>
+                                                @foreach (var file in submission.SubmittedFiles)
+                                                {
+
+                                                    <div class="file">
+                                                        @if (file.Type.StartsWith("image/"))
+                                                        {
+                                                            <img src="@file.GetResizedImageUrl(100, 100)" alt="@file.Title" title="@file.Title" /><br />
+                                                        }
+                                                        else
+                                                        {
+                                                            @file.Title
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </a>
+                                        <div class="list-right">
+                                            <div class="list-date"> @Html.DisplayFor(model => submission.CreatedAtShortString) </div>
+                                            <div class="delete-task">
+                                                <form asp-page-handler="delete" asp-page="Submission/Index" asp-route-id="@submission.Id" method="post">
+                                                    <button><i class="material-icons">delete</i></button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                row++;
+                                    row++;
+                                }
                             }
-                        }
-                        <div class="no-data-found collection-item">
-                            <h6 class="center-align font-weight-500">No Results Found</h6>
+                            <div class="no-data-found collection-item">
+                                <h6 class="center-align font-weight-500">No Results Found</h6>
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>
@@ -206,55 +211,42 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
 <script>
     $(document).ready(function () {
-        $(".app-search").on("change", ".search-value", function () {
-            var searchVal = $('.search-value').val();
-            $.ajax({
-                url: '/api/search',
-                type: 'POST',
-                contentType: "application/json",
-                data: JSON.stringify({
-                    value: searchVal
-                })
-            }).then(function (res) {
-                if (res) {
+        //$(".app-search").on("change", ".search-value", function () {
+        //    var searchVal = $('.search-value').val();
+        //    $.ajax({
+        //        url: '/api/search',
+        //        type: 'POST',
+        //        contentType: "application/json",
+        //        data: JSON.stringify({
+        //            value: searchVal
+        //        })
+        //    }).then(function (res) {
+        //        if (res) {
 
-                    let resultSearch = $("#result-search");
+        //            let resultSearch = $("#result-search");
 
-                    let resultSearch1 = $("#result-search1");
+        //            resultSearch.html("");
 
-                    resultSearch.html("");
+        //            var html = '';
 
-                    var html = '';
+        //            for (var i = 0; i < res.result.length; i++) {
+        //                var title = res.result[i].title;
+        //                var description = res.result[i].description;
+        //                var size = res.result[i].size;
 
-                    resultSearch1.html("");
+        //                html += "<div style='background:white'>"
+        //                    + title + "</br >"
+        //                    + description + "</br >"
+        //                    + size
+        //                    + "</div>";
 
-                    var html1 = '';
-
-                    for (var i = 0; i < res.result.length; i++) {
-                        var title = res.result[i].title;
-                        var description = res.result[i].description;
-                        
-                        html += "<div style='background:white'>"
-                            + title + "</br >"
-                            + description
-                            
-                            + "</div>";
-
-                        for (var j = 0; j < res.result[i].submittedFiles.length; j++) {
-                            var titleStory = res.result[i].submittedFiles[j].title;
-                            html1 += "<div style='background:white'>"
-                                
-                                + titleStory
-                                + "</div>";
-                            resultSearch1.append(html1)
-                        }
-                        resultSearch.append(html)
-                    }
+        //                resultSearch.append(html)
+        //            }
 
 
-                }
-            });
+        //        }
+        //    });
 
-        });
+        //});
     });
 </script>
