@@ -20,23 +20,57 @@
                     @if (Model != null)
                     {
                         <div class="col s5">
-                            <label>Description</label>
+                            <label>SubmittedBy Name<span style="color:red">(*)</span></label>
+                            <input asp-for="StoryFile.SubmittedBy.Name" required>
+                        </div>
+                        <div class="col s5">
+                            <label>Description<span style="color:red">(*)</span></label>
                             <input asp-for="StoryFile.Description" required>
                         </div>
                         <div class="col s5">
                             <label>Is this file associated with an event or holiday?</label>
-                            <input asp-for="@Model.StoryFile.Event.Name">
+                            <select asp-for="StoryFile.Event.Id">
+                                <option value="">Event Name...</option>
+                                @foreach (var item in Model.Event.Where(m => m.Name != null).OrderBy(m => m.Id))
+                                {
+                                    if (item.Id == Model.StoryFile.Event.Id)
+                                    {
+                                        <option value="@item.Id" selected="selected">@item.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                }
+                            </select>
                         </div>
                         @if (Model.StoryFile.DownloadUrl != null)
                         {
                             <div class="col s5">
-                                <label>DownloadUrl</label>
-                                <input asp-for="StoryFile.DownloadUrl" required>
+                                <label>DownloadUrl<span style="color:red">(*)</span></label>
+                                <input asp-for="StoryFile.DownloadUrl">
                             </div>
                         }
                         <div class="col s5">
                             <label>If this file was requested by a staff member, please specify who:</label>
-                            <input asp-for="@Model.StoryFile.RequestedBy.Name">
+                            <select asp-for="StoryFile.RequestedBy.Id">
+                                <option value="">Full Name...</option>
+                                @foreach (var item in Model.Staff.OrderBy(m => m.Id))
+                                {
+                                    if (item.Id == Model.StoryFile.RequestedBy.Id)
+                                    {
+                                        <option value="@item.Id" selected="selected">@item.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col s5">
+                            <label>Who is featured?</label>
+                            <input asp-for="@Model.StoryFile.FeaturedPeople">
                         </div>
 
                         <div style="text-align:right; width:20%">

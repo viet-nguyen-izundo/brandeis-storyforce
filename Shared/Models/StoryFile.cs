@@ -17,6 +17,7 @@ namespace StoryForce.Shared.Models
         public string Key { get; set; }
 
         public string Description { get; set; }
+        public int EventId { get; set; }
 
         public List<Note> Notes { get; set; }                                                      
 
