@@ -1,9 +1,11 @@
 ﻿@page "/searchresult/{myvalue}"
 @model StoryForce.Server.Pages.Admin.SearchStoryFile.IndexModel
+@using StoryForce.Server.Services
 @{
     ViewData["Title"] = "Search";
     Layout = "~/Pages/Shared/_SearchResultLayout.cshtml";
 }
+@inject ImageService ImageService
 
 @section HeadScripts
 {
@@ -57,19 +59,22 @@
                                                     Created At: @(!string.IsNullOrEmpty(story.CreatedAt.ToString()) ? story.CreatedAt.ToString("dd/MM/yyyy") : null)
                                                 </div>
                                             </div>
-                                            
+
                                             @if (story.Tags != null && story.Tags.Count > 0)
                                             {
                                                 <div class="item-content">
                                                     <span>Tags:</span>
                                                     @foreach (var tag in story.Tags)
                                                     {
-                                                    <span>
-                                                        <em>@Html.DisplayFor(model => tag.Name)</em>
-                                                    </span>
+                                                        <span>
+                                                            <em>@Html.DisplayFor(model => tag.Name)</em>
+                                                        </span>
                                                     }
                                                 </div>
                                             }
+                                        </a>
+                                        <a href="@ImageService.GetPreSignedUrl(story.Key)" target="_blank" style="position: absolute;bottom: 0;left: 6rem;">
+                                            <i class="material-icons">file_download</i>
                                         </a>
                                     </div>
 

@@ -21,7 +21,7 @@ namespace StoryForce.Server.Pages.Admin
         private readonly IStoryFileService _storyFileService;
         private readonly IPeopleService _peopleService;
         private readonly ISubmissionService _submissionService;
-        private readonly IEventService _eventService;       
+        private readonly IEventService _eventService;
 
         public StoryFileDetail(IStoryFileService storyFileService, IPeopleService peopleService, ISubmissionService submissionService, IEventService eventService)
         {
@@ -54,11 +54,20 @@ namespace StoryForce.Server.Pages.Admin
 
         public async Task<IActionResult> OnPostAsync()
         {
-            Event = await this._eventService.GetAsync();            
+            Event = await this._eventService.GetAsync();
+            var staff = await this._peopleService.GetAsync();
+            Staff = staff.Where(m => m.Type == PersonType.Staff).ToList();
             if (File.Id > 0)
             {
                 var file = await _storyFileService.GetAsync(File.Id);
                 file.Description = StoryFile.Description;
+                var user = await this._peopleService.GetAsync(file.SubmittedById);
+                if(user != null)
+                {
+                    user.Name = StoryFile.SubmittedBy.Name;
+                    user.Email = StoryFile.SubmittedBy.Email;
+                    await _peopleService.UpdateAsync(user.Id, user);
+                }
                 if (StoryFile.Event.Id > 0)
                 {
                     //var even = await this._eventService.GetAsync(StoryFile.Event.Id);
@@ -68,11 +77,20 @@ namespace StoryForce.Server.Pages.Admin
                 {
                     file.Event = StoryFile.Event;
                 }
+
                 if (StoryFile.DownloadUrl != null)
                 {
                     file.DownloadUrl = StoryFile.DownloadUrl;
                 }
-                file.RequestedBy = StoryFile.RequestedBy;
+
+                if (StoryFile.RequestedBy.Id > 0)
+                {
+                    file.RequestedById = StoryFile.RequestedBy.Id;
+                }
+                else
+                {
+                    file.RequestedById = 0;
+                }
                 await _storyFileService.UpdateAsync(file.Id, file);
             }
             return Page();

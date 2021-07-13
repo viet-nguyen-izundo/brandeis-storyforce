@@ -15,10 +15,11 @@
         <div class="app-wrapper">
             <div class="app-search">
                 <form method="post">
-                    <button type="submit">
-                        <i class="material-icons mr-2 search-icon" style="cursor:pointer; margin-top: 22px;">search</i>
-                    </button>
-                    <input type="text" placeholder="Search Submissions" class="app-filter search-value" asp-for="@Model.value" >
+                    @*<button type="submit">
+                            <i class="material-icons mr-2 search-icon" style="cursor:pointer; margin-top: 22px;">search</i>
+                        </button>*@
+                    <i class="material-icons mr-2 search-icon">search</i>
+                    <input type="text" placeholder="Search Submissions" class="app-filter search-value" asp-for="@Model.value">
                 </form>
             </div>
             <div id="result-search">
@@ -46,7 +47,7 @@
                         <div class="email-action">
                             <span class="email-options"><i class="material-icons grey-text">more_vert</i></span>
                         </div>
-                    </div>                    
+                    </div>
                     @if (Model.Submissions != null)
                     {
                         <div class="collection email-collection">

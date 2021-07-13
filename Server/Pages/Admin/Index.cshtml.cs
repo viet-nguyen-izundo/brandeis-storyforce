@@ -58,9 +58,9 @@ namespace StoryForce.Server.Pages.Admin
         {
             if (value == "" || value == null)
             {
-                OnGetAsync();
+                return Redirect("/admin");
             }
-            return Redirect("/searchresult/" + value);
+            return Redirect($"/searchresult/{value}");
         }
         //protected string GetPreSignedUrl(string fileName)
         //{
