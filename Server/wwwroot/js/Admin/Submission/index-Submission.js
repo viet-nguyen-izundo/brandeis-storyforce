@@ -11,9 +11,9 @@
 
 };
 $(document).ready(function() {
-    $('.modal').modal();
-    $(".select2").select2({
-        dropdownAutoWidth: true,
-        width: '100%'
-    });
+    //$('.modal').modal();
+    //$("#select-user").select2({
+    //    dropdownAutoWidth: true,
+    //    width: '100%'
+    //});
 });

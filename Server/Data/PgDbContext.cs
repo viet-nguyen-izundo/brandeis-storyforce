@@ -1,6 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using StoryForce.Shared.Interfaces;
 using StoryForce.Shared.Models;
 
 namespace StoryForce.Server.Data
@@ -24,6 +31,8 @@ namespace StoryForce.Server.Data
         public DbSet<Comment> Comments { get; set; }
 
         public DbSet<AuditDetail> AuditDetails { get; set; }
+
+        //public DbSet<AssignInSubmission> AssignInSubmissions { get; set; }
 
         public PgDbContext(DbContextOptions options) : base(options)
         {
@@ -103,6 +112,36 @@ namespace StoryForce.Server.Data
                 .HasMany(person => person.FeaturedStoryFile)
                 .WithMany(sf => sf.FeaturedPeople);
 
+
+            modelBuilder.Entity<StoryFileAssignment>()
+                .HasOne(sf => sf.StoryFile)
+                .WithMany(st => st.StoryFileAssignment);
+
+            modelBuilder.Entity<StoryFileAssignment>()
+                .HasOne(sf => sf.AssignedTo)
+                .WithMany(person => person.AssignmentStoryFiles);
+        }
+
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            IEnumerable<EntityEntry> modified = ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Modified || e.State == EntityState.Added);
+            foreach (EntityEntry item in modified)
+            {
+                if (item.Entity is IDateTracking changedOrAddedItem)
+                {
+                    if (item.State == EntityState.Added)
+                    {
+                        changedOrAddedItem.CreatedDate = DateTime.Now;
+                    }
+                    else
+                    {
+                        changedOrAddedItem.LastModifiedDate = DateTime.Now;
+                    }
+                }
+            }
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }
