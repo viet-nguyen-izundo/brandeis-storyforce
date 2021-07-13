@@ -25,15 +25,18 @@
                         </div>
                         <div class="col s5">
                             <label>Is this file associated with an event or holiday?</label>
-                            <input asp-for="@Model.StoryFile.Event.Name" required>
+                            <input asp-for="@Model.StoryFile.Event.Name">
                         </div>
-                        <div class="col s5">
-                            <label>Description</label>
-                            <input asp-for="StoryFile.Description" required>
-                        </div>
+                        @if (Model.StoryFile.DownloadUrl != null)
+                        {
+                            <div class="col s5">
+                                <label>DownloadUrl</label>
+                                <input asp-for="StoryFile.DownloadUrl" required>
+                            </div>
+                        }
                         <div class="col s5">
                             <label>If this file was requested by a staff member, please specify who:</label>
-                            <input asp-for="@Model.StoryFile.RequestedBy.Name" required>
+                            <input asp-for="@Model.StoryFile.RequestedBy.Name">
                         </div>
 
                         <div style="text-align:right; width:20%">

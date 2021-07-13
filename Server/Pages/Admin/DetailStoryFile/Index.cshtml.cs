@@ -51,6 +51,12 @@ namespace StoryForce.Server.Pages.Admin
             {
                 var file = await _storyFileService.GetAsync(File.Id);
                 file.Description = StoryFile.Description;                           
+                file.Event.Name = StoryFile.Event.Name;                           
+                if(StoryFile.DownloadUrl != null)
+                {
+                    file.DownloadUrl = StoryFile.DownloadUrl;
+                }
+                file.RequestedBy = StoryFile.RequestedBy;
                 await _storyFileService.UpdateAsync(file.Id, file);                
             }
             return Page();
