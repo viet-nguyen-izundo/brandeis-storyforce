@@ -10,6 +10,20 @@
 {
     <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/css/pages/app-email-content.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+    <!--<link rel="stylesheet" href="/materialize-admin/app-assets/vendors/select2/select2.min.css" type="text/css">
+    <link rel="stylesheet" href="/materialize-admin/app-assets/vendors/select2/select2-materialize.css" type="text/css">-->
+    <!-- END: VENDOR CSS-->
+    <!-- BEGIN: Page Level CSS-->
+    <!--<link rel="stylesheet" type="text/css" href="/materialize-admin/app-assets/css/themes/vertical-modern-menu-template/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/materialize-admin/app-assets/css/themes/vertical-modern-menu-template/style.min.css">
+    <link rel="stylesheet" type="text/css" href="/materialize-admin/app-assets/css/pages/form-select2.min.css">-->
+    <!-- END: Page Level CSS-->
+    <!-- BEGIN: Custom CSS-->
+    <!--<link rel="stylesheet" type="text/css" href="/materialize-admin/app-assets/css/custom/custom.css">-->
+    <!-- END: Custom CSS-->
+
+    <link rel="stylesheet" type="text/css" href="/scss/Admin/Submission/SubmissionIndex.min.css">
+
 }
 
 <div class="app-email-content">
@@ -68,14 +82,19 @@
                             </div>
                             <!-- Email Content Ends -->
                             <hr>
+
                             <!-- Email Footer -->
                             <div class="email-footer">
                                 <div>
                                     <h6 class="footer-title"> (@Model.Submission.SubmittedFiles.Count)</h6>
                                     <div class="footer-buttons" style="text-align: right">
-                                        <form asp-page-handler="delete" asp-route-id="@Model.Submission.Id" method="post">
+                                        <form asp-page-handler="delete" asp-route-id="@Model.Submission.Id" method="post" class="d-inline">
                                             <button class="btn delete mb-1"><i class="material-icons left">delete</i><span>Delete</span></button>
                                         </form>
+                                        @*<a class="waves-effect waves-light green btn modal-trigger mb-1" href="#send"><i class="material-icons left">email</i><span>Send</span></a>*@
+                                        <button class="btn waves-effect waves-light green mb-1" type="submit" name="action">Send
+                                            <i class="material-icons left">email</i>
+                                        </button>
                                     </div>
                                     <div class="row note-group">
                                         <div class="col s10" style="width: 40%">
@@ -329,9 +348,41 @@
         </div>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
-<script>
+<!-- Modal Structure -->
+<!--<div id="send" class="modal">
+    <div class="modal-content">
+        <h4>Send to group</h4>-->
+
+        @*<div class="input-field">
+            <select id="select-user" class="select2 browser-default">
+                <option value="square">Square</option>
+                <option value="rectangle">Rectangle</option>
+                <option value="rombo">Rombo</option>
+                <option value="romboid">Romboid</option>
+                <option value="trapeze">Trapeze</option>
+                <option value="traible">Triangle</option>
+                <option value="polygon">Polygon</option>
+            </select>
+        </div>*@
+
+
+    <!--</div>
+    <div class="modal-footer">
+        <button class="btn delete mb-1"><i class="material-icons left">send</i><span>Send</span></button>
+        <a href="#!" class="modal-action modal-close btn waves-effect waves-light purple mb-1 btn"><i class="material-icons left">cancel</i><span>Cancel</span></a>
+    </div>
+</div>-->
+
+@section FooterScripts{
+    @*<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+    @*<script src="/materialize-admin/app-assets/vendors/select2/select2.full.min.js"></script>
+    <script src="/materialize-admin/app-assets/js/custom/custom-script.min.js"></script>
+    <script src="/materialize-admin/app-assets/js/scripts/customizer.min.js"></script>
+    <script src="/materialize-admin/app-assets/js/scripts/form-select2.min.js"></script>*@
+    <script src="/js/Admin/Submission/index-Submission.js"></script>
+
+    <script>
 
     $(document).ready(function () {
 
@@ -563,7 +614,7 @@
                     });
                 }
                 window.location.reload();
-                });
+            });
 
         });
 
@@ -645,7 +696,16 @@
                 $(this).parents('.tags-item').find('.tags-name').show();
             }
 
-        });      
+        });
+
+
     });
-</script>
+    </script>
+
+    <script>
+        var indexSubmission = new indexSubmission();
+        indexSubmission.initialize();
+    </script>
+}
+
 

@@ -49,10 +49,11 @@ namespace StoryForce.Shared.Models
 
         public Submission RejectedSubmission { get; set; }
 
-
         public string DownloadUrl { get; set; }
 
         public int? Class { get; set; }
+
+        public ICollection<StoryFileAssignment> StoryFileAssignment { get; set; }
 
         [BsonIgnore]
         [NotMapped]

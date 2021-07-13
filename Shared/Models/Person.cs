@@ -32,7 +32,9 @@ namespace StoryForce.Shared.Models
 
         public ICollection<StoryFile> RequestedStoryFiles { get; set; }
         
-        public ICollection<StoryFile> UpdatedStoryFiles { get; set; }       
+        public ICollection<StoryFile> UpdatedStoryFiles { get; set; }
+
+        public ICollection<StoryFileAssignment> AssignmentStoryFiles { get; set; }
         
     }
 

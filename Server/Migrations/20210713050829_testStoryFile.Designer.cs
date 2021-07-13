@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StoryForce.Server.Data;
@@ -10,9 +11,10 @@ using StoryForce.Server.Data;
 namespace StoryForce.Server.Migrations
 {
     [DbContext(typeof(PgDbContext))]
-    partial class PgDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210713050829_testStoryFile")]
+    partial class testStoryFile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -479,6 +481,9 @@ namespace StoryForce.Server.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("StoryFileAssignmentId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("SubmissionId")
                         .HasColumnType("integer");
 
@@ -513,6 +518,8 @@ namespace StoryForce.Server.Migrations
 
                     b.HasIndex("RequestedById");
 
+                    b.HasIndex("StoryFileAssignmentId");
+
                     b.HasIndex("SubmissionId");
 
                     b.HasIndex("SubmittedById");
@@ -528,9 +535,6 @@ namespace StoryForce.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int?>("AssignedToId")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
@@ -551,14 +555,13 @@ namespace StoryForce.Server.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Note")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("StoryFileId")
+                    b.Property<int>("StoryFileId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AssignedToId");
 
                     b.HasIndex("StoryFileId");
 
@@ -816,6 +819,10 @@ namespace StoryForce.Server.Migrations
                         .WithMany("RequestedStoryFiles")
                         .HasForeignKey("RequestedById");
 
+                    b.HasOne("StoryForce.Shared.Models.StoryFileAssignment", "StoryFileAssignment")
+                        .WithMany("StoryFile")
+                        .HasForeignKey("StoryFileAssignmentId");
+
                     b.HasOne("StoryForce.Shared.Models.Submission", "Submission")
                         .WithMany("SubmittedFiles")
                         .HasForeignKey("SubmissionId")
@@ -838,6 +845,8 @@ namespace StoryForce.Server.Migrations
 
                     b.Navigation("RequestedBy");
 
+                    b.Navigation("StoryFileAssignment");
+
                     b.Navigation("Submission");
 
                     b.Navigation("SubmittedBy");
@@ -847,17 +856,13 @@ namespace StoryForce.Server.Migrations
 
             modelBuilder.Entity("StoryForce.Shared.Models.StoryFileAssignment", b =>
                 {
-                    b.HasOne("StoryForce.Shared.Models.Person", "AssignedTo")
-                        .WithMany("AssignmentStoryFiles")
-                        .HasForeignKey("AssignedToId");
+                    b.HasOne("StoryForce.Shared.Models.StoryFile", "StoryFileList")
+                        .WithMany("StoryFileAssignmentList")
+                        .HasForeignKey("StoryFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("StoryForce.Shared.Models.StoryFile", "StoryFile")
-                        .WithMany("StoryFileAssignment")
-                        .HasForeignKey("StoryFileId");
-
-                    b.Navigation("AssignedTo");
-
-                    b.Navigation("StoryFile");
+                    b.Navigation("StoryFileList");
                 });
 
             modelBuilder.Entity("StoryForce.Shared.Models.Submission", b =>
@@ -916,8 +921,6 @@ namespace StoryForce.Server.Migrations
                 {
                     b.Navigation("ApprovedSubmissions");
 
-                    b.Navigation("AssignmentStoryFiles");
-
                     b.Navigation("RequestedStoryFiles");
 
                     b.Navigation("ReviewedBySubmissions");
@@ -939,7 +942,12 @@ namespace StoryForce.Server.Migrations
 
                     b.Navigation("Notes");
 
-                    b.Navigation("StoryFileAssignment");
+                    b.Navigation("StoryFileAssignmentList");
+                });
+
+            modelBuilder.Entity("StoryForce.Shared.Models.StoryFileAssignment", b =>
+                {
+                    b.Navigation("StoryFile");
                 });
 
             modelBuilder.Entity("StoryForce.Shared.Models.Submission", b =>
