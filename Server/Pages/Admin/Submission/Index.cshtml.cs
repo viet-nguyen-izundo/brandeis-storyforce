@@ -40,8 +40,10 @@ namespace StoryForce.Server.Pages.Admin.Submission
             _submissionId = id;
             var submission = await this._submissionService.GetAsync(_submissionId);
             this.Submission = SubmissionDto.ConvertFromEntity(submission);
+
             return Page();
         }
+  
 
         public async Task<IActionResult> OnPostDeleteAsync(int id)
         {
