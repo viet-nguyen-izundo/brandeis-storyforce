@@ -1,7 +1,10 @@
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
@@ -10,35 +13,28 @@ using StoryForce.Shared.Dtos;
 
 namespace StoryForce.Server.Pages.Admin.SearchStoryFile
 {
+    [Authorize]
     public class IndexModel : PageModel
     {
-        private ISubmissionService _submissionService;
-        private readonly IConfiguration _configuration;
-        private IAmazonS3 _s3Client;
-        private readonly INoteService _noteService;
-        private string _s3BucketName;
-        public IndexModel(ISubmissionService submissionService, IConfiguration configuration, IAmazonS3 s3Client, INoteService noteService)
+        private readonly IStoryFileService _storyFileService;
+        private readonly IAmazonS3 _s3Client;
+
+        public IndexModel(IAmazonS3 s3Client, IStoryFileService storyFileService)
         {
-            this._submissionService = submissionService;
-            this._configuration = configuration;
-            this._s3BucketName = this._configuration.GetSection("AWS:S3:BucketName").Value;
+            this._storyFileService = storyFileService;
             this._s3Client = s3Client;
-            _noteService = noteService;
+            storyFiles = new List<StoryForce.Shared.Models.StoryFile>();
         }
-        public void OnGet()
-        {
-        }
+        public IList<StoryForce.Shared.Models.StoryFile> storyFiles { get; set; }
+        [Parameter]
 
-        [BindProperty]
-        public StoryForce.Shared.Dtos.SubmissionDto Submission { get; set; }
+        public string myvalue { get; set; }
 
-        private int _submissionId;
-        public async Task<IActionResult> OnGetAsync(int id)
+        public async Task<IActionResult> OnGetAsync(string myvalue)
         {
-            _submissionId = id;
-            var submission = await this._submissionService.GetAsync(_submissionId);
-            this.Submission = SubmissionDto.ConvertFromEntity(submission);
+            storyFiles = await _storyFileService.GetByStoryFileByInputValueAsync(myvalue);
             return Page();
         }
     }
 }
+

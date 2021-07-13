@@ -20,17 +20,18 @@ namespace StoryForce.Server.Controllers
             this._storyFileService = storyFileService;
             this._submissionService = submissionService;            
         }
-        [HttpPost]
-        public async Task<IActionResult> Post(Search search)
-        {   
-            var submission = _submissionService.GetBySubmittedByInputValueAsync(search.Value);
-            //var storyFile = _storyFileService.GetByStoryFileByInputValueAsync(search.Value);           
-            return Ok(submission);
-        }
-        public class Search
-        {
-            public string Value { get; set; }
+        
+        //[HttpPost]        
+        //public async Task<IActionResult> Post(Search search)
+        //{   
+        //    //var submission = _submissionService.GetBySubmittedByInputValueAsync(search.Value);
+        //    var storyFile = _storyFileService.GetByStoryFileByInputValueAsync(search.Value);           
+        //    return Ok(storyFile);
+        //}
+        //public class Search
+        //{
+        //    public string Value { get; set; }
            
-        }
+        //}
     }
 }

@@ -15,60 +15,13 @@
         <div class="app-wrapper">
             <div class="app-search">
                 <form method="post">
-                    <input type="text" placeholder="Search Submissions" class="app-filter search-value" id="search-value" asp-for="@Model.value">
-                    <button type="submit"><i class="material-icons mr-2 search-icon" style="cursor:pointer">search</i> </button>
+                    <button type="submit">
+                        <i class="material-icons mr-2 search-icon" style="cursor:pointer; margin-top: 22px;">search</i>
+                    </button>
+                    <input type="text" placeholder="Search Submissions" class="app-filter search-value" asp-for="@Model.value" >
                 </form>
-                @if (Model.submissionSearch != null)
-                {
-                    <p>Submission</p>
-                    foreach (var sub in Model.submissionSearch)
-                    {
-                        <div class="user-media">
-                            <img src="@(!string.IsNullOrEmpty(sub.SubmittedBy.AvatarUrl) ? sub.SubmittedBy.AvatarUrl : null)" alt=""
-                                 class="circle z-depth-2 responsive-img avtar">
-                            <div class="list-title">@Html.DisplayFor(model => sub.Title)</div>
-                        </div>
-                        <div class="list-desc">
-                            @Html.DisplayFor(model => sub.Description)
-                        </div>
-                        <div class="list-right">
-                            <div class="list-date"> @Html.DisplayFor(model => sub.CreatedAt) </div>
-                        </div>
-                    }
-                }
-                @if (Model.storyFile != null)
-                {
-                    <p>StoryFile:</p>
-                    foreach (var story in Model.storyFile)
-                    {
-                        <div class="file">
-                            @if (story.Type.StartsWith("image/"))
-                            {
-                                <img src="@story.GetResizedImageUrl(100, 100)" alt="@story.Title" title="@story.Title" /><br />
-                            }
-                            else
-                            {
-                                @story.Title
-                            }
-                            <div>@(!string.IsNullOrEmpty(story.Description) ? story.Description : null)</div>
-                            <div>@(!string.IsNullOrEmpty(story.DownloadUrl) ? story.DownloadUrl : null)</div>
-                            @*<a href="@ImageService.G(file.Key)" class="right" target="_blank">
-                                <i class="material-icons">file_download</i>
-                            </a>*@
-                        </div>
-                        <div class="tags">
-                            @if (story.Tags != null)
-                            {
-                                <p>Tags:</p>
-                                @foreach (var tag in story.Tags)
-                                {
-                                    <div>@tag.Name</div>
-                                }
-                            }
-                        </div>
-                    }
-                }
-
+            </div>
+            <div id="result-search">
             </div>
             <div class="card card card-default scrollspy border-radius-6 fixed-width">
                 <div class="card-content p-0 pb-2">
@@ -93,12 +46,12 @@
                         <div class="email-action">
                             <span class="email-options"><i class="material-icons grey-text">more_vert</i></span>
                         </div>
-                    </div>
-                    <div class="collection email-collection">
-                        @{
-                            int row = 1;
-                            if (Model.Submissions != null)
-                            {
+                    </div>                    
+                    @if (Model.Submissions != null)
+                    {
+                        <div class="collection email-collection">
+                            @{
+                                int row = 1;
                                 foreach (var submission in Model.Submissions)
                                 {
                                     <div class="email-brief-info collection-item animate fadeUp delay-@row">
@@ -164,11 +117,11 @@
                                     row++;
                                 }
                             }
-                        }
-                        <div class="no-data-found collection-item">
-                            <h6 class="center-align font-weight-500">No Results Found</h6>
+                            <div class="no-data-found collection-item">
+                                <h6 class="center-align font-weight-500">No Results Found</h6>
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>
@@ -258,8 +211,42 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
 <script>
     $(document).ready(function () {
-        $(".header-search-wrapper").on("change", ".header-search-input", function () {
-            $.parents(".header-search-wrapper").find('.ps--active-y').css("display", "none");
-        });
+        //$(".app-search").on("change", ".search-value", function () {
+        //    var searchVal = $('.search-value').val();
+        //    $.ajax({
+        //        url: '/api/search',
+        //        type: 'POST',
+        //        contentType: "application/json",
+        //        data: JSON.stringify({
+        //            value: searchVal
+        //        })
+        //    }).then(function (res) {
+        //        if (res) {
+
+        //            let resultSearch = $("#result-search");
+
+        //            resultSearch.html("");
+
+        //            var html = '';
+
+        //            for (var i = 0; i < res.result.length; i++) {
+        //                var title = res.result[i].title;
+        //                var description = res.result[i].description;
+        //                var size = res.result[i].size;
+
+        //                html += "<div style='background:white'>"
+        //                    + title + "</br >"
+        //                    + description + "</br >"
+        //                    + size
+        //                    + "</div>";
+
+        //                resultSearch.append(html)
+        //            }
+
+
+        //        }
+        //    });
+
+        //});
     });
 </script>
