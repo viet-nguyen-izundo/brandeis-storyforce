@@ -3,6 +3,7 @@
 @model StoryForce.Server.Pages.Admin.Submission.DetailsModel
 @{
     ViewData["Title"] = "Submission Details";
+    ViewData["SideBar-Title"] = "Submissions";
 }
 @inject ImageService ImageService
 @*@inject INoteService NoteService*@
@@ -91,8 +92,9 @@
                                         <form asp-page-handler="delete" asp-route-id="@Model.Submission.Id" method="post" class="d-inline">
                                             <button class="btn delete mb-1"><i class="material-icons left">delete</i><span>Delete</span></button>
                                         </form>
-                                        @*<a class="waves-effect waves-light green btn modal-trigger mb-1" href="#send"><i class="material-icons left">email</i><span>Send</span></a>*@
-                                        <button class="btn waves-effect waves-light green mb-1" type="submit" name="action">Send
+                                        @*<a class="waves-effect waves-light green btn modal-trigger mb-1" href=""><i class="material-icons left">email</i><span>Send</span></a>*@
+                                        <button class="btn waves-effect waves-light green mb-1" id="goToAssignment">
+                                            Send
                                             <i class="material-icons left">email</i>
                                         </button>
                                     </div>
@@ -348,277 +350,253 @@
         </div>
     </div>
 </div>
-<!-- Modal Structure -->
-<!--<div id="send" class="modal">
-    <div class="modal-content">
-        <h4>Send to group</h4>-->
-
-        @*<div class="input-field">
-            <select id="select-user" class="select2 browser-default">
-                <option value="square">Square</option>
-                <option value="rectangle">Rectangle</option>
-                <option value="rombo">Rombo</option>
-                <option value="romboid">Romboid</option>
-                <option value="trapeze">Trapeze</option>
-                <option value="traible">Triangle</option>
-                <option value="polygon">Polygon</option>
-            </select>
-        </div>*@
-
-
-    <!--</div>
-    <div class="modal-footer">
-        <button class="btn delete mb-1"><i class="material-icons left">send</i><span>Send</span></button>
-        <a href="#!" class="modal-action modal-close btn waves-effect waves-light purple mb-1 btn"><i class="material-icons left">cancel</i><span>Cancel</span></a>
-    </div>
-</div>-->
 
 @section FooterScripts{
     @*<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>*@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
     @*<script src="/materialize-admin/app-assets/vendors/select2/select2.full.min.js"></script>
-    <script src="/materialize-admin/app-assets/js/custom/custom-script.min.js"></script>
-    <script src="/materialize-admin/app-assets/js/scripts/customizer.min.js"></script>
-    <script src="/materialize-admin/app-assets/js/scripts/form-select2.min.js"></script>*@
+        <script src="/materialize-admin/app-assets/js/custom/custom-script.min.js"></script>
+        <script src="/materialize-admin/app-assets/js/scripts/customizer.min.js"></script>
+        <script src="/materialize-admin/app-assets/js/scripts/form-select2.min.js"></script>*@
     <script src="/js/Admin/Submission/index-Submission.js"></script>
 
     <script>
 
-    $(document).ready(function () {
+        $(document).ready(function () {
 
-        //------Note------
-        $(".attachment-list").on("click", ".edit-note-button", function () {
-            console.log("note-id", $(this).data("note-id"));
-            var mode = $(this).find('i').text();
-            if (mode === 'save') {
-                $.ajax({
-                    url: '/api/note/' + $(this).data("note-id"),
-                    type: 'PUT',
-                    contentType: "application/json",
-                    data: JSON.stringify({
-                        text: $(this).parents('.note-item').find('.note-input textarea').val(),
-                        id: $(this).data("note-id")
-                    })
-                }).then(function (res) {
-                    window.location.reload();
-                });
-            }
-            else {
-                $(this).find('i').text('save');
-                $(this).find('span').text('Save');
-                $(this).parents('.note-item').find('.note-text').hide();
-                $(this).parents('.note-item').find('.note-input').show();
-            }
-
-        });
-
-        $(".note-group").on("click", ".edit-note-button", function () {
-            console.log("note-id", $(this).data("note-id"));
-            var mode = $(this).find('i').text();
-            if (mode === 'save') {
-                $.ajax({
-                    url: '/api/note/' + $(this).data("note-id"),
-                    type: 'PUT',
-                    contentType: "application/json",
-                    data: JSON.stringify({
-                        text: $(this).parents('.note-item-group').find('.note-input textarea').val(),
-                        id: $(this).data("note-id")
-                    })
-                }).then(function (res) {
-                    window.location.reload();
-                });
-            }
-            else {
-                $(this).find('i').text('save');
-                $(this).find('span').text('Save');
-                $(this).parents('.note-item-group').find('.note-text').hide();
-                $(this).parents('.note-item-group').find('.note-input').show();
-            }
-
-        });
-
-        $(".attachment-list").on("click", ".new-note-button", function () {
-            debugger
-            var newNoteText = $(this).parents('.new-note').find('.new-note-input').val();
-            $.ajax({
-                url: '/api/note',
-                type: 'POST',
-                contentType: "application/json",
-                data: JSON.stringify({
-                    text: newNoteText,
-                    username: '@User?.Identity?.Name',
-                    storyFileId: $(this).data("file-id")
-                })
-            }).then(function (res) {
-                window.location.reload();
-            });
-
-        });
-        $(".email-footer").on("click", ".new-note-group-button", function () {
-            debugger
-            var newNoteText = $(this).parents('.note-group').find('.new-note-group-input').val();
-            var submissionId = $(this).data("submission-id");
-            $.ajax({
-                url: '/api/note',
-                type: 'POST',
-                contentType: "application/json",
-                data: JSON.stringify({
-                    text: newNoteText,
-                    username: '@User?.Identity?.Name',
-                    storyFileId: $(this).data("file-id"),
-                    SubmissionId: submissionId
-                })
-            }).then(function (res) {
-                window.location.reload();
-            });
-
-        });
-
-        $(".attachment-list").on("click", ".delete-note-button", function () {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ok'
-            }).then((result) => {
-                if (result.isConfirmed) {
+            //------Note------
+            $(".attachment-list").on("click", ".edit-note-button", function () {
+                console.log("note-id", $(this).data("note-id"));
+                var mode = $(this).find('i').text();
+                if (mode === 'save') {
                     $.ajax({
                         url: '/api/note/' + $(this).data("note-id"),
-                        type: 'DELETE'
-                    }).then(function (res) {
-                        Swal.fire(
-                            'Deleted!',
-                            "The note was deleted",
-                            'success'
-                        ).then(function() {
-                            window.location.reload();
-                        });
-
-                    });
-
-                }
-            });
-
-
-        });
-
-        $(".note-group").on("click", ".delete-note-button", function () {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ok'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/api/note/' + $(this).data("note-id"),
-                        type: 'DELETE'
-                    }).then(function (res) {
-                        Swal.fire(
-                            'Deleted!',
-                            "The note was deleted",
-                            'success'
-                        ).then(function () {
-                            window.location.reload();
-                        });
-
-                    });
-
-                }
-            });
-
-
-        });
-
-        //------Tags------
-
-        $(".tagstype").change(function () {
-            let select = $(this).find("option:selected").val();
-            if (select == "brandtags") {
-                $(this).parents(".attachment").find('.new-tags-brand').css("display", "block");
-                $(this).parents(".attachment").find('.new-tags-process').css("display", "none");
-            }
-            else if (select == "processtags") {
-                $(this).parents(".attachment").find('.new-tags-brand').css("display", "none");
-                $(this).parents(".attachment").find('.new-tags-process').css("display", "block");
-                $(this).parents(".attachment").find('.note-tag-process').css("display", "block");
-            }
-            else if (select == "") {
-                $(this).parents(".attachment").find('.new-tags-brand').css("display", "none");
-                $(this).parents(".attachment").find('.new-tags-process').css("display", "none");
-                $(this).parents(".attachment").find('.note-tag-process').css("display", "none");
-            }
-        })
-
-        $('textarea.autocomplete_brand').autocomplete({
-            data: {
-                "Confident Leader (Outcome)": null,
-                "Joyful Learner (Outcome)": null,
-                "Global Citizen (Outcome)": null,
-                "Curriculum (Process)": null,
-                "Culture (Process)": null,
-                "Character (Process)": null
-            },
-        });
-        $('textarea.autocomplete_process').autocomplete({
-            data: {
-                "Pending": null,
-                "Internal use only - Not for public view": null,
-                "Potential for newsletter, media": null,
-                "In editing process": null,
-                "Edited for Media Use": null,
-                "Used in Media": null
-            },
-        });
-
-        $(".attachment-list").on("click", ".new-tags-button", function () {
-            debugger
-            var newTagsText = "";
-            var newTagsBrand = $(this).parents('.new-tags-brand').find('.autocomplete_brand').val();
-            var newTagsProcess = $(this).parents('.new-tags-process').find('.autocomplete_process').val();
-            if (newTagsBrand) {
-                newTagsText = newTagsBrand;
-            }
-            if (newTagsProcess) {
-                newTagsText = newTagsProcess;
-            }
-            var newNoteText = $(this).parents('.new-tags-process').find('.new-note-process').val();
-            var id = $(this).data("file-id");
-            $.ajax({
-                url: '/api/tag',
-                type: 'POST',
-                contentType: "application/json",
-                data: JSON.stringify({
-                    name: newTagsText,
-                    storyFileId: $(this).data("file-id")
-                })
-            }).then(function (res) {
-                if (newNoteText) {
-                    $.ajax({
-                        url: '/api/note',
-                        type: 'POST',
+                        type: 'PUT',
                         contentType: "application/json",
                         data: JSON.stringify({
-                            text: newNoteText,
-                            username: '@User?.Identity?.Name',
-                            storyFileId: id
+                            text: $(this).parents('.note-item').find('.note-input textarea').val(),
+                            id: $(this).data("note-id")
                         })
                     }).then(function (res) {
                         window.location.reload();
                     });
                 }
-                window.location.reload();
+                else {
+                    $(this).find('i').text('save');
+                    $(this).find('span').text('Save');
+                    $(this).parents('.note-item').find('.note-text').hide();
+                    $(this).parents('.note-item').find('.note-input').show();
+                }
+
             });
 
-        });
+            $(".note-group").on("click", ".edit-note-button", function () {
+                console.log("note-id", $(this).data("note-id"));
+                var mode = $(this).find('i').text();
+                if (mode === 'save') {
+                    $.ajax({
+                        url: '/api/note/' + $(this).data("note-id"),
+                        type: 'PUT',
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            text: $(this).parents('.note-item-group').find('.note-input textarea').val(),
+                            id: $(this).data("note-id")
+                        })
+                    }).then(function (res) {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    $(this).find('i').text('save');
+                    $(this).find('span').text('Save');
+                    $(this).parents('.note-item-group').find('.note-text').hide();
+                    $(this).parents('.note-item-group').find('.note-input').show();
+                }
 
-        @*$(".attachment-list").on("click", ".new-note-process-button", function () {
+            });
+
+            $(".attachment-list").on("click", ".new-note-button", function () {
+                debugger
+                var newNoteText = $(this).parents('.new-note').find('.new-note-input').val();
+                $.ajax({
+                    url: '/api/note',
+                    type: 'POST',
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        text: newNoteText,
+                        username: '@User?.Identity?.Name',
+                        storyFileId: $(this).data("file-id")
+                    })
+                }).then(function (res) {
+                    window.location.reload();
+                });
+
+            });
+            $(".email-footer").on("click", ".new-note-group-button", function () {
+                debugger
+                var newNoteText = $(this).parents('.note-group').find('.new-note-group-input').val();
+                var submissionId = $(this).data("submission-id");
+                $.ajax({
+                    url: '/api/note',
+                    type: 'POST',
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        text: newNoteText,
+                        username: '@User?.Identity?.Name',
+                        storyFileId: $(this).data("file-id"),
+                        SubmissionId: submissionId
+                    })
+                }).then(function (res) {
+                    window.location.reload();
+                });
+
+            });
+
+            $(".attachment-list").on("click", ".delete-note-button", function () {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ok'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/api/note/' + $(this).data("note-id"),
+                            type: 'DELETE'
+                        }).then(function (res) {
+                            Swal.fire(
+                                'Deleted!',
+                                "The note was deleted",
+                                'success'
+                            ).then(function() {
+                                window.location.reload();
+                            });
+
+                        });
+
+                    }
+                });
+
+
+            });
+
+            $(".note-group").on("click", ".delete-note-button", function () {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ok'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/api/note/' + $(this).data("note-id"),
+                            type: 'DELETE'
+                        }).then(function (res) {
+                            Swal.fire(
+                                'Deleted!',
+                                "The note was deleted",
+                                'success'
+                            ).then(function () {
+                                window.location.reload();
+                            });
+
+                        });
+
+                    }
+                });
+
+
+            });
+
+            //------Tags------
+
+            $(".tagstype").change(function () {
+                let select = $(this).find("option:selected").val();
+                if (select == "brandtags") {
+                    $(this).parents(".attachment").find('.new-tags-brand').css("display", "block");
+                    $(this).parents(".attachment").find('.new-tags-process').css("display", "none");
+                }
+                else if (select == "processtags") {
+                    $(this).parents(".attachment").find('.new-tags-brand').css("display", "none");
+                    $(this).parents(".attachment").find('.new-tags-process').css("display", "block");
+                    $(this).parents(".attachment").find('.note-tag-process').css("display", "block");
+                }
+                else if (select == "") {
+                    $(this).parents(".attachment").find('.new-tags-brand').css("display", "none");
+                    $(this).parents(".attachment").find('.new-tags-process').css("display", "none");
+                    $(this).parents(".attachment").find('.note-tag-process').css("display", "none");
+                }
+            })
+
+            $('textarea.autocomplete_brand').autocomplete({
+                data: {
+                    "Confident Leader (Outcome)": null,
+                    "Joyful Learner (Outcome)": null,
+                    "Global Citizen (Outcome)": null,
+                    "Curriculum (Process)": null,
+                    "Culture (Process)": null,
+                    "Character (Process)": null
+                },
+            });
+            $('textarea.autocomplete_process').autocomplete({
+                data: {
+                    "Pending": null,
+                    "Internal use only - Not for public view": null,
+                    "Potential for newsletter, media": null,
+                    "In editing process": null,
+                    "Edited for Media Use": null,
+                    "Used in Media": null
+                },
+            });
+
+            $(".attachment-list").on("click", ".new-tags-button", function () {
+                debugger
+                var newTagsText = "";
+                var newTagsBrand = $(this).parents('.new-tags-brand').find('.autocomplete_brand').val();
+                var newTagsProcess = $(this).parents('.new-tags-process').find('.autocomplete_process').val();
+                if (newTagsBrand) {
+                    newTagsText = newTagsBrand;
+                }
+                if (newTagsProcess) {
+                    newTagsText = newTagsProcess;
+                }
+                var newNoteText = $(this).parents('.new-tags-process').find('.new-note-process').val();
+                var id = $(this).data("file-id");
+                $.ajax({
+                    url: '/api/tag',
+                    type: 'POST',
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        name: newTagsText,
+                        storyFileId: $(this).data("file-id")
+                    })
+                }).then(function (res) {
+                    if (newNoteText) {
+                        $.ajax({
+                            url: '/api/note',
+                            type: 'POST',
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                text: newNoteText,
+                                username: '@User?.Identity?.Name',
+                                storyFileId: id
+                            })
+                        }).then(function (res) {
+                            window.location.reload();
+                        });
+                    }
+                    window.location.reload();
+                });
+
+            });
+
+            @*$(".attachment-list").on("click", ".new-note-process-button", function () {
             var newNoteText = $(this).parents('.note-tag-process').find('.new-note-process').val();
             $.ajax({
                 url: '/api/note',
@@ -635,69 +613,69 @@
 
         });*@
 
-        $(".attachment-list").on("click", ".close-tags-process-button", function () {
-            $(this).parents(".attachment").find('.note-tag-process').css("display", "none");
-            $(this).parents(".attachment").find('.new-tags-button').css("display", "block");
-        });
+            $(".attachment-list").on("click", ".close-tags-process-button", function () {
+                $(this).parents(".attachment").find('.note-tag-process').css("display", "none");
+                $(this).parents(".attachment").find('.new-tags-button').css("display", "block");
+            });
 
-        //$(".attachment-list").on("click", ".add-process-tags-button", function () {
-        //    $(this).parents(".attachment").find('.note-tag-process').css("display", "block");
-        //});
+            //$(".attachment-list").on("click", ".add-process-tags-button", function () {
+            //    $(this).parents(".attachment").find('.note-tag-process').css("display", "block");
+            //});
 
-        $(".attachment-list").on("click", ".delete-tags-button", function () {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ok'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/api/tag/' + $(this).data("tag-id"),
-                        type: 'DELETE'
-                    }).then(function (res) {
-                        Swal.fire(
-                            'Deleted!',
-                            "The tag was deleted",
-                            'success'
-                        ).then(function () {
-                            window.location.reload();
+            $(".attachment-list").on("click", ".delete-tags-button", function () {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ok'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/api/tag/' + $(this).data("tag-id"),
+                            type: 'DELETE'
+                        }).then(function (res) {
+                            Swal.fire(
+                                'Deleted!',
+                                "The tag was deleted",
+                                'success'
+                            ).then(function () {
+                                window.location.reload();
+                            });
+
                         });
 
-                    });
+                    }
+                });
+            });
 
+            $(".attachment-list").on("click", ".edit-tags-button", function () {
+                console.log("note-id", $(this).data("tag-id"));
+                var mode = $(this).find('i').text();
+                if (mode === 'save') {
+                    $.ajax({
+                        url: '/api/tag/' + $(this).data("tag-id"),
+                        type: 'PUT',
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            name: $(this).parents('.tags-item').find('.tags-name textarea').val(),
+                            id: $(this).data("tag-id")
+                        })
+                    }).then(function (res) {
+                        window.location.reload();
+                    });
                 }
+                else {
+                    $(this).find('i').text('save');
+                    $(this).find('span').text('Save');
+                    $(this).parents('.tags-item').find('.tags-text').hide();
+                    $(this).parents('.tags-item').find('.tags-name').show();
+                }
+
             });
         });
-
-        $(".attachment-list").on("click", ".edit-tags-button", function () {
-            console.log("note-id", $(this).data("tag-id"));
-            var mode = $(this).find('i').text();
-            if (mode === 'save') {
-                $.ajax({
-                    url: '/api/tag/' + $(this).data("tag-id"),
-                    type: 'PUT',
-                    contentType: "application/json",
-                    data: JSON.stringify({
-                        name: $(this).parents('.tags-item').find('.tags-name textarea').val(),
-                        id: $(this).data("tag-id")
-                    })
-                }).then(function (res) {
-                    window.location.reload();
-                });
-            }
-            else {
-                $(this).find('i').text('save');
-                $(this).find('span').text('Save');
-                $(this).parents('.tags-item').find('.tags-text').hide();
-                $(this).parents('.tags-item').find('.tags-name').show();
-            }
-
-        });
-    });
     </script>
 
     <script>

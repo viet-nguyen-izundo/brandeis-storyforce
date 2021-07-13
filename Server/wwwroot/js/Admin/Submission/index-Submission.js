@@ -5,15 +5,9 @@
 
     };
     function registerEvents() {
-
+        $("#goToAssignment").click(function () {
+            window.location.href = window.location.href + '/assignment';
+        });
     }
-
-
 };
-$(document).ready(function() {
-    //$('.modal').modal();
-    //$("#select-user").select2({
-    //    dropdownAutoWidth: true,
-    //    width: '100%'
-    //});
-});
+
