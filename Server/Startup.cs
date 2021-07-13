@@ -42,6 +42,13 @@ namespace StoryForce.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if (environment == Environments.Development)
+            {
+                services.AddRazorPages()
+                    .AddRazorRuntimeCompilation();
+            }
+
             services.AddSingleton(Configuration);
             // services.AddDbContext<ApplicationDbContext>(options =>
             //     options.UseSqlServer(
