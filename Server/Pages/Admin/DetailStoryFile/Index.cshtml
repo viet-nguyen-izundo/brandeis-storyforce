@@ -20,7 +20,7 @@
                     @if (Model != null)
                     {
                         <div class="col s12">
-                            <label style="border-bottom:1px solid">SubmittedBy</label>                            
+                            <label style="border-bottom:1px solid">SubmittedBy</label>
                         </div>
                         <div class="col s5">
                             <label>Name<span style="color:red">(*)</span></label>
@@ -31,7 +31,7 @@
                             <input asp-for="StoryFile.SubmittedBy.Email">
                         </div>
                         <div class="col s12">
-                            <label style="border-bottom:1px solid">File Info:</label>
+                            <label style="border-bottom:1px solid">File Info</label>
                         </div>
                         <div class="col s5">
                             <label>Description<span style="color:red">(*)</span></label>
@@ -61,6 +61,10 @@
                                 <input asp-for="StoryFile.DownloadUrl">
                             </div>
                         }
+                        @*<div class="col s5">
+                            <label>Who is featured?</label>
+                            <input asp-for="StoryFile.FeaturedPeople.FirstOrDefault().Name">
+                        </div>*@
                         <div class="col s5">
                             <label>If this file was requested by a staff member, please specify who:</label>
                             <select asp-for="StoryFile.RequestedBy.Id">

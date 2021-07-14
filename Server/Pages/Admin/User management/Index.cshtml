@@ -74,7 +74,7 @@
                     }
                     @if (Model != null)
                     {
-                        foreach (var user in Model.User)
+                        foreach (var user in Model.User.OrderBy(m=>m.Id))
                         {
                             <tr>
                                 <td>@index</td>
@@ -84,7 +84,7 @@
                                 <td>@(!string.IsNullOrEmpty(user.PhoneNumber) ? user.PhoneNumber : null)</td>
                                 <td>
                                     <a href="/usermanagement/@user.Id">Edit</a>
-                                    <a class="delete-people" data-id-people="@user.Id" href="#">Delete</a>
+                                    <a class="delete-user" data-id-people="@user.Id" href="#">Delete</a>
                                 </td>
                             </tr>
                             index++;
@@ -99,7 +99,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        $(".content-table").on("click", ".delete-people", function () {
+        $(".content-table").on("click", ".delete-user", function () {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
