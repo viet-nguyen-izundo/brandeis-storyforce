@@ -19,9 +19,19 @@
                     <p class="header">StoryFile Detail</p>
                     @if (Model != null)
                     {
+                        <div class="col s12">
+                            <label style="border-bottom:1px solid">SubmittedBy</label>                            
+                        </div>
                         <div class="col s5">
-                            <label>SubmittedBy Name<span style="color:red">(*)</span></label>
+                            <label>Name<span style="color:red">(*)</span></label>
                             <input asp-for="StoryFile.SubmittedBy.Name" required>
+                        </div>
+                        <div class="col s5">
+                            <label>Email<span style="color:red">(*)</span></label>
+                            <input asp-for="StoryFile.SubmittedBy.Email">
+                        </div>
+                        <div class="col s12">
+                            <label style="border-bottom:1px solid">File Info:</label>
                         </div>
                         <div class="col s5">
                             <label>Description<span style="color:red">(*)</span></label>
@@ -67,10 +77,6 @@
                                     }
                                 }
                             </select>
-                        </div>
-                        <div class="col s5">
-                            <label>Who is featured?</label>
-                            <input asp-for="@Model.StoryFile.FeaturedPeople">
                         </div>
 
                         <div style="text-align:right; width:20%">

@@ -39,6 +39,8 @@ namespace StoryForce.Shared.Models
         public List<AuditDetail> History { get; set; }
 
         public int SubmissionId { get; set; }
+        public int RequestedById { get; set; }
+        public int SubmittedById { get; set; }
 
         public Submission Submission { get; set; }
 
