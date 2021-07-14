@@ -10,5 +10,9 @@
   {
     "outputFile": "wwwroot/scss/Admin/Submission/SubmissionIndex.css",
     "inputFile": "wwwroot/scss/Admin/Submission/SubmissionIndex.scss"
+  },
+  {
+    "outputFile": "wwwroot/scss/Admin/Submission/Assignment/AssignmentIndex.css",
+    "inputFile": "wwwroot/scss/Admin/Submission/Assignment/AssignmentIndex.scss"
   }
 ]

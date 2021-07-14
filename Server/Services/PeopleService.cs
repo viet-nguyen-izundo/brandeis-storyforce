@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
+using StoryForce.Server.Data;
+using StoryForce.Shared.Dtos;
 using StoryForce.Shared.Models;
 
 namespace StoryForce.Server.Services
@@ -8,11 +12,13 @@ namespace StoryForce.Server.Services
     public class PeopleService : IPeopleService
     {
         private readonly IMongoCollection<Person> _people;
+    
 
         public PeopleService(IMongoDbDatabaseSettings settings)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
+           
 
             _people = database.GetCollection<Person>("People");
         }
@@ -79,6 +85,11 @@ namespace StoryForce.Server.Services
         }
 
         public Task<List<Person>> GetByAllAsync()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<List<PeopleSelect2Vm>> GetByFilterAsync(string filter)
         {
             throw new System.NotImplementedException();
         }

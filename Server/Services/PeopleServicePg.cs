@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using StoryForce.Server.Data;
+using StoryForce.Shared.Dtos;
 using StoryForce.Shared.Models;
 
 namespace StoryForce.Server.Services
@@ -108,6 +110,16 @@ namespace StoryForce.Server.Services
         public async Task<List<Person>> GetByAllAsync()
         {
             return await _dbContext.Persons.ToListAsync();
+        }
+        public async Task<List<PeopleSelect2Vm>> GetByFilterAsync(string filter)
+        {
+            var persons = await _dbContext.Persons.Where(x => x.Name.Contains(filter)
+                                                              || x.Email.Contains(filter)).ToListAsync();
+            if (persons == null)
+                return new List<PeopleSelect2Vm>();
+
+            var peopleVm = PeopleDto.ConvertFromEntityToSelect2Vm(persons.ToArray());
+            return peopleVm.ToList();
         }
     }
 }

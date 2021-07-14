@@ -9,6 +9,7 @@ using StoryForce.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using OfficeOpenXml;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace StoryForce.Server.Controllers
 {
@@ -160,5 +161,14 @@ namespace StoryForce.Server.Controllers
         //    }
         //    return RedirectToAction("/usermanagement");
         //}
+
+        [HttpGet("select2Filter")]
+        public async Task<List<PeopleSelect2Vm>> GetPersonFilter(string search)
+        {
+            var peoples = await this._peopleService.GetByFilterAsync(search ?? string.Empty);
+            return peoples;
+        }
+
+ 
     }
 }
