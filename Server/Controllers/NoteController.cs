@@ -94,7 +94,7 @@ namespace StoryForce.Server.Controllers
                 return BadRequest($"Note with id '{id}' not found.");
             await _noteService.RemoveAsync(id);
             return NoContent();
-        }
+        }        
     }
 
     public class CreateNoteDto

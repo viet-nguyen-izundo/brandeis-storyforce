@@ -345,7 +345,7 @@ namespace StoryForce.Client.Pages
         }
 
         protected void AddUrl()
-        {
+        {            
             this.Submission.UploadFiles.Add(new UploadFile()
             {
                 DownloadUrl = NewUploadByUrl.DownloadUrl,
