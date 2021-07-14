@@ -7,7 +7,7 @@
     var colorPalette = new string[]
     {
         "light-blue", "green", "red", "light-green", "lime", "yellow", "amber", "orange"
-    };
+            };
 }
 <!DOCTYPE html>
 <html>
@@ -18,7 +18,8 @@
     <title>@ViewBag.Title</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- BEGIN: VENDOR CSS-->
-    <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/vendors/vendors.min.css">
+    @*<link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/vendors/vendors.min.css">*@
+    <link rel="stylesheet" type="text/css" href="/materialize-admin/app-assets/vendors/vendors.min.css">
     <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/vendors/flag-icon/css/flag-icon.min.css">
     <link rel="stylesheet" type="text/css" href="~/materialize-admin/app-assets/vendors/quill/quill.snow.css">
     <!-- END: VENDOR CSS-->
@@ -181,7 +182,7 @@
                                             <li class="sidebar-title">Labels</li>
                                             @{ int i = 0; }
                                             @foreach (var grade in Enum.GetNames(typeof(Grade)))
-                                            { 
+                                            {
                                                 <li>
                                                     <a href="#!" class="text-sub">
                                                         <i class="@colorPalette[i]-text material-icons small-icons mr-2">
@@ -762,7 +763,7 @@
     </footer>
     <!-- END: Footer-->
     <!-- BEGIN VENDOR JS-->
-    <script src="~/materialize-admin/app-assets/js/vendors.min.js"></script>
+    <script src="/materialize-admin/app-assets/js/vendors.min.js"></script>
     <!-- BEGIN VENDOR JS-->
     <!-- BEGIN PAGE VENDOR JS-->
     <script src="~/materialize-admin/app-assets/vendors/sortable/jquery-sortable-min.js"></script>

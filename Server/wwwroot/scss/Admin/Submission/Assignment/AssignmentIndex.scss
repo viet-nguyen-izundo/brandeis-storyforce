@@ -1,0 +1,26 @@
+﻿$as-color-content: #9e9e9e;
+$as-color-header: rgb(107, 111, 130);
+
+.as-content {
+    cursor: pointer;
+
+    .as-Title {
+        color: $as-color-header;
+        font-weight: 700;
+    }
+
+    .as-Description {
+        color: $as-color-content;
+        padding-left: 35px;
+        margin-top: .25rem;
+    }
+
+    .pd-left-20 {
+        padding-left: 20px;
+    }
+}
+.as-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
