@@ -31,6 +31,7 @@ namespace StoryForce.Server.Data
         public DbSet<Comment> Comments { get; set; }
 
         public DbSet<AuditDetail> AuditDetails { get; set; }
+        public DbSet<StoryFileAssignment> StoryFileAssignment { get; set; }
 
         //public DbSet<AssignInSubmission> AssignInSubmissions { get; set; }
 

@@ -49,11 +49,15 @@
 
     </script>
 }
-<form id="assignment">
+
+<form id="assignment" action="/api/submissions/StoryFileAssignment">
     <div class="row">
         <div class="input-field col s3">
-            <select class="select2 browser-default">
+            <select class="select2 browser-default" id="staff-select-box" name="staffSelect" class="validate">
             </select>
+        </div>
+        <div class="error-Text col s9" style="height: 63px;">
+            <span style="display: block; padding-top: 30px;"> Staff is required</span>
         </div>
     </div>
 
@@ -70,31 +74,30 @@
         </div>
         @foreach (var file in Model.Submission.SubmittedFiles)
         {
-            <form>
-                <div class="control-group form-group">
-                    <div class="col s12 controls">
-                        <p>
-                            <label>
-                                <input type="checkbox" class="singleCheckbox form-control" name="isCheck" />
-                                <span class="as-Title">@file.Title</span>
-                            </label>
-                        </p>
+            <div class="form-group">
+                <div class="col s12">
+                    <p>
+                        <label>
+                            <input type="checkbox" class="singleCheckbox form-control checkbox-form" data-file-id="@file.Id" name="checkbox" />
+                            <span class="as-Title">@file.Title</span>
+                        </label>
+                    </p>
+                </div>
+                <div class="col s12">
+                    <div class="as-Description">
+                        @file.Description
                     </div>
-                    <div class="col s12">
-                        <div class="as-Description">
-                            @file.Description
-                        </div>
-                    </div>
-                    <div class="col s12">
-                        <div class="pd-left-20">
-                            <div class="input-field col s12 ">
-                                <textarea id="textarea_@file.Id" class="materialize-textarea form-control" name="Note_@file.Id"></textarea>
-                                <label for="textarea_@file.Id">Note</label>
-                            </div>
+                </div>
+                <div class="col s12">
+                    <div class="pd-left-20">
+                        <div class="input-field col s12 ">
+                            <textarea id="textarea_@file.Id" class="materialize-textarea form-control note-form" name="note"></textarea>
+                            <label for="textarea_@file.Id">Note</label>
                         </div>
                     </div>
                 </div>
-            </form>
+            </div>
+
 
         }
 

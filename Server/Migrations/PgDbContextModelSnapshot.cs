@@ -458,7 +458,7 @@ namespace StoryForce.Server.Migrations
                     b.Property<string>("DownloadUrl")
                         .HasColumnType("text");
 
-                    b.Property<int?>("EventId")
+                    b.Property<int>("EventId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Key")
@@ -470,7 +470,7 @@ namespace StoryForce.Server.Migrations
                     b.Property<int?>("RejectedSubmissionId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("RequestedById")
+                    b.Property<int>("RequestedById")
                         .HasColumnType("integer");
 
                     b.Property<long?>("Size")
@@ -482,7 +482,7 @@ namespace StoryForce.Server.Migrations
                     b.Property<int>("SubmissionId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("SubmittedById")
+                    b.Property<int>("SubmittedById")
                         .HasColumnType("integer");
 
                     b.Property<string>("ThumbnailUrl")
@@ -802,19 +802,25 @@ namespace StoryForce.Server.Migrations
                 {
                     b.HasOne("StoryForce.Shared.Models.Submission", "ApprovedSubmission")
                         .WithMany("ApprovedFiles")
-                        .HasForeignKey("ApprovedSubmissionId");
+                        .HasForeignKey("ApprovedSubmissionId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("StoryForce.Shared.Models.Event", "Event")
                         .WithMany("StoryFiles")
-                        .HasForeignKey("EventId");
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("StoryForce.Shared.Models.Submission", "RejectedSubmission")
                         .WithMany("RejectedFiles")
-                        .HasForeignKey("RejectedSubmissionId");
+                        .HasForeignKey("RejectedSubmissionId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("StoryForce.Shared.Models.Person", "RequestedBy")
                         .WithMany("RequestedStoryFiles")
-                        .HasForeignKey("RequestedById");
+                        .HasForeignKey("RequestedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("StoryForce.Shared.Models.Submission", "Submission")
                         .WithMany("SubmittedFiles")
@@ -824,11 +830,14 @@ namespace StoryForce.Server.Migrations
 
                     b.HasOne("StoryForce.Shared.Models.Person", "SubmittedBy")
                         .WithMany("SubmittedStoryFiles")
-                        .HasForeignKey("SubmittedById");
+                        .HasForeignKey("SubmittedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("StoryForce.Shared.Models.Person", "UpdatedBy")
                         .WithMany("UpdatedStoryFiles")
-                        .HasForeignKey("UpdatedById");
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("ApprovedSubmission");
 
@@ -864,7 +873,8 @@ namespace StoryForce.Server.Migrations
                 {
                     b.HasOne("StoryForce.Shared.Models.Person", "ApprovedBy")
                         .WithMany("ApprovedSubmissions")
-                        .HasForeignKey("ApprovedById");
+                        .HasForeignKey("ApprovedById")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("StoryForce.Shared.Models.Event", "Event")
                         .WithMany()
@@ -872,11 +882,13 @@ namespace StoryForce.Server.Migrations
 
                     b.HasOne("StoryForce.Shared.Models.Person", "ReviewedBy")
                         .WithMany("ReviewedBySubmissions")
-                        .HasForeignKey("ReviewedById");
+                        .HasForeignKey("ReviewedById")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("StoryForce.Shared.Models.Person", "SubmittedBy")
                         .WithMany("SubmittedSubmissions")
-                        .HasForeignKey("SubmittedById");
+                        .HasForeignKey("SubmittedById")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("ApprovedBy");
 

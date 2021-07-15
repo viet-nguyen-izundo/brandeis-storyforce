@@ -13,7 +13,9 @@ namespace StoryForce.Shared.Models
     [Table("StoryFileAssignment")]
     public class StoryFileAssignment : DatabaseEntity, IDateTracking
     {
+        public int? StoryFileId { get; set; }
         public StoryFile StoryFile { get; set; }
+        public int? AssignedToId { get; set; }
         public Person AssignedTo { get; set; }
         public string Note { get; set; }
         public string ModifiedBy { get; set; }

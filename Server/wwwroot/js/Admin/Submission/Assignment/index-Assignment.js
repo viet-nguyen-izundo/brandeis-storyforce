@@ -14,68 +14,51 @@
 
         $("#assignment").submit(function (e) {
             e.preventDefault(); // avoid to execute the actual submit of the form.
+            var checkBoxs = $('.checkbox-form');
+            var textNotes = $('.note-form');
+            var results = [];
 
             var form = $(this);
 
-
-
-            var url = form.attr('action');
-            var formData = false;
-            if (window.FormData) {
-                formData = new FormData(form[0]);
-            }
-
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: formData,
-                success: function (data) {
-                    window.location.href = '/';
-                },
-                enctype: 'multipart/form-data',
-                processData: false,  // Important!
-                contentType: false,
-                beforeSend: function () {
-
-                },
-                cache: false,
-                error: function (err) {
-                    //hide loading
-                    $('#contact-loader').hide();
-                    $('#btn-login').show();
-                    // end hide loading
-                    $('#message-result').html('');
-                    if (err.status === 400 && err.responseText) {
-                        var errMsgs = JSON.parse(err.responseText);
-                        $(".kt-error-btm").remove();
-
-                        for (field in errMsgs) {
-                            switch (field) {
-                                case 'UserName':
-                                    $('<span class="text-danger d-block mt-2 kt-error-btm">' +
-                                        errMsgs[field] +
-                                        '</span>').insertAfter("#loginName");
-
-                                    break;
-                                case 'Password':
-                                    $('<span class="text-danger d-block mt-2 kt-error-btm">' +
-                                        errMsgs[field] +
-                                        '</span>').insertAfter("#inputPassword");
-                                    break;
-                                default:
-                                    $('#message-result').append(errMsgs[field] + '<br>');
-                                    break;
-                            }
-                        }
-
-                    }
+            checkBoxs.each((checkBoxIndex, checkBox) => {
+                if (checkBox.checked) {
+                    results.push({
+                        Note: textNotes[checkBoxIndex].value || '',
+                        StoryFileId: +checkBox.getAttribute('data-file-id')
+                    });
                 }
             });
+            var Assignment = {
+                AssignedToId: document.getElementById('staff-select-box').value ? parseInt(document.getElementById('staff-select-box').value) : 0,
+                AssignmentFiles: results
+            }
 
+            if (Assignment.AssignedToId > 0) {
+                $('.error-Text').hide();
+                var url = form.attr('action');
+                if (Assignment.AssignmentFiles.length !== 0) {
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        contentType: "application/json;charset=utf-8",
+                        data: JSON.stringify(Assignment),
+                        success: function (data) {
+                            window.location.href = '/';
+                        },
+                        cache: false,
+                        error: function (err) {
+
+                        }
+                    });
+                }
+            } else {
+                $('.error-Text').show();
+            }
         });
     }
 };
 $(document).ready(function () {
+    $('.error-Text').hide();
     $(".select2").select2({
         dropdownAutoWidth: true,
         width: '100%',
@@ -100,4 +83,6 @@ $(document).ready(function () {
             }
         }
     });
+   
+
 });

@@ -481,5 +481,10 @@ namespace StoryForce.Server.Controllers
                 };
             }
         }
+        [HttpPost("StoryFileAssignment")]
+        public ActionResult StoryFileAssignment([FromBody]AssignmentRequestModel request)
+        {
+            return null;
+        }
     }
 }
