@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using StoryForce.Shared.Models;
 
 namespace StoryForce.Server.Services
 {
@@ -17,6 +18,7 @@ namespace StoryForce.Server.Services
             services.AddTransient<IEventService, EventServicePg>();
             services.AddTransient<INoteService, NoteServicePg>();
             services.AddTransient<ITagService, TagServicePg>();
+            services.AddTransient<IStoryFileAssignmentService, StoryFileAssignmentService>();
             return services;
         }
     }

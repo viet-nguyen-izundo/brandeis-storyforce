@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml.FormulaParsing.ExpressionGraph.FunctionCompilers;
 using OfficeOpenXml.Packaging.Ionic.Zip;
 using StoryForce.Server.Data;
 using StoryForce.Server.ViewModels;
@@ -10,26 +11,41 @@ using StoryForce.Shared.Models;
 
 namespace StoryForce.Server.Services
 {
-    public class StoryFileAssignmentService: DataService<StoryFileAssignment>, IStoryFileAssignment
+    public class StoryFileAssignmentService : DataService<StoryFileAssignment>, IStoryFileAssignmentService
     {
         private readonly PgDbContext _dbContext;
-        public StoryFileAssignmentService(PgDbContext dbContext) : base(dbContext, dbContext.StoryFileAssignment)
+        public StoryFileAssignmentService(PgDbContext dbContext) : base(dbContext, dbContext.StoryFileAssignments)
         {
+            _dbContext = dbContext;
         }
-
 
         public async Task<bool> InsertStoryFileAssignment(AssignmentRequestModel request)
         {
             if (!request.AssignmentFiles.Any())
                 return false;
-            //request.AssignmentFiles.ToList().ForEach(x =>
-            //{
-            //    var assignmentFile = new StoryFileAssignment
-            //    {
-            //        StoryFile=x.StoryFileId;
-            //    };
-            //});
-            return true;
+            request.AssignmentFiles.ToList().ForEach(x =>
+            {
+                var assignmentFile = new StoryFileAssignment
+                {
+                    StoryFileId = x.StoryFileId,
+                    Note = x.Note,
+                    AssignedToId = request.AssignedToId,
+                    FileStatus = FileStatus.New,
+                    TitleStoryFile = x.TitleAssignment,
+                    DescriptionStoryFile = x.DescriptionAssignment
+                };
+                _dbContext.StoryFileAssignments.AddAsync(assignmentFile);
+            });
+            var result = await _dbContext.SaveChangesAsync();
+            if (result > 0)
+                return true;
+            return false;
+        }
+
+        public async Task<List<StoryFileAssignment>> GetAssignmentById(int Id)
+        {
+            var storyfile = await _dbContext.StoryFileAssignments.Where(x => x.AssignedTo.Equals(Id)).ToListAsync();
+            return storyfile;
         }
 
         public Task<List<StoryFileAssignmentService>> GetAsync()

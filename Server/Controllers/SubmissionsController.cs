@@ -34,6 +34,7 @@ namespace StoryForce.Server.Controllers
         private readonly ISendMailJobService _sendMailJobService;
         private readonly IConfiguration _configuration;
         private readonly ITagService _tagService;
+        private readonly IStoryFileAssignmentService _storyFileAssignmentService;
         readonly string[] scopes = { DriveService.Scope.Drive };
         DriveService _gDriveService;
         private FileService _fileService;
@@ -47,6 +48,7 @@ namespace StoryForce.Server.Controllers
             , IEventService eventService
             , ISendMailJobService sendMailJobService
             , ITagService tagService
+            , IStoryFileAssignmentService storyFileAssignmentService
             )
         {
             _configuration = configration;
@@ -56,6 +58,7 @@ namespace StoryForce.Server.Controllers
             _gDriveService = InitGoogleDriveService();
             _eventService = eventService;
             _tagService = tagService;
+            _storyFileAssignmentService = storyFileAssignmentService;
             this._sendMailJobService = sendMailJobService;
             _fileService = new FileService();
             _webClient = new WebClient();
@@ -481,10 +484,16 @@ namespace StoryForce.Server.Controllers
                 };
             }
         }
+
         [HttpPost("StoryFileAssignment")]
-        public ActionResult StoryFileAssignment([FromBody]AssignmentRequestModel request)
+        public async Task<ActionResult> StoryFileAssignment([FromBody]AssignmentRequestModel request)
         {
-            return null;
+            if (request.AssignedToId.Equals(0) || !request.AssignmentFiles.Any())
+                return NotFound();
+            var newAssignment =await _storyFileAssignmentService.InsertStoryFileAssignment(request);
+            if (newAssignment.Equals(false))
+                return BadRequest();
+            return Ok();
         }
     }
 }

@@ -18,5 +18,7 @@ namespace StoryForce.Server.ViewModels
     {
         public string Note { get; set; }
         public int StoryFileId { get; set; }
+        public string TitleAssignment { get; set; }
+        public string DescriptionAssignment { get; set; }
     }
 }

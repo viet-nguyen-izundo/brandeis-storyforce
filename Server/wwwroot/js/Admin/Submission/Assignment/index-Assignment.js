@@ -4,6 +4,7 @@
         registerEvents();
     };
     function registerEvents() {
+        $('.error-Text').hide();
         $('#selectAll').click(function () {
             if (document.getElementById('all').checked) {
                 $(".singleCheckbox").prop("checked", true);
@@ -16,6 +17,8 @@
             e.preventDefault(); // avoid to execute the actual submit of the form.
             var checkBoxs = $('.checkbox-form');
             var textNotes = $('.note-form');
+            var title = $('.as-Title');
+            var description = $('.as-Description');
             var results = [];
 
             var form = $(this);
@@ -24,7 +27,9 @@
                 if (checkBox.checked) {
                     results.push({
                         Note: textNotes[checkBoxIndex].value || '',
-                        StoryFileId: +checkBox.getAttribute('data-file-id')
+                        StoryFileId: +checkBox.getAttribute('data-file-id'),
+                        TitleAssignment: title[checkBoxIndex].innerHTML,
+                        DescriptionAssignment: description[checkBoxIndex].innerHTML
                     });
                 }
             });
@@ -42,12 +47,17 @@
                         type: 'POST',
                         contentType: "application/json;charset=utf-8",
                         data: JSON.stringify(Assignment),
-                        success: function (data) {
-                            window.location.href = '/';
+                        success: function () {
+                            M.toast({
+                                html: 'Success'
+                            });
+                            $(".singleCheckbox").prop("checked", false);
                         },
                         cache: false,
-                        error: function (err) {
-
+                        error: function () {
+                            M.toast({
+                                html: 'False!'
+                            });
                         }
                     });
                 }
@@ -58,7 +68,7 @@
     }
 };
 $(document).ready(function () {
-    $('.error-Text').hide();
+
     $(".select2").select2({
         dropdownAutoWidth: true,
         width: '100%',
@@ -83,6 +93,4 @@ $(document).ready(function () {
             }
         }
     });
-   
-
 });
