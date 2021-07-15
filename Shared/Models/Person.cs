@@ -20,7 +20,7 @@ namespace StoryForce.Shared.Models
 
         public ICollection<Submission> FeaturedSubmissions { get; set; }
 
-        public ICollection<StoryFile> FeaturedStoryFile { get; set; }
+        public ICollection<StoryFile> FeaturedStoryFile { get; set; }      
 
         public ICollection<Submission> SubmittedSubmissions { get; set; }
 

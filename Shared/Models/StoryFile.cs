@@ -19,7 +19,7 @@ namespace StoryForce.Shared.Models
         public string Description { get; set; }
         public int EventId { get; set; }
 
-        public List<Note> Notes { get; set; }                                                      
+        public List<Note> Notes { get; set; }
 
         [EnumDataType(typeof(ApprovalStatusEnum))]
         public ApprovalStatusEnum Status { get; set; }
@@ -47,7 +47,7 @@ namespace StoryForce.Shared.Models
         public int? ApprovedSubmissionId { get; set; }
 
         public Submission ApprovedSubmission { get; set; }
-        
+
         public int? RejectedSubmissionId { get; set; }
 
         public Submission RejectedSubmission { get; set; }
@@ -56,7 +56,7 @@ namespace StoryForce.Shared.Models
 
         public int? Class { get; set; }
 
-        public ICollection<StoryFileAssignment> StoryFileAssignment { get; set; }
+        public ICollection<StoryFileAssignment> StoryFileAssignment { get; set; }        
 
         [BsonIgnore]
         [NotMapped]
@@ -123,9 +123,11 @@ namespace StoryForce.Shared.Models
         {
             var json = new
             {
-                bucket = "storyforce", key = this.Key, edits = new
+                bucket = "storyforce",
+                key = this.Key,
+                edits = new
                 {
-                    resize = new { width = width, height = height, fit = "cover"}
+                    resize = new { width = width, height = height, fit = "cover" }
                 }
             };
             var encodedParams = BtoA(JsonConvert.SerializeObject(json));
@@ -160,6 +162,6 @@ namespace StoryForce.Shared.Models
             byte[] bytes = Encoding.GetEncoding(28591).GetBytes(toEncode);
             string toReturn = System.Convert.ToBase64String(bytes);
             return toReturn;
-        }        
+        }
     }
 }

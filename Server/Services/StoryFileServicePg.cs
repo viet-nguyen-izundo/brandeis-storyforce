@@ -52,7 +52,7 @@ namespace StoryForce.Server.Services
                 .Include(x => x.Notes)
                 .Include(x => x.Tags)
                 .FirstOrDefaultAsync(x => x.Id == id);
-        }
+        }       
 
         public async Task<List<StoryFile>> GetByRequestedEmailAsync(string email)
             => await _dbContext.StoryFiles
