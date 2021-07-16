@@ -28,11 +28,11 @@ namespace StoryForce.Server.Services
                 var assignmentFile = new StoryFileAssignment
                 {
                     StoryFileId = x.StoryFileId,
-                    Note = x.Note,
+                    Note = x.Note.Trim(),
                     AssignedToId = request.AssignedToId,
                     FileStatus = FileStatus.New,
-                    Title = x.TitleAssignment,
-                    Description = x.DescriptionAssignment
+                    Title = x.TitleAssignment.Trim(),
+                    Description = x.DescriptionAssignment.Trim()
                 };
                 _dbContext.StoryFileAssignments.AddAsync(assignmentFile);
             });
@@ -44,7 +44,7 @@ namespace StoryForce.Server.Services
 
         public async Task<List<StoryFileAssignment>> GetAssignmentById(int Id)
         {
-            var storyfile = await _dbContext.StoryFileAssignments.Where(x => x.AssignedTo.Equals(Id)).ToListAsync();
+            var storyfile = await _dbContext.StoryFileAssignments.Where(x => x.AssignedToId.Equals(Id)).ToListAsync();
             return storyfile;
         }
 

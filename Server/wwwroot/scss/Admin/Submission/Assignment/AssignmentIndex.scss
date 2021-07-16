@@ -10,9 +10,14 @@ $as-color-header: rgb(107, 111, 130);
     }
 
     .as-Description {
-        color: $as-color-content;
         padding-left: 35px;
         margin-top: .25rem;
+        height: 39px;
+
+        .input-description {
+            color: $as-color-content;
+            border: 0;
+        }
     }
 
     .pd-left-20 {

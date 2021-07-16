@@ -18,7 +18,7 @@
             var checkBoxs = $('.checkbox-form');
             var textNotes = $('.note-form');
             var title = $('.as-Title');
-            var description = $('.as-Description');
+            var description = $('.input-description');
             var results = [];
 
             var form = $(this);
@@ -29,7 +29,7 @@
                         Note: textNotes[checkBoxIndex].value || '',
                         StoryFileId: +checkBox.getAttribute('data-file-id'),
                         TitleAssignment: title[checkBoxIndex].innerHTML,
-                        DescriptionAssignment: description[checkBoxIndex].innerHTML
+                        DescriptionAssignment: description[checkBoxIndex].value || ''
                     });
                 }
             });

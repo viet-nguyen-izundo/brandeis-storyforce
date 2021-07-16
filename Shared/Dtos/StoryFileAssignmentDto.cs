@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Formatters.Internal;
 using StoryForce.Shared.Models;
 
 namespace StoryForce.Shared.Dtos
@@ -12,17 +13,20 @@ namespace StoryForce.Shared.Dtos
         public string Note { get; set; }
         public string Description { get; set; }
         public string Title { get; set; }
-        public static IEnumerable<StoryFileAssignmentDto> ConvertFromEntityToSelect2Vm(StoryFileAssignment[] entity)
+        public static List<StoryFileAssignmentDto> ConvertFromEntityToSelect2Vm(List<StoryFileAssignment> entity)
         {
-            foreach (var item in entity)
+            var lstAssign = new List<StoryFileAssignmentDto>();
+            entity.ForEach(x =>
             {
-                yield return new StoryFileAssignmentDto
+                var newAssign = new StoryFileAssignmentDto
                 {
-                    Note = item.Note,
-                    Description=item.Description,
-                    Title = item.Title
+                    Note=x.Note,
+                    Description = x.Description,
+                    Title = x.Title
                 };
-            }
+                lstAssign.Add(newAssign);
+            });
+            return lstAssign;
         }
     }
 }
