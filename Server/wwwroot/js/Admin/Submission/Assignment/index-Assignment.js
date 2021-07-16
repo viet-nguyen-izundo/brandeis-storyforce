@@ -52,6 +52,8 @@
                                 html: 'Success'
                             });
                             $(".singleCheckbox").prop("checked", false);
+                            $("#all").prop("checked", false);
+                            
                         },
                         cache: false,
                         error: function () {
