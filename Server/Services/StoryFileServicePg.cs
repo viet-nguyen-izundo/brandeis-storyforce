@@ -32,6 +32,7 @@ namespace StoryForce.Server.Services
                 .Include(x => x.Comments)
                 .Include(x => x.Notes)
                 .Include(x => x.Tags)
+                .Include(x => x.FavouritesPeople)
                 .ToListAsync();
         }
 
@@ -51,8 +52,9 @@ namespace StoryForce.Server.Services
                 .Include(x => x.Comments)
                 .Include(x => x.Notes)
                 .Include(x => x.Tags)
+                .Include(x => x.FavouritesPeople)
                 .FirstOrDefaultAsync(x => x.Id == id);
-        }       
+        }
 
         public async Task<List<StoryFile>> GetByRequestedEmailAsync(string email)
             => await _dbContext.StoryFiles
@@ -68,6 +70,7 @@ namespace StoryForce.Server.Services
                 .Include(x => x.Categories)
                 .Include(x => x.Comments)
                 .Include(x => x.Notes)
+                .Include(x => x.FavouritesPeople)
                 .Where(s => s.RequestedBy.Email == email)
                 .ToListAsync();
 
@@ -75,7 +78,7 @@ namespace StoryForce.Server.Services
         {
             var list = _dbContext.StoryFiles.Include(x => x.Tags).Where(m => m.Title.ToLower().Contains(value.ToLower())
             || m.Description.ToLower().Contains(value.ToLower())
-            || m.Tags.Any(t => t.Name.ToLower().Contains(value.ToLower()))).ToList();            
+            || m.Tags.Any(t => t.Name.ToLower().Contains(value.ToLower()))).ToList();
 
             return list;
         }
@@ -100,7 +103,7 @@ namespace StoryForce.Server.Services
 
         public IList<StoryFile> GetByUserIdAsync(int userId)
         {
-            var list = _dbContext.StoryFiles.Where(story => story.FavouritesPeople.Any(x=>x.Id == userId)).ToList();
+            var list = _dbContext.StoryFiles.Include(m=>m.FavouritesPeople).Where(story => story.FavouritesPeople.Any(x => x.Id == userId)).ToList();
             return list;
         }
     }

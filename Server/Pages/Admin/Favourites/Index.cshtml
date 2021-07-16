@@ -1,8 +1,8 @@
-﻿@page "/listfavourites"
+﻿@page "/listfavorites"
 @model StoryForce.Server.Pages.Admin.Favourites.IndexModel
 @using StoryForce.Server.Services
 @{
-    ViewData["Title"] = "Search";
+    ViewData["Title"] = "Favorites";
     Layout = "~/Pages/Shared/_LayoutFavoritesUser.cshtml";
 }
 @inject ImageService ImageService
@@ -34,8 +34,8 @@
                                                 <input type="checkbox" name="foo" />
                                                 <span></span>
                                             </label>
-                                            <div class="favorite">
-                                                <i class="material-icons button-favorite">star_border</i>
+                                            <div class="favorite ">
+                                                <i class="material-icons button-favorite @(story.FavouritesPeople.Count > 0 ? "amber-text" : "")">star_border</i>
                                             </div>
                                             <div class="email-label">
                                                 <i class="material-icons">label_outline</i>

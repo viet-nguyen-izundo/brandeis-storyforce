@@ -7,12 +7,13 @@ namespace StoryForce.Shared.Dtos
 {
     public class SubmissionDto : DatabaseEntity
     {
-        private List<Person> _featuredPersons;
+        private List<Person> _featuredPersons;        
 
         public SubmissionDto()
         {
             this.SubmittedFiles = new List<StoryFile>();
-            this.FeaturedPeople = new List<Person>();            
+            this.FeaturedPeople = new List<Person>();           
+                   
         }
 
         public string CreatedAtShortString => this.CreatedAt.ToString("h:mm tt M/d/yy");
@@ -51,7 +52,7 @@ namespace StoryForce.Shared.Dtos
         {
             get => this._featuredPersons;
             set => this._featuredPersons = value;
-        }
+        }        
 
         public List<string> Keywords { get; set; }
 
@@ -81,7 +82,7 @@ namespace StoryForce.Shared.Dtos
                     CreatedAt = this.CreatedAt,
                     ReviewedBy = this.ReviewedBy,
                     UpdatedAt = this.UpdatedAt,
-                    NoteFile = this.Notes
+                    NoteFile = this.Notes,                    
                 };
         }
 
@@ -104,7 +105,7 @@ namespace StoryForce.Shared.Dtos
                     CreatedAt = entity.CreatedAt,
                     ReviewedBy = entity.ReviewedBy,
                     UpdatedAt = entity.UpdatedAt,     
-                    Notes = entity.NoteFile.ToList()
+                    Notes = entity.NoteFile.ToList(),                    
                 };
         }
 

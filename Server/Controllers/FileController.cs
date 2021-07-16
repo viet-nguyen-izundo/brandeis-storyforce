@@ -34,7 +34,8 @@ namespace StoryForce.Server.Controllers
         private string _googleDriveId;
         private WebClient _webClient;
         private string UPLOAD_DIRECTORY;
-        public FileController(IHostingEnvironment hostingEnvironment, IConfiguration configration)
+        private readonly IStoryFileService _storyFileService;       
+        public FileController(IHostingEnvironment hostingEnvironment, IConfiguration configration, IStoryFileService storyFileService)
         {
             this.hostingEnvironment = hostingEnvironment;
             this._configuration = configration;
@@ -42,6 +43,7 @@ namespace StoryForce.Server.Controllers
             this._googleDriveId = this._configuration.GetSection("Google:Drive:DriveId").Value;
             this._webClient = new WebClient();
             this.UPLOAD_DIRECTORY = Path.Combine(Path.GetTempPath(), "uploads");
+            this._storyFileService = storyFileService;            
         }
 
         [HttpGet("UploadByUrl")]
@@ -266,9 +268,19 @@ namespace StoryForce.Server.Controllers
             return service;
         }
         [HttpPost("{id}/favorite")]
-        public ActionResult Favourite(int id)
+        public async Task<ActionResult> Favourite(int id)
         {
-            
+            var storyFile = await this._storyFileService.GetAsync(id);     
+            if(storyFile.FavouritesPeople.Count > 0)
+            {
+                storyFile.FavouritesPeople.Remove((Person)storyFile.FavouritesPeople);
+                await _storyFileService.UpdateAsync(id, storyFile);
+                return Ok();
+            }
+            else
+            {
+               // storyFile.FavouritesPeople.Add(storyFile);
+            }
             return Ok();
         }
 

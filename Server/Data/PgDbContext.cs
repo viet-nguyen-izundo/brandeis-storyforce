@@ -31,7 +31,7 @@ namespace StoryForce.Server.Data
         public DbSet<Comment> Comments { get; set; }
 
         public DbSet<AuditDetail> AuditDetails { get; set; }
-        public DbSet<StoryFileAssignment> StoryFileAssignments { get; set; }
+        public DbSet<StoryFileAssignment> StoryFileAssignments { get; set; }       
 
         //public DbSet<AssignInSubmission> AssignInSubmissions { get; set; }
 
@@ -116,7 +116,8 @@ namespace StoryForce.Server.Data
 
             modelBuilder.Entity<Person>()
                 .HasMany(person => person.FavouritesStoryFile)
-                .WithMany(sf => sf.FavouritesPeople);
+                .WithMany(sf => sf.FavouritesPeople)
+                .UsingEntity(join => join.ToTable("Favorites"));
 
             modelBuilder.Entity<StoryFile>()
                 .HasMany(sf => sf.StoryFileAssignment)

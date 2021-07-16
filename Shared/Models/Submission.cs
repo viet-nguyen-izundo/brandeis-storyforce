@@ -23,8 +23,7 @@ namespace StoryForce.Shared.Models
 
         public string Description { get; set; }
 
-        public ICollection<Person> FeaturedPeople { get; set; }     
-        //public ICollection<StoryFile> UserFavorites { get; set; }     
+        public ICollection<Person> FeaturedPeople { get; set; }            
 
         public Event Event { get; set; }
 
