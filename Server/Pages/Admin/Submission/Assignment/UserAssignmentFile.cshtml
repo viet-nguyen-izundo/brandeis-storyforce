@@ -43,36 +43,36 @@
 <div class="card">
     <div class="card-content">
         <p class="caption mb-0">
-         Assignment File For User
+            Assignment File For User
         </p>
     </div>
 </div>
-<div class="card-panel">
-    <div>
+@foreach (var assignment in Model.StoryFileAssignment)
+{
+    <div class="card-panel">
         <div class="row">
             <div class="col s12">
                 <div class="input-field">
                     <label for="name" class="active">Title</label>
-                    <input id="name" name="name" type="text" value="Hermione Granger" readonly>
+                    <input id="name" name="name" type="text" value="@assignment?.Title" readonly>
                 </div>
             </div>
             <div class="col s12">
                 <div class="input-field">
                     <label for="uname" class="active">Description</label>
-                    <textarea id="textarea_" class="materialize-textarea form-control note-form" name="note" readonly>dsdsdaaa</textarea>
+                    <textarea id="textarea_" class="materialize-textarea form-control note-form" name="note" readonly>@assignment.Description?.Trim()</textarea>
                 </div>
             </div>
-
             <div class="col s12">
                 <div class="card-alert card orange lighten-5">
                     <div class="card-content orange-text">
-                        <p>Your email is not confirmed. Please check your inbox.</p>
-                        <a href="/admin">Back to Admin</a>
+                        <p style="color: rgb(107, 111, 130);">Note:</p>
+                        <p>@assignment.Note?.Trim()</p>
                     </div>
 
                 </div>
             </div>
-
         </div>
     </div>
-</div>
+}
+
