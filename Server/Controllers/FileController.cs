@@ -265,6 +265,12 @@ namespace StoryForce.Server.Controllers
 
             return service;
         }
+        [HttpPost("{id}/favorite")]
+        public ActionResult Favourite(int id)
+        {
+            
+            return Ok();
+        }
 
     }
 }

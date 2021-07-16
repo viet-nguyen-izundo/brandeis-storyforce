@@ -114,6 +114,10 @@ namespace StoryForce.Server.Data
                 .HasMany(person => person.FeaturedStoryFile)
                 .WithMany(sf => sf.FeaturedPeople);
 
+            modelBuilder.Entity<Person>()
+                .HasMany(person => person.FavouritesStoryFile)
+                .WithMany(sf => sf.FavouritesPeople);
+
             modelBuilder.Entity<StoryFile>()
                 .HasMany(sf => sf.StoryFileAssignment)
                 .WithOne(sf => sf.StoryFile)

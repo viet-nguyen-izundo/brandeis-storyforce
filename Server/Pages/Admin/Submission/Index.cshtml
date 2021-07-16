@@ -141,6 +141,18 @@
                                             @foreach (var file in Model.Submission.SubmittedFiles)
                                             {
                                                 <div class="attachment">
+                                                    @if (file.FavouritesPeople != null)
+                                                    {
+                                                        <div class="favorite-files">
+                                                            <i id="i-favorite" class="material-icons button-favorite" style="color:#ffc107" data-file-id="@file.Id">star_border</i>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="favorite-files">
+                                                            <i id="i-favorite" class="material-icons button-favorite" data-file-id="@file.Id">star_border</i>
+                                                        </div>
+                                                    }
                                                     @if (file.Type.StartsWith("image/"))
                                                     {
                                                         <img src="@file.GetResizedImageUrl(200, 200)" alt="@file.Title" class="responsive-img attached-image">
@@ -677,6 +689,19 @@
 
             });
 
+            $(".footer-action").on("click", ".button-favorite", function () {
+                debugger;
+                console.log($(this).data("file-id"));
+                var id = $(this).data("file-id");
+                $(this).parents('.favorite-files').find('.button-favorite').css("color", "#ffc107!important");
+                $.ajax({
+                url: '/api/file/' + id +'/favorite',
+                type: 'POST',
+                contentType: "application/json",
+            }).then(function (res) {
+                window.location.reload();
+            });
+            });
         });
     </script>
 

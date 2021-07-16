@@ -97,5 +97,11 @@ namespace StoryForce.Server.Services
                 .Include(x => x.Notes)
                 .Where(s => s.SubmittedBy.Id == submittedById || s.RequestedBy.Id == submittedById)
                 .ToListAsync();
+
+        public IList<StoryFile> GetByUserIdAsync(int userId)
+        {
+            var list = _dbContext.StoryFiles.Where(story => story.FavouritesPeople.Any(x=>x.Id == userId)).ToList();
+            return list;
+        }
     }
 }

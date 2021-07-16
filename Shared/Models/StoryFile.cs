@@ -33,6 +33,7 @@ namespace StoryForce.Shared.Models
         public List<Tag> Tags { get; set; }
 
         public ICollection<Person> FeaturedPeople { get; set; }
+        public ICollection<Person> FavouritesPeople { get; set; }
 
         public List<string> Keywords { get; set; }
 

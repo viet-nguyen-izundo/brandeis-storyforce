@@ -52,7 +52,7 @@ namespace StoryForce.Server.Controllers
             else
             {
                 createdNote = await _noteService.CreateAsync(note.ToEntity());
-            }            
+            }
             if (note.SubmissionId != 0)
             {
                 var submission = await _submissionService.GetAsync(note.SubmissionId);
@@ -61,7 +61,7 @@ namespace StoryForce.Server.Controllers
                 submission.NoteFile.Add(createdNote);
                 await _submissionService.UpdateAsync(submission.Id, submission);
             }
-            else 
+            else
             {
                 var storyFile = await _storyFileService.GetAsync(note.StoryFileId);
                 if (storyFile == null)
@@ -69,10 +69,10 @@ namespace StoryForce.Server.Controllers
                 storyFile.Notes.Add(createdNote);
                 await _storyFileService.UpdateAsync(storyFile.Id, storyFile);
             }
-           
-            return CreatedAtRoute("GetNote", new { id = createdNote.Id }, createdNote);
-        }
 
+            return CreatedAtRoute("GetNote", new { id = createdNote.Id }, createdNote);
+        }        
+       
         // PUT api/<Note>/5
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, EditNoteDto note)

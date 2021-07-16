@@ -9,5 +9,6 @@ namespace StoryForce.Server.Services
         Task<List<StoryFile>> GetByRequestedEmailAsync(string email);
         Task<List<StoryFile>> GetBySubmittedByIdAsync(int submittedId);
         Task<List<StoryFile>> GetByStoryFileByInputValueAsync(string value);        
+        IList<StoryFile> GetByUserIdAsync(int userId);        
     }
 }
