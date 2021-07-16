@@ -19,8 +19,8 @@ namespace StoryForce.Shared.Dtos
                 yield return new StoryFileAssignmentDto
                 {
                     Note = item.Note,
-                    Description=item.DescriptionStoryFile,
-                    Title = item.TitleStoryFile
+                    Description=item.Description,
+                    Title = item.Title
                 };
             }
         }

@@ -31,8 +31,8 @@ namespace StoryForce.Server.Services
                     Note = x.Note,
                     AssignedToId = request.AssignedToId,
                     FileStatus = FileStatus.New,
-                    TitleStoryFile = x.TitleAssignment,
-                    DescriptionStoryFile = x.DescriptionAssignment
+                    Title = x.TitleAssignment,
+                    Description = x.DescriptionAssignment
                 };
                 _dbContext.StoryFileAssignments.AddAsync(assignmentFile);
             });

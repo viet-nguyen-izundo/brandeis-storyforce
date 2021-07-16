@@ -124,6 +124,12 @@ namespace StoryForce.Server.Data
                 .HasMany(sf => sf.StoryFileAssignments)
                 .WithOne(sf => sf.AssignedTo)
                 .HasForeignKey(sf => sf.AssignedToId);
+
+            modelBuilder.Entity<StoryFileAssignment>()
+                .Property(c => c.Description).HasMaxLength(1000);
+
+            modelBuilder.Entity<StoryFileAssignment>()
+                .Property(c => c.Title).HasMaxLength(1000);
         }
 
 
