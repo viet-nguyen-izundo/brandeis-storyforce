@@ -54,6 +54,7 @@ namespace StoryForce.Server.Services
                 .Include(x => x.Tags)
                 .Include(x => x.FavouritesPeople)
                 .FirstOrDefaultAsync(x => x.Id == id);
+
         }
 
         public async Task<List<StoryFile>> GetByRequestedEmailAsync(string email)

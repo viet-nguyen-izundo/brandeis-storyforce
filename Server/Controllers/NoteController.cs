@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using StoryForce.Server.Services;
@@ -47,12 +49,11 @@ namespace StoryForce.Server.Controllers
             var createdNote = new Note();
             if (note.Text == null)
             {
-                return BadRequest($"Text null");
+                return BadRequest("Text null");
             }
-            else
-            {
-                createdNote = await _noteService.CreateAsync(note.ToEntity());
-            }
+
+            createdNote = await _noteService.CreateAsync(note.ToEntity());
+            var storyHistoryLog = new StoryLogHistory();
             if (note.SubmissionId != 0)
             {
                 var submission = await _submissionService.GetAsync(note.SubmissionId);
@@ -60,6 +61,10 @@ namespace StoryForce.Server.Controllers
                     return BadRequest($"Submission with id '{note.SubmissionId}' not found.");
                 submission.NoteFile.Add(createdNote);
                 await _submissionService.UpdateAsync(submission.Id, submission);
+
+                var userId = User.Claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                storyHistoryLog.ModifiedBy = !string.IsNullOrEmpty(userId) ? Int32.Parse(userId) : 0;
+
             }
             else
             {
@@ -71,8 +76,8 @@ namespace StoryForce.Server.Controllers
             }
 
             return CreatedAtRoute("GetNote", new { id = createdNote.Id }, createdNote);
-        }        
-       
+        }
+
         // PUT api/<Note>/5
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, EditNoteDto note)
@@ -94,7 +99,7 @@ namespace StoryForce.Server.Controllers
                 return BadRequest($"Note with id '{id}' not found.");
             await _noteService.RemoveAsync(id);
             return NoContent();
-        }        
+        }
     }
 
     public class CreateNoteDto
@@ -113,7 +118,7 @@ namespace StoryForce.Server.Controllers
             {
                 Text = this.Text,
                 UserName = this.Username,
-                CreatedAt = DateTime.Now,                
+                CreatedAt = DateTime.Now,
             };
         }
     }
@@ -122,6 +127,12 @@ namespace StoryForce.Server.Controllers
     {
         public int Id { get; set; }
         public string Text { get; set; }
-        
+    }
+
+    public class StoryLogHistory
+    {
+        public string Note { get; set; }
+        public int ModifiedBy { get; set; }
+        public DateTime Modified { get; set; }
     }
 }
