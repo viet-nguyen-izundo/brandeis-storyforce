@@ -34,8 +34,8 @@
                                                 <input type="checkbox" name="foo" />
                                                 <span></span>
                                             </label>
-                                            <div class="favorite ">
-                                                <i class="material-icons button-favorite @(story.FavouritesPeople.Count > 0 ? "amber-text" : "")">star_border</i>
+                                            <div class="favorite">
+                                                <i class="material-icons button-favorite @(story.FavouritesPeople.Count > 0 ? "amber-text" : "")" data-file-id="@story.Id">star_border</i>
                                             </div>
                                             <div class="email-label">
                                                 <i class="material-icons">label_outline</i>
@@ -60,18 +60,18 @@
                                                 </div>
                                             </div>
 
-                                            @if (story.Tags != null && story.Tags.Count > 0)
-                                            {
-                                                <div class="item-content">
-                                                    <span>Tags:</span>
-                                                    @foreach (var tag in story.Tags)
-                                                    {
-                                                        <span>
-                                                            <em>@Html.DisplayFor(model => tag.Name)</em>
-                                                        </span>
-                                                    }
-                                                </div>
-                                            }
+                                            @*@if (story.Tags != null && story.Tags.Count > 0)
+                                                {
+                                                    <div class="item-content">
+                                                        <span>Tags:</span>
+                                                        @foreach (var tag in story.Tags)
+                                                        {
+                                                            <span>
+                                                                <em>@Html.DisplayFor(model => tag.Name)</em>
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                }*@
                                         </a>
                                         <a href="@ImageService.GetPreSignedUrl(story.Key)" target="_blank" style="position: absolute;bottom: 0;left: 6rem;">
                                             <i class="material-icons">file_download</i>
@@ -94,3 +94,31 @@
         </div>
     </div>
 </div>
+@section FooterScripts{
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+<script src="/js/Admin/Submission/index-Submission.js"></script>
+<script>
+    $(document).ready(function () {
+        console.log("abc")
+        $(".card-content").on("click", ".button-favorite", function () {
+            debugger
+            console.log($(this).data("file-id"));
+            var id = $(this).data("file-id");
+
+            if ($(this).hasClass("amber-text")) {
+                $(this).removeClass("amber-text");
+            } else {
+                $(this).addClass("amber-text")
+            }
+
+            $.ajax({
+                url: '/api/file/' + id + '/favorite',
+                type: 'POST',
+                contentType: "application/json",
+            }).then(function (res) {
+                window.location.reload();
+            });
+        });
+    });
+    </script>
+}

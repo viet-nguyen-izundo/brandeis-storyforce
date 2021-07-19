@@ -21,6 +21,7 @@ using StoryForce.Shared;
 using StoryForce.Shared.Models;
 using StoryForce.Shared.ViewModels;
 using File = Google.Apis.Drive.v3.Data.File;
+using Microsoft.AspNetCore.Identity;
 
 namespace StoryForce.Server.Controllers
 {
@@ -34,8 +35,11 @@ namespace StoryForce.Server.Controllers
         private string _googleDriveId;
         private WebClient _webClient;
         private string UPLOAD_DIRECTORY;
-        private readonly IStoryFileService _storyFileService;       
-        public FileController(IHostingEnvironment hostingEnvironment, IConfiguration configration, IStoryFileService storyFileService)
+        private readonly IStoryFileService _storyFileService;
+        private readonly IPeopleService _peopleService;
+        public UserManager<StoryForce.Shared.Models.Person> _userManager;
+        public FileController(IHostingEnvironment hostingEnvironment, IConfiguration configration, IStoryFileService storyFileService, IPeopleService peopleService,
+            UserManager<StoryForce.Shared.Models.Person> userManager)
         {
             this.hostingEnvironment = hostingEnvironment;
             this._configuration = configration;
@@ -43,7 +47,9 @@ namespace StoryForce.Server.Controllers
             this._googleDriveId = this._configuration.GetSection("Google:Drive:DriveId").Value;
             this._webClient = new WebClient();
             this.UPLOAD_DIRECTORY = Path.Combine(Path.GetTempPath(), "uploads");
-            this._storyFileService = storyFileService;            
+            this._storyFileService = storyFileService;
+            this._peopleService = peopleService;
+            _userManager = userManager;
         }
 
         [HttpGet("UploadByUrl")]
@@ -65,7 +71,7 @@ namespace StoryForce.Server.Controllers
             File newFile = new File
             {
                 Name = fileName,
-                Description =description,
+                Description = description,
                 Parents = new List<string>() { _googleDriveId }
             };
 
@@ -114,12 +120,12 @@ namespace StoryForce.Server.Controllers
         {
             if (file.Length == 0)
             {
-                return new UploadStatus {Message = "The file is empty", Status = "error"};
+                return new UploadStatus { Message = "The file is empty", Status = "error" };
             }
 
             var uploadedFileName = SaveFile(file);
             return new UploadStatus
-                { Message = "File Chunk Uploaded Successfully!", Status = "success" };
+            { Message = "File Chunk Uploaded Successfully!", Status = "success" };
         }
 
         [HttpPost("UploadByUrls")]
@@ -150,7 +156,7 @@ namespace StoryForce.Server.Controllers
             return uploads.ToArray();
         }
 
-        public async Task<UploadStatus> UploadFileToGoogleDrive(string fileOnDisk, string fileName, string description, string mimeType) 
+        public async Task<UploadStatus> UploadFileToGoogleDrive(string fileOnDisk, string fileName, string description, string mimeType)
         {
             File newFile = new File
             {
@@ -256,7 +262,7 @@ namespace StoryForce.Server.Controllers
             ServiceAccountCredential credential = new ServiceAccountCredential(
                 new ServiceAccountCredential.Initializer(serviceAccount)
                 {
-                    Scopes = new []{ DriveService.Scope.Drive }
+                    Scopes = new[] { DriveService.Scope.Drive }
                 }.FromPrivateKey(privateKey));
 
             DriveService service = new DriveService(new BaseClientService.Initializer()
@@ -270,18 +276,33 @@ namespace StoryForce.Server.Controllers
         [HttpPost("{id}/favorite")]
         public async Task<ActionResult> Favourite(int id)
         {
-            var storyFile = await this._storyFileService.GetAsync(id);     
-            if(storyFile.FavouritesPeople.Count > 0)
+            var storyFile = await this._storyFileService.GetAsync(id);
+            var user = await this._peopleService.GetByEmailAsync(_userManager.GetUserName(User));
+            if (storyFile == null)
             {
-                storyFile.FavouritesPeople.Remove((Person)storyFile.FavouritesPeople);
-                await _storyFileService.UpdateAsync(id, storyFile);
-                return Ok();
+                return BadRequest();
             }
             else
             {
-               // storyFile.FavouritesPeople.Add(storyFile);
+                if (storyFile.FavouritesPeople.Count > 0 && storyFile.FavouritesPeople.Any(m => m.Id == user.Id))
+                {
+                    foreach (var item in storyFile.FavouritesPeople.Where(m => m.Id == user.Id))
+                    {
+                        if (item.FavouritesStoryFile.Any(m => m.Id == id))
+                        {
+                            storyFile.FavouritesPeople.Remove(item);
+                        }
+                    }
+                    await _storyFileService.UpdateAsync(id, storyFile);
+                    return Ok();
+                }
+                else
+                {
+                    storyFile.FavouritesPeople.Add(user);                                
+                    await _storyFileService.UpdateAsync(id, storyFile);
+                    return Ok();
+                }
             }
-            return Ok();
         }
 
     }
