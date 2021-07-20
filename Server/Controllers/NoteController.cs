@@ -53,7 +53,8 @@ namespace StoryForce.Server.Controllers
             }
 
             createdNote = await _noteService.CreateAsync(note.ToEntity());
-            var storyHistoryLog = new StoryLogHistory();
+            var storyHistoryLog = new NoteLogHistory();
+            var userId = User.Claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (note.SubmissionId != 0)
             {
                 var submission = await _submissionService.GetAsync(note.SubmissionId);
@@ -61,10 +62,6 @@ namespace StoryForce.Server.Controllers
                     return BadRequest($"Submission with id '{note.SubmissionId}' not found.");
                 submission.NoteFile.Add(createdNote);
                 await _submissionService.UpdateAsync(submission.Id, submission);
-
-                var userId = User.Claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-                storyHistoryLog.ModifiedBy = !string.IsNullOrEmpty(userId) ? Int32.Parse(userId) : 0;
-
             }
             else
             {
@@ -73,6 +70,17 @@ namespace StoryForce.Server.Controllers
                     return BadRequest($"Story file with id '{note.StoryFileId}' not found.");
                 storyFile.Notes.Add(createdNote);
                 await _storyFileService.UpdateAsync(storyFile.Id, storyFile);
+
+                //var storyLogHistory = new StoryLogHistory();
+                //var noteLogHistory = new NoteLogHistory
+                //{
+                //    UserId = userId,
+                //    UserName = User.Identity?.Name,
+                //    Action = NoteLogAction.Create
+                //};
+                //var newLst = new List<NoteLogHistory>();
+                //newLst.Add(noteLogHistory);
+                //storyLogHistory.lstNoteLogHistory = newLst;
             }
 
             return CreatedAtRoute("GetNote", new { id = createdNote.Id }, createdNote);
@@ -128,11 +136,26 @@ namespace StoryForce.Server.Controllers
         public int Id { get; set; }
         public string Text { get; set; }
     }
-
     public class StoryLogHistory
     {
-        public string Note { get; set; }
-        public int ModifiedBy { get; set; }
-        public DateTime Modified { get; set; }
+        public List<NoteLogHistory> lstNoteLogHistory { get; set; }
+    }
+
+    public class NoteLogHistory
+    {
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+        public NoteLogAction Action { get; set; }
+        public int NoteId { get; set; } = 0;
+        public string NoteContent { get; set; }
+        public string SubmissionId { get; set; }
+        public string StoryFieldId { get; set; }
+    }
+    public enum NoteLogAction
+    {
+        Create,
+        Add,
+        Delete,
+        Update
     }
 }
