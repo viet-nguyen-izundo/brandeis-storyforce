@@ -115,6 +115,8 @@ namespace StoryForce.Server.Controllers
                 {
                     storyFile.Event = await _eventService.GetByNameAsync(storyFile.Event.Name) ?? storyFile.Event;
                 }
+
+
             }
 
             var insertedSubmission = await _submissionService.CreateAsync(convertedSubmission);

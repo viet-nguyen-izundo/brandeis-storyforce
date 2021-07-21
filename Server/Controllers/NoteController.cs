@@ -71,16 +71,36 @@ namespace StoryForce.Server.Controllers
                 storyFile.Notes.Add(createdNote);
                 await _storyFileService.UpdateAsync(storyFile.Id, storyFile);
 
-                //var storyLogHistory = new StoryLogHistory();
-                //var noteLogHistory = new NoteLogHistory
-                //{
-                //    UserId = userId,
-                //    UserName = User.Identity?.Name,
-                //    Action = NoteLogAction.Create
-                //};
-                //var newLst = new List<NoteLogHistory>();
-                //newLst.Add(noteLogHistory);
-                //storyLogHistory.lstNoteLogHistory = newLst;
+                #region 
+
+                #endregion
+                var noteLog = new NoteLogHistory
+                {
+                    UserId = userId,
+                    UserName = User.Identity?.Name,
+                    Action = NoteLogAction.Create,
+
+                };
+                var storyFileIdUpdated = await _storyFileService.GetAsync(storyFile.Id);
+                var newNote = _noteService.GetNoteDescByCreatedAt(storyFileIdUpdated, noteLog);
+                
+
+                if (string.IsNullOrEmpty(storyFileIdUpdated.StoryHistoryLog))
+                {
+                    var historJjson = Newtonsoft.Json.JsonConvert.SerializeObject(newNote);
+                    storyFileIdUpdated.StoryHistoryLog = historJjson;
+                }
+                else
+                {
+                    StoryLogHistory historyLog = Newtonsoft.Json.JsonConvert.DeserializeObject<StoryLogHistory>(storyFileIdUpdated.StoryHistoryLog);
+                    if (historyLog != null)
+                    {
+                        historyLog.lstNoteLogHistory.Add(newNote.lstNoteLogHistory[0]);
+                        var historJson = Newtonsoft.Json.JsonConvert.SerializeObject(historyLog);
+                        storyFileIdUpdated.StoryHistoryLog = historJson;
+                    }
+                }
+                await _storyFileService.UpdateAsync(storyFile.Id, storyFileIdUpdated);
             }
 
             return CreatedAtRoute("GetNote", new { id = createdNote.Id }, createdNote);
