@@ -117,7 +117,7 @@
                                                     <textarea style="border: none; border-bottom: 1px solid">@note.Text</textarea>
                                                 </div>
                                                 <div class="col s2">
-                                                    <button class="btn-small edit mb-1 teal lighten-2 edit-note-button" data-note-id="@note.Id" style="width:100%">
+                                                    <button class="btn-small edit mb-1 teal lighten-2 edit-note-button" data-note-id="@note.Id" data-Story-Id="@note." style="width:100%">
                                                         <i class="material-icons left" style="width: 0px; margin-left: -45%">edit</i>
                                                         <span style=" margin-right: -40%">Edit</span>
                                                     </button>
@@ -140,10 +140,10 @@
                                             int row = 1;
                                             @foreach (var file in Model.Submission.SubmittedFiles)
                                             {
-                                                <div class="attachment">                                                    
+                                                <div class="attachment">
                                                     <div class="favorite">
                                                         <i title="@(file.FavouritesPeople.Count > 0 && file.FavouritesPeople.Any(m=>m.Id == Model.UserIden.Id) ? "Remove to list favorites" : "Add to list favorites")" id="i-favorite" style="cursor:pointer" class="material-icons button-favorite @(file.FavouritesPeople.Any(m=>m.Id == Model.UserIden.Id) && file.FavouritesPeople.Count > 0 ? "amber-text" : "")" data-file-id="@file.Id">star_border</i>
-                                                    </div>                                                    
+                                                    </div>
                                                     @if (file.Type.StartsWith("image/"))
                                                     {
                                                         <img src="@file.GetResizedImageUrl(200, 200)" alt="@file.Title" class="responsive-img attached-image">
@@ -185,14 +185,14 @@
                                                                         <textarea style="border: none; border-bottom: 1px solid">@item.Text</textarea>
                                                                     </div>
                                                                     <div class="col s2">
-                                                                        <button class="btn-small edit mb-1 teal lighten-2 edit-note-group-button" data-note-id="@item.Id" style="width:100%">
+                                                                        <button class="btn-small edit mb-1 teal lighten-2 edit-note-group-button" data-note-id="@item.Id" data-submittedfile-id="@file.Id" style="width:100%">
                                                                             <i class="material-icons left" style="width: 0px; margin-left: -45%">edit</i>
                                                                             <span style=" margin-right: -40%">Edit</span>
                                                                         </button>
                                                                     </div>
 
                                                                     <div class="col s2" style="text-align: end">
-                                                                        <button class="btn-small mb-1 delete-note-button" data-note-id="@item.Id" style="width:100%">
+                                                                        <button class="btn-small mb-1 delete-note-button" data-note-id="@item.Id" data-submittedfile-id="@file.Id" style="width:100%">
                                                                             <i class="material-icons left" style="width: 0px; margin-left: -45%">delete</i>
                                                                             <span style=" margin-right: -40%">Delete</span>
                                                                         </button>
@@ -369,8 +369,7 @@
         $(document).ready(function () {
 
             //------Note------
-            $(".attachment-list").on("click", ".edit-note-button", function () {
-                console.log("note-id", $(this).data("note-id"));
+            $(".attachment-list").on("click", ".edit-note-group-button", function () {
                 var mode = $(this).find('i').text();
                 if (mode === 'save') {
                     $.ajax({
@@ -379,7 +378,8 @@
                         contentType: "application/json",
                         data: JSON.stringify({
                             text: $(this).parents('.note-item').find('.note-input textarea').val(),
-                            id: $(this).data("note-id")
+                            id: $(this).data("note-id"),
+                            submittedFileId: $(this).data("submittedfile-id"),
                         })
                     }).then(function (res) {
                         window.location.reload();
@@ -395,7 +395,7 @@
             });
 
             $(".note-group").on("click", ".edit-note-button", function () {
-                console.log("note-id", $(this).data("note-id"));
+
                 var mode = $(this).find('i').text();
                 if (mode === 'save') {
                     $.ajax({
@@ -466,7 +466,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: '/api/note/' + $(this).data("note-id"),
+                            url: '/api/note/' + $(this).data("note-id") + '?submittedFileId=' + $(this).data("submittedfile-id"),
                             type: 'DELETE'
                         }).then(function (res) {
                             Swal.fire(
@@ -497,7 +497,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: '/api/note/' + $(this).data("note-id"),
+                            url: '/api/note/' + $(this).data("note-id") ,
                             type: 'DELETE'
                         }).then(function (res) {
                             Swal.fire(
@@ -688,7 +688,7 @@
                 } else {
                     $(this).addClass("amber-text")
                 }
-                               
+
                 $.ajax({
                 url: '/api/file/' + id +'/favorite',
                 type: 'POST',

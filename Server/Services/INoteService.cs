@@ -7,5 +7,6 @@ namespace StoryForce.Server.Services
     public interface INoteService : IDataService<Note>
     {
         StoryLogHistory GetNoteDescByCreatedAt(StoryFile storyFile, NoteLogHistory noteLog);
+     
     }
 }
