@@ -142,7 +142,7 @@
                                             {
                                                 <div class="attachment">                                                    
                                                     <div class="favorite">
-                                                        <i id="i-favorite" style="cursor:pointer" class="material-icons button-favorite @(file.FavouritesPeople.Count > 0 ? "amber-text" : "")" data-file-id="@file.Id">star_border</i>
+                                                        <i title="@(file.FavouritesPeople.Count > 0 && file.FavouritesPeople.Any(m=>m.Id == Model.UserIden.Id) ? "Remove to list favorites" : "Add to list favorites")" id="i-favorite" style="cursor:pointer" class="material-icons button-favorite @(file.FavouritesPeople.Any(m=>m.Id == Model.UserIden.Id) && file.FavouritesPeople.Count > 0 ? "amber-text" : "")" data-file-id="@file.Id">star_border</i>
                                                     </div>                                                    
                                                     @if (file.Type.StartsWith("image/"))
                                                     {
@@ -688,9 +688,7 @@
                 } else {
                     $(this).addClass("amber-text")
                 }
-
-
-               // $(this).parents('.favorite-files').find('.button-favorite').css("color", "#ffc107!important");
+                               
                 $.ajax({
                 url: '/api/file/' + id +'/favorite',
                 type: 'POST',
