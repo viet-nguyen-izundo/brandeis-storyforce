@@ -144,6 +144,14 @@
                                             @foreach (var file in Model.Submission.SubmittedFiles)
                                             {
                                                 <div class="attachment">
+                                                    <div class="title-right" style="margin-right:-295%">
+                                                        <span class="badge grey lighten-3">
+                                                            <i class="purple-text material-icons small-icons mr-2">
+                                                                fiber_manual_record
+                                                            </i>
+                                                        </span>
+                                                        <span>@file.Status</span>
+                                                    </div>
                                                     <div class="favorite">
                                                         <i title="@(file.FavouritesPeople.Count > 0 && file.FavouritesPeople.Any(m=>m.Id == Model.UserIden.Id) ? "Remove to list favorites" : "Add to list favorites")" id="i-favorite" style="cursor:pointer" class="material-icons button-favorite @(file.FavouritesPeople.Any(m=>m.Id == Model.UserIden.Id) && file.FavouritesPeople.Count > 0 ? "amber-text" : "")" data-file-id="@file.Id">star_border</i>
                                                     </div>
@@ -274,13 +282,13 @@
                                                                 <div class="col s7 tags-name" style="display: none; width:66%; margin-left:-2%">
                                                                     <textarea style="border: none; border-bottom: 1px solid">@tag.Name</textarea>
                                                                 </div>
-                                                                <div class="col s2">
-                                                                    <button class="btn-small edit mb-1 teal lighten-2 edit-tags-button" data-tag-id="@tag.Id" style="width:100%">
+                                                                <div class="col s2" style=" margin-left: 0%;">
+                                                                    <button class="btn-small edit mb-1 teal lighten-2 edit-tags-button" data-tag-id="@tag.Id" style="width:100%; margin-right:-20%">
                                                                         <i class="material-icons left" style="width: 0px; margin-left: -45%">edit</i>
                                                                         <span style=" margin-right: -40%">Edit</span>
                                                                     </button>
                                                                 </div>
-                                                                <div class="col s2" style="text-align: end">
+                                                                <div class="col s2" style=" width: 18%; margin-left: 1%">
                                                                     <button class="btn-small mb-1 delete-tags-button" data-tag-id="@tag.Id" style="width:100%">
                                                                         <i class="material-icons left" style="width: 0px; margin-left: -45%">delete</i>
                                                                         <span style=" margin-right: -40%">Delete</span>
