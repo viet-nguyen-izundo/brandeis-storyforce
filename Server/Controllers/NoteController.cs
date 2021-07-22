@@ -82,7 +82,6 @@ namespace StoryForce.Server.Controllers
                 var storyFileIdUpdated = await _storyFileService.GetAsync(storyFile.Id);
                 var newNote = _noteService.GetNoteDescByCreatedAt(storyFileIdUpdated, noteLog);
 
-
                 if (string.IsNullOrEmpty(storyFileIdUpdated.StoryHistoryLog))
                 {
                     var historyJson = Newtonsoft.Json.JsonConvert.SerializeObject(newNote);
@@ -98,6 +97,7 @@ namespace StoryForce.Server.Controllers
                         storyFileIdUpdated.StoryHistoryLog = historyJson;
                     }
                 }
+
                 await _storyFileService.UpdateAsync(storyFile.Id, storyFileIdUpdated);
                 #endregion
 
@@ -116,7 +116,7 @@ namespace StoryForce.Server.Controllers
 
 
             #region Add history Note
-         
+
             var noteLog = new NoteLogHistory
             {
                 UserId = User.Claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty,
@@ -125,7 +125,8 @@ namespace StoryForce.Server.Controllers
                 NoteId = note.Id,
                 NoteContent = note.Text,
                 OldNoteContent = noteInDb.Text,
-                StoryFieldId = note.SubmittedFileId.ToString()
+                StoryFieldId = note.SubmittedFileId.ToString(),
+                CreatedDate = DateTime.Now
             };
 
             var storyFile = await _storyFileService.GetAsync(note.SubmittedFileId);
@@ -146,7 +147,7 @@ namespace StoryForce.Server.Controllers
 
         // DELETE api/<Note>/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id,int submittedFileId)
+        public async Task<ActionResult> Delete(int id, int submittedFileId)
         {
             var noteInDb = await _noteService.GetAsync(id);
             if (noteInDb == null)
@@ -161,7 +162,8 @@ namespace StoryForce.Server.Controllers
                 NoteId = id,
                 NoteContent = noteInDb.Text,
                 OldNoteContent = noteInDb.Text,
-                StoryFieldId = submittedFileId > 0 ? submittedFileId.ToString() : string.Empty
+                StoryFieldId = submittedFileId > 0 ? submittedFileId.ToString() : string.Empty,
+                CreatedDate = DateTime.Now
             };
 
             if (submittedFileId > 0)
@@ -180,7 +182,7 @@ namespace StoryForce.Server.Controllers
 
             #endregion
             await _noteService.RemoveAsync(id);
-    
+
             return NoContent();
         }
     }
@@ -228,12 +230,14 @@ namespace StoryForce.Server.Controllers
         public string OldNoteContent { get; set; }
         public string SubmissionId { get; set; }
         public string StoryFieldId { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 
     public enum NoteLogAction
     {
-        Create,
-        Delete,
-        Update
+        Create = 0,
+        Update = 1,
+        Delete = 2
+
     }
 }
