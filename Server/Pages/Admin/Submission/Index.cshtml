@@ -452,68 +452,68 @@
                 var mode = $(this).find('i').text();
                 if (mode === 'save') {
                     $.ajax({
-                                            url: '/api/note/' + $(this).data("note-id"),
+                        url: '/api/note/' + $(this).data("note-id"),
                         type: 'PUT',
                         contentType: "application/json",
                         data: JSON.stringify({
-                                                text: $(this).parents('.note-item').find('.note-input textarea').val(),
-                            id: $(this).data("note-id"),
-                            submittedFileId: $(this).data("submittedfile-id"),
+                        text: $(this).parents('.note-item').find('.note-input textarea').val(),
+                        id: $(this).data("note-id"),
+                        submittedFileId: $(this).data("submittedfile-id"),
                         })
                     }).then(function (res) {
-                                            window.location.reload();
-                                        });
-                                    }
-                                    else {
+                            window.location.reload();
+                        });
+                    }
+                    else {
                     $(this).find('i').text('save');
                     $(this).find('span').text('Save');
                     $(this).parents('.note-item').find('.note-text').hide();
                     $(this).parents('.note-item').find('.note-input').show();
-                                    }
+                    }
 
-                                });
+                });
 
             $(".note-group").on("click", ".edit-note-button", function () {
 
-                                    var mode = $(this).find('i').text();
-                                    if (mode === 'save') {
+                    var mode = $(this).find('i').text();
+                    if (mode === 'save') {
                     $.ajax({
-                                            url: '/api/note/' + $(this).data("note-id"),
+                        url: '/api/note/' + $(this).data("note-id"),
                         type: 'PUT',
                         contentType: "application/json",
                         data: JSON.stringify({
-                                                text: $(this).parents('.note-item-group').find('.note-input textarea').val(),
+                            text: $(this).parents('.note-item-group').find('.note-input textarea').val(),
                             id: $(this).data("note-id")
                         })
                     }).then(function (res) {
-                                            window.location.reload();
-                                        });
-                                    }
-                                    else {
+                            window.location.reload();
+                        });
+                    }
+                    else {
                     $(this).find('i').text('save');
                     $(this).find('span').text('Save');
                     $(this).parents('.note-item-group').find('.note-text').hide();
                     $(this).parents('.note-item-group').find('.note-input').show();
-                                    }
+                }
 
-                                });
+            });
 
             $(".attachment-list").on("click", ".new-note-button", function () {
-                                    var newNoteText = $(this).parents('.new-note').find('.new-note-input').val();
+                var newNoteText = $(this).parents('.new-note').find('.new-note-input').val();
                 $.ajax({
-                                        url: '/api/note',
+                    url: '/api/note',
                     type: 'POST',
                     contentType: "application/json",
                     data: JSON.stringify({
-                                            text: newNoteText,
+                        text: newNoteText,
                         username: '@User?.Identity?.Name',
                         storyFileId: $(this).data("file-id")
                     })
                 }).then(function (res) {
-                                        window.location.reload();
-                                    });
+                    window.location.reload();
+                });
 
-                                });
+            });
 
             $(".email-footer").on("click", ".new-note-group-button", function () {
                                     var newNoteText = $(this).parents('.note-group').find('.new-note-group-input').val();
@@ -639,34 +639,34 @@
             });
 
             $(".attachment-list").on("click", ".new-tags-button", function () {
-                            debugger
-                            var newTagsText = "";
-                            var newTagsBrand = $(this).parents('.new-tags-brand').find('.autocomplete_brand').val();
-                            var newTagsProcess = $(this).parents('.new-tags-process').find('.autocomplete_process').val();
-                            if (newTagsBrand) {
-                                newTagsText = newTagsBrand;
-                            }
-                            if (newTagsProcess) {
-                                newTagsText = newTagsProcess;
-                            }
-                            var newNoteText = $(this).parents('.new-tags-process').find('.new-note-process').val();
-                            var id = $(this).data("file-id");
+            debugger
+            var newTagsText = "";
+            var newTagsBrand = $(this).parents('.new-tags-brand').find('.autocomplete_brand').val();
+            var newTagsProcess = $(this).parents('.new-tags-process').find('.autocomplete_process').val();
+            if (newTagsBrand) {
+                newTagsText = newTagsBrand;
+            }
+            if (newTagsProcess) {
+                newTagsText = newTagsProcess;
+            }
+            var newNoteText = $(this).parents('.new-tags-process').find('.new-note-process').val();
+            var id = $(this).data("file-id");
                 $.ajax({
-                                url: '/api/tag',
+                    url: '/api/tag',
                     type: 'POST',
                     contentType: "application/json",
                     data: JSON.stringify({
-                                    name: newTagsText,
+                        name: newTagsText,
                         storyFileId: $(this).data("file-id")
                     })
                 }).then(function (res) {
                                 if (newNoteText) {
                         $.ajax({
-                                        url: '/api/note',
+                            url: '/api/note',
                             type: 'POST',
                             contentType: "application/json",
                             data: JSON.stringify({
-                                            text: newNoteText,
+                                text: newNoteText,
                                 username: '@User?.Identity?.Name',
                                 storyFileId: id
                             })
