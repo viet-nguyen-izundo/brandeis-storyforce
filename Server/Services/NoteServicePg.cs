@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using StoryForce.Server.Controllers;
@@ -31,7 +32,8 @@ namespace StoryForce.Server.Services
                             Action = noteLog.Action,
                             NoteId = note.Id,
                             NoteContent = note.Text,
-                            StoryFieldId = storyFile.Id.ToString()
+                            StoryFieldId = storyFile.Id.ToString(),
+                            CreatedDate= DateTime.Now
                         }
                     }
                 };

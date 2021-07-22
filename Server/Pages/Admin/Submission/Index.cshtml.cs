@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
+using StoryForce.Server.Controllers;
 using StoryForce.Server.Services;
 using StoryForce.Shared.Dtos;
 using StoryForce.Shared.Models;
@@ -40,6 +41,10 @@ namespace StoryForce.Server.Pages.Admin.Submission
         [BindProperty]
         public StoryForce.Shared.Dtos.SubmissionDto Submission { get; set; }
 
+
+        [BindProperty]
+        public StoryLogHistory StoryLogHistory { get; set; }
+
         [BindProperty]
         public StoryForce.Shared.Models.Person UserIden { get; set; }
         private int _submissionId;
@@ -49,6 +54,7 @@ namespace StoryForce.Server.Pages.Admin.Submission
             var submission = await this._submissionService.GetAsync(_submissionId);
             this.Submission = SubmissionDto.ConvertFromEntity(submission);        
             this.UserIden = await this._peopleService.GetByEmailAsync(_userManager.GetUserName(User));
+ 
             return Page();
         }      
 
@@ -56,6 +62,12 @@ namespace StoryForce.Server.Pages.Admin.Submission
         {
             await this._submissionService.RemoveWithFilesAsync(id);
             return new RedirectToPageResult("/Admin/Index");
-        }        
+        }
+
+        public StoryLogHistory ConvertToStoryLog(string storyLogHistory)
+        {
+            StoryLogHistory historyLog = Newtonsoft.Json.JsonConvert.DeserializeObject<StoryLogHistory>(storyLogHistory);
+            return historyLog;
+        }
     }
 }
