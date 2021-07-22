@@ -71,9 +71,7 @@ namespace StoryForce.Server.Controllers
                 storyFile.Notes.Add(createdNote);
                 await _storyFileService.UpdateAsync(storyFile.Id, storyFile);
 
-                #region 
-
-                #endregion
+                #region Add history Note
                 var noteLog = new NoteLogHistory
                 {
                     UserId = userId,
@@ -83,12 +81,11 @@ namespace StoryForce.Server.Controllers
                 };
                 var storyFileIdUpdated = await _storyFileService.GetAsync(storyFile.Id);
                 var newNote = _noteService.GetNoteDescByCreatedAt(storyFileIdUpdated, noteLog);
-                
 
                 if (string.IsNullOrEmpty(storyFileIdUpdated.StoryHistoryLog))
                 {
-                    var historJjson = Newtonsoft.Json.JsonConvert.SerializeObject(newNote);
-                    storyFileIdUpdated.StoryHistoryLog = historJjson;
+                    var historyJson = Newtonsoft.Json.JsonConvert.SerializeObject(newNote);
+                    storyFileIdUpdated.StoryHistoryLog = historyJson;
                 }
                 else
                 {
@@ -96,11 +93,14 @@ namespace StoryForce.Server.Controllers
                     if (historyLog != null)
                     {
                         historyLog.lstNoteLogHistory.Add(newNote.lstNoteLogHistory[0]);
-                        var historJson = Newtonsoft.Json.JsonConvert.SerializeObject(historyLog);
-                        storyFileIdUpdated.StoryHistoryLog = historJson;
+                        var historyJson = Newtonsoft.Json.JsonConvert.SerializeObject(historyLog);
+                        storyFileIdUpdated.StoryHistoryLog = historyJson;
                     }
                 }
+
                 await _storyFileService.UpdateAsync(storyFile.Id, storyFileIdUpdated);
+                #endregion
+
             }
 
             return CreatedAtRoute("GetNote", new { id = createdNote.Id }, createdNote);
@@ -113,19 +113,76 @@ namespace StoryForce.Server.Controllers
             var noteInDb = await _noteService.GetAsync(id);
             if (noteInDb == null || note.Id != id)
                 return BadRequest($"Note with id '{id}' not found.");
+
+
+            #region Add history Note
+
+            var noteLog = new NoteLogHistory
+            {
+                UserId = User.Claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty,
+                UserName = User.Identity?.Name,
+                Action = NoteLogAction.Update,
+                NoteId = note.Id,
+                NoteContent = note.Text,
+                OldNoteContent = noteInDb.Text,
+                StoryFieldId = note.SubmittedFileId.ToString(),
+                CreatedDate = DateTime.Now
+            };
+
+            var storyFile = await _storyFileService.GetAsync(note.SubmittedFileId);
+            StoryLogHistory historyLog = Newtonsoft.Json.JsonConvert.DeserializeObject<StoryLogHistory>(storyFile.StoryHistoryLog);
+            if (historyLog != null)
+            {
+                historyLog.lstNoteLogHistory.Add(noteLog);
+                var historyJson = Newtonsoft.Json.JsonConvert.SerializeObject(historyLog);
+                storyFile.StoryHistoryLog = historyJson;
+            }
+
+            #endregion
             noteInDb.Text = note.Text;
             await _noteService.UpdateAsync(id, noteInDb);
+            await _storyFileService.UpdateAsync(note.SubmittedFileId, storyFile);
             return NoContent();
         }
 
         // DELETE api/<Note>/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(int id, int submittedFileId)
         {
             var noteInDb = await _noteService.GetAsync(id);
             if (noteInDb == null)
                 return BadRequest($"Note with id '{id}' not found.");
+            #region Add history Note
+
+            var noteLog = new NoteLogHistory
+            {
+                UserId = User.Claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty,
+                UserName = User.Identity?.Name,
+                Action = NoteLogAction.Delete,
+                NoteId = id,
+                NoteContent = noteInDb.Text,
+                OldNoteContent = noteInDb.Text,
+                StoryFieldId = submittedFileId > 0 ? submittedFileId.ToString() : string.Empty,
+                CreatedDate = DateTime.Now
+            };
+
+            if (submittedFileId > 0)
+            {
+                var storyFile = await _storyFileService.GetAsync(submittedFileId);
+                StoryLogHistory historyLog = Newtonsoft.Json.JsonConvert.DeserializeObject<StoryLogHistory>(storyFile.StoryHistoryLog);
+                if (historyLog != null)
+                {
+                    historyLog.lstNoteLogHistory.Add(noteLog);
+                    var historyJson = Newtonsoft.Json.JsonConvert.SerializeObject(historyLog);
+                    storyFile.StoryHistoryLog = historyJson;
+                    await _storyFileService.UpdateAsync(submittedFileId, storyFile);
+                }
+            }
+
+
+            #endregion
             await _noteService.RemoveAsync(id);
+
             return NoContent();
         }
     }
@@ -155,7 +212,9 @@ namespace StoryForce.Server.Controllers
     {
         public int Id { get; set; }
         public string Text { get; set; }
+        public int SubmittedFileId { get; set; }
     }
+
     public class StoryLogHistory
     {
         public List<NoteLogHistory> lstNoteLogHistory { get; set; }
@@ -168,14 +227,17 @@ namespace StoryForce.Server.Controllers
         public NoteLogAction Action { get; set; }
         public int NoteId { get; set; } = 0;
         public string NoteContent { get; set; }
+        public string OldNoteContent { get; set; }
         public string SubmissionId { get; set; }
         public string StoryFieldId { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
+
     public enum NoteLogAction
     {
-        Create,
-        Add,
-        Delete,
-        Update
+        Create = 0,
+        Update = 1,
+        Delete = 2
+
     }
 }
