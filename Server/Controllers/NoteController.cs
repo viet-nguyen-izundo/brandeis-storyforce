@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using StoryForce.Server.Services;
@@ -47,12 +49,12 @@ namespace StoryForce.Server.Controllers
             var createdNote = new Note();
             if (note.Text == null)
             {
-                return BadRequest($"Text null");
+                return BadRequest("Text null");
             }
-            else
-            {
-                createdNote = await _noteService.CreateAsync(note.ToEntity());
-            }
+
+            createdNote = await _noteService.CreateAsync(note.ToEntity());
+            var storyHistoryLog = new NoteLogHistory();
+            var userId = User.Claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (note.SubmissionId != 0)
             {
                 var submission = await _submissionService.GetAsync(note.SubmissionId);
@@ -68,11 +70,42 @@ namespace StoryForce.Server.Controllers
                     return BadRequest($"Story file with id '{note.StoryFileId}' not found.");
                 storyFile.Notes.Add(createdNote);
                 await _storyFileService.UpdateAsync(storyFile.Id, storyFile);
+
+                #region 
+
+                #endregion
+                var noteLog = new NoteLogHistory
+                {
+                    UserId = userId,
+                    UserName = User.Identity?.Name,
+                    Action = NoteLogAction.Create,
+
+                };
+                var storyFileIdUpdated = await _storyFileService.GetAsync(storyFile.Id);
+                var newNote = _noteService.GetNoteDescByCreatedAt(storyFileIdUpdated, noteLog);
+                
+
+                if (string.IsNullOrEmpty(storyFileIdUpdated.StoryHistoryLog))
+                {
+                    var historJjson = Newtonsoft.Json.JsonConvert.SerializeObject(newNote);
+                    storyFileIdUpdated.StoryHistoryLog = historJjson;
+                }
+                else
+                {
+                    StoryLogHistory historyLog = Newtonsoft.Json.JsonConvert.DeserializeObject<StoryLogHistory>(storyFileIdUpdated.StoryHistoryLog);
+                    if (historyLog != null)
+                    {
+                        historyLog.lstNoteLogHistory.Add(newNote.lstNoteLogHistory[0]);
+                        var historJson = Newtonsoft.Json.JsonConvert.SerializeObject(historyLog);
+                        storyFileIdUpdated.StoryHistoryLog = historJson;
+                    }
+                }
+                await _storyFileService.UpdateAsync(storyFile.Id, storyFileIdUpdated);
             }
 
             return CreatedAtRoute("GetNote", new { id = createdNote.Id }, createdNote);
-        }        
-       
+        }
+
         // PUT api/<Note>/5
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, EditNoteDto note)
@@ -94,7 +127,7 @@ namespace StoryForce.Server.Controllers
                 return BadRequest($"Note with id '{id}' not found.");
             await _noteService.RemoveAsync(id);
             return NoContent();
-        }        
+        }
     }
 
     public class CreateNoteDto
@@ -113,7 +146,7 @@ namespace StoryForce.Server.Controllers
             {
                 Text = this.Text,
                 UserName = this.Username,
-                CreatedAt = DateTime.Now,                
+                CreatedAt = DateTime.Now,
             };
         }
     }
@@ -122,6 +155,27 @@ namespace StoryForce.Server.Controllers
     {
         public int Id { get; set; }
         public string Text { get; set; }
-        
+    }
+    public class StoryLogHistory
+    {
+        public List<NoteLogHistory> lstNoteLogHistory { get; set; }
+    }
+
+    public class NoteLogHistory
+    {
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+        public NoteLogAction Action { get; set; }
+        public int NoteId { get; set; } = 0;
+        public string NoteContent { get; set; }
+        public string SubmissionId { get; set; }
+        public string StoryFieldId { get; set; }
+    }
+    public enum NoteLogAction
+    {
+        Create,
+        Add,
+        Delete,
+        Update
     }
 }

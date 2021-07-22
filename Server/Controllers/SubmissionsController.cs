@@ -115,6 +115,8 @@ namespace StoryForce.Server.Controllers
                 {
                     storyFile.Event = await _eventService.GetByNameAsync(storyFile.Event.Name) ?? storyFile.Event;
                 }
+
+
             }
 
             var insertedSubmission = await _submissionService.CreateAsync(convertedSubmission);
@@ -486,11 +488,11 @@ namespace StoryForce.Server.Controllers
         }
 
         [HttpPost("StoryFileAssignment")]
-        public async Task<ActionResult> StoryFileAssignment([FromBody]AssignmentRequestModel request)
+        public async Task<ActionResult> StoryFileAssignment([FromBody] AssignmentRequestModel request)
         {
             if (request.AssignedToId.Equals(0) || !request.AssignmentFiles.Any())
                 return NotFound();
-            var newAssignment =await _storyFileAssignmentService.InsertStoryFileAssignment(request);
+            var newAssignment = await _storyFileAssignmentService.InsertStoryFileAssignment(request);
             if (newAssignment.Equals(false))
                 return BadRequest();
             return Ok();

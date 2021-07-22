@@ -6,11 +6,12 @@ using System.Text;
 using System.Web;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
+using StoryForce.Shared.Interfaces;
 
 namespace StoryForce.Shared.Models
 {
     [BsonIgnoreExtraElements]
-    public class StoryFile : DatabaseEntity
+    public class StoryFile : DatabaseEntity, IStoryHistory
     {
         public string Title { get; set; }
 
@@ -41,7 +42,7 @@ namespace StoryForce.Shared.Models
         public List<AuditDetail> History { get; set; }
 
         public int SubmissionId { get; set; }
-        public int RequestedById { get; set; }
+        public int? RequestedById { get; set; }
         public int SubmittedById { get; set; }
 
         public Submission Submission { get; set; }
@@ -120,6 +121,7 @@ namespace StoryForce.Shared.Models
         public List<Story> BelongsTo { get; set; }
 
         public List<Event> Events { get; set; }
+ 
 
         public string GetResizedImageUrl(int width, int height)
         {
@@ -165,5 +167,7 @@ namespace StoryForce.Shared.Models
             string toReturn = System.Convert.ToBase64String(bytes);
             return toReturn;
         }
+
+        public string StoryHistoryLog { get; set; }
     }
 }

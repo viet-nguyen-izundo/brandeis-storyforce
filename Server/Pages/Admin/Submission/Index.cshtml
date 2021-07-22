@@ -420,7 +420,6 @@
             });
 
             $(".attachment-list").on("click", ".new-note-button", function () {
-                debugger
                 var newNoteText = $(this).parents('.new-note').find('.new-note-input').val();
                 $.ajax({
                     url: '/api/note',
@@ -437,7 +436,6 @@
 
             });
             $(".email-footer").on("click", ".new-note-group-button", function () {
-                debugger
                 var newNoteText = $(this).parents('.note-group').find('.new-note-group-input').val();
                 var submissionId = $(this).data("submission-id");
                 $.ajax({
