@@ -778,6 +778,23 @@
 
             });
             });
+            //Category
+            $(".attachment-list").on("click", ".new-categories-button", function () {
+                debugger
+                var newNoteText = $(this).parents('.new-categories').find('.new-categories-input').val();
+                $.ajax({
+                    url: '/api/categories',
+                    type: 'POST',
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        name: newNoteText,
+                        storyFileId: $(this).data("file-id")
+                    })
+                }).then(function (res) {
+                    window.location.reload();
+                });
+
+            });
         });
 
     </script>
