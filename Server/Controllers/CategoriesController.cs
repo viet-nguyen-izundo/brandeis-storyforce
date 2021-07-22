@@ -47,7 +47,7 @@ namespace StoryForce.Server.Controllers
             var createdCategory = new Category();
             if (categoriesDto.Name == "")
             {
-                return BadRequest($"Error tag name because null");
+                return BadRequest($"Error Category name because null");
             }
             else
             {
