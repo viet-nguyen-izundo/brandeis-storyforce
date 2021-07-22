@@ -103,8 +103,13 @@ namespace StoryForce.Server.Services
 
         public IList<StoryFile> GetByUserIdAsync(int userId)
         {
-            var list = _dbContext.StoryFiles.Include(m=>m.FavouritesPeople).Where(story => story.FavouritesPeople.Any(x => x.Id == userId)).ToList();
+            var list = _dbContext.StoryFiles.Include(m => m.FavouritesPeople).Where(story => story.FavouritesPeople.Any(x => x.Id == userId)).ToList();
             return list;
+        }
+
+        public Task UpdateHistoryLog()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
