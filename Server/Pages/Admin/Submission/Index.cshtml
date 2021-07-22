@@ -1,5 +1,6 @@
 ﻿@page "{id}"
 @using StoryForce.Server.Services
+@using StoryForce.Shared.Models
 @model StoryForce.Server.Pages.Admin.Submission.DetailsModel
 @{
     ViewData["Title"] = "Submission Details";
@@ -140,10 +141,18 @@
                                             int row = 1;
                                             @foreach (var file in Model.Submission.SubmittedFiles)
                                             {
-                                                <div class="attachment">                                                    
+                                                <div class="attachment">
+                                                    <div class="title-right" style="margin-right:-295%">
+                                                        <span class="badge grey lighten-3">
+                                                            <i class="purple-text material-icons small-icons mr-2">
+                                                                fiber_manual_record
+                                                            </i>
+                                                        </span>
+                                                        <span>@file.Status</span>
+                                                    </div>
                                                     <div class="favorite">
                                                         <i title="@(file.FavouritesPeople.Count > 0 && file.FavouritesPeople.Any(m=>m.Id == Model.UserIden.Id) ? "Remove to list favorites" : "Add to list favorites")" id="i-favorite" style="cursor:pointer" class="material-icons button-favorite @(file.FavouritesPeople.Any(m=>m.Id == Model.UserIden.Id) && file.FavouritesPeople.Count > 0 ? "amber-text" : "")" data-file-id="@file.Id">star_border</i>
-                                                    </div>                                                    
+                                                    </div>
                                                     @if (file.Type.StartsWith("image/"))
                                                     {
                                                         <img src="@file.GetResizedImageUrl(200, 200)" alt="@file.Title" class="responsive-img attached-image">
@@ -279,6 +288,23 @@
                                                                 </div>
                                                             </div>
                                                         }
+                                                    }
+                                                    @*Add Categories*@
+                                                    @if (file.Status == ApprovalStatusEnum.New)
+                                                    {
+                                                        <p class="mt-5" style="margin-left:-86%">Add Category</p>
+                                                        <div class="categories" style="width:100%">
+                                                            <div class="row new-categories">
+                                                                <div class="col s10" style="width: 80%">
+                                                                    <textarea type="text" placeholder=" Input Category" class="new-categories-input" style="border: none; border-bottom: 1px solid"></textarea>
+                                                                </div>
+                                                                <div class="col s2" style="width:19%">
+                                                                    <button class="btn-small edit mb-1 teal lighten-2 new-categories-button" data-file-id="@file.Id" style="width: 90%">
+                                                                        <i class="material-icons left" style="margin-left: -40%; width:0%">save</i><span style="margin-left: 30%">Save</span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     }
                                                 </div>
                                                 <a class="btn-small edit mb-1 teal lighten-2 edit-note-group-button" data-note-id="@file.Id" href="/storyFile/@file.Id" style="width:21%; margin-left:180%">
@@ -688,7 +714,7 @@
                 } else {
                     $(this).addClass("amber-text")
                 }
-                               
+
                 $.ajax({
                 url: '/api/file/' + id +'/favorite',
                 type: 'POST',
@@ -696,6 +722,24 @@
                 }).then(function (res) {
 
             });
+            });
+
+            //Category
+            $(".attachment-list").on("click", ".new-categories-button", function () {
+                debugger
+                var newNoteText = $(this).parents('.new-categories').find('.new-categories-input').val();
+                $.ajax({
+                    url: '/api/categories',
+                    type: 'POST',
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        name: newNoteText,                        
+                        storyFileId: $(this).data("file-id")
+                    })
+                }).then(function (res) {
+                    window.location.reload();
+                });
+
             });
         });
     </script>

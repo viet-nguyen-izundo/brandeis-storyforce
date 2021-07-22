@@ -1,5 +1,6 @@
 ﻿@page
 @using System.Data
+@using StoryForce.Shared.Models
 @model StoryForce.Server.Pages.Admin.IndexModel
 @{
     ViewData["Title"] = "Admin Page";
@@ -77,13 +78,18 @@
                                                          class="circle z-depth-2 responsive-img avtar">
                                                     <div class="list-title">@Html.DisplayFor(model => submission.Title)</div>
                                                 </div>
-                                                <div class="title-right">
-                                                    <span class="badge grey lighten-3">
-                                                        <i class="purple-text material-icons small-icons mr-2">
-                                                            fiber_manual_record
-                                                        </i>New
-                                                    </span>
-                                                </div>
+                                                @if (submission.SubmittedFiles.Any(m => m.Status == ApprovalStatusEnum.New))
+                                                {
+                                                    var countFile = @submission.SubmittedFiles.Where(m => m.Status == ApprovalStatusEnum.New).Count();
+                                                    <div class="title-right">
+                                                        @countFile files
+                                                        <span class="badge grey lighten-3">
+                                                            <i class="purple-text material-icons small-icons mr-2">
+                                                                fiber_manual_record
+                                                            </i>New
+                                                        </span>
+                                                    </div>
+                                                }
                                             </div>
                                             <div class="list-desc">
                                                 @Html.DisplayFor(model => submission.Description)

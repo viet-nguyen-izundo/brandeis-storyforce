@@ -502,7 +502,7 @@ namespace StoryForce.Client.Pages
                         Size = file.Size,
                         AccessToken = this.Submission.GDriveOAuthToken,
                         FeaturedPeople = file.FeaturedPeople,
-                        Event = file.Event
+                        Event = file.Event                        
                     }).ToList();
 
             var urlFiles = new List<UploadByUrl>();
@@ -524,7 +524,7 @@ namespace StoryForce.Client.Pages
                     Size = file.Size,
                     AccessToken = null,
                     FeaturedPeople = file.FeaturedPeople,
-                    Event = file.Event
+                    Event = file.Event                   
                 });
             }
 

@@ -14,15 +14,13 @@ namespace StoryForce.Server.Controllers
     [ApiController]
     [Authorize]
     public class TagController : ControllerBase
-    {
-        private readonly INoteService _noteService;
+    {      
         private readonly IStoryFileService _storyFileService;
         private readonly ISubmissionService _submissionService;
         private readonly ITagService _tagsService;
 
         public TagController(INoteService noteService, IStoryFileService storyFileService, ISubmissionService submissionService, ITagService tagService)
-        {
-            _noteService = noteService;
+        {           
             this._storyFileService = storyFileService;
             this._submissionService = submissionService;
             this._tagsService = tagService;

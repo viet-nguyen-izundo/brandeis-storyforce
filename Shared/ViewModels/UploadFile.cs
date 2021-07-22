@@ -48,6 +48,9 @@ namespace StoryForce.Shared.ViewModels
 
         public List<Note> Notes { get; set; }
 
+        [EnumDataType(typeof(ApprovalStatusEnum))]
+        public ApprovalStatusEnum Status { get; set; }
+
         public UploadFile()
         {
             this.FeaturedPeople = new List<Person>();

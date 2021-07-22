@@ -64,7 +64,8 @@ namespace StoryForce.Shared.ViewModels
                     SubmittedBy = this.SubmittedBy,
                     FeaturedPeople = file.FeaturedPeople,
                     RequestedBy = file.RequestedBy,
-                    Event = file.Event                    
+                    Event = file.Event,
+                    Status = ApprovalStatusEnum.New
                 }).ToList(),
             };
         }

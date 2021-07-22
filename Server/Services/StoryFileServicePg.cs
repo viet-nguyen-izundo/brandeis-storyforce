@@ -33,6 +33,7 @@ namespace StoryForce.Server.Services
                 .Include(x => x.Notes)
                 .Include(x => x.Tags)
                 .Include(x => x.FavouritesPeople)
+                .Include(x => x.Categories)
                 .ToListAsync();
         }
 
@@ -53,6 +54,7 @@ namespace StoryForce.Server.Services
                 .Include(x => x.Notes)
                 .Include(x => x.Tags)
                 .Include(x => x.FavouritesPeople)
+                .Include(x => x.Categories)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -71,6 +73,7 @@ namespace StoryForce.Server.Services
                 .Include(x => x.Comments)
                 .Include(x => x.Notes)
                 .Include(x => x.FavouritesPeople)
+                .Include(x => x.Categories)
                 .Where(s => s.RequestedBy.Email == email)
                 .ToListAsync();
 
@@ -98,6 +101,7 @@ namespace StoryForce.Server.Services
                 .Include(x => x.Categories)
                 .Include(x => x.Comments)
                 .Include(x => x.Notes)
+                .Include(x => x.Categories)
                 .Where(s => s.SubmittedBy.Id == submittedById || s.RequestedBy.Id == submittedById)
                 .ToListAsync();
 
