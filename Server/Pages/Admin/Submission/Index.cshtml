@@ -1,5 +1,7 @@
 ﻿@page "{id}"
 @using StoryForce.Server.Services
+@using StoryForce.Shared.Models
+@using StoryForce.Server.Controllers
 @model StoryForce.Server.Pages.Admin.Submission.DetailsModel
 
 @{
@@ -141,10 +143,10 @@
                                             int row = 1;
                                             @foreach (var file in Model.Submission.SubmittedFiles)
                                             {
-                                                <div class="attachment">                                                    
+                                                <div class="attachment">
                                                     <div class="favorite">
                                                         <i title="@(file.FavouritesPeople.Count > 0 && file.FavouritesPeople.Any(m=>m.Id == Model.UserIden.Id) ? "Remove to list favorites" : "Add to list favorites")" id="i-favorite" style="cursor:pointer" class="material-icons button-favorite @(file.FavouritesPeople.Any(m=>m.Id == Model.UserIden.Id) && file.FavouritesPeople.Count > 0 ? "amber-text" : "")" data-file-id="@file.Id">star_border</i>
-                                                    </div>                                                    
+                                                    </div>
                                                     @if (file.Type.StartsWith("image/"))
                                                     {
                                                         <img src="@file.GetResizedImageUrl(200, 200)" alt="@file.Title" class="responsive-img attached-image">
