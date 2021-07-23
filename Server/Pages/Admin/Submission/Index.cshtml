@@ -647,7 +647,6 @@
             });
 
             $(".attachment-list").on("click", ".new-tags-button", function () {
-            debugger
             var newTagsText = "";
             var newTagsBrand = $(this).parents('.new-tags-brand').find('.autocomplete_brand').val();
             var newTagsProcess = $(this).parents('.new-tags-process').find('.autocomplete_process').val();
@@ -768,8 +767,6 @@
             });
 
             $(".footer-action").on("click", ".button-favorite", function () {
-                debugger;
-                console.log($(this).data("file-id"));
                 var id = $(this).data("file-id");
 
                 if ($(this).hasClass("amber-text")) {
@@ -788,7 +785,7 @@
             });
             //Category
             $(".attachment-list").on("click", ".new-categories-button", function () {
-                debugger
+
                 var newNoteText = $(this).parents('.new-categories').find('.new-categories-input').val();
                 $.ajax({
                     url: '/api/categories',
