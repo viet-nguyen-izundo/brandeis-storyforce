@@ -33,7 +33,7 @@ namespace StoryForce.Server.Data
         public DbSet<AuditDetail> AuditDetails { get; set; }
         public DbSet<StoryFileAssignment> StoryFileAssignments { get; set; }       
 
-        public DbSet<Category> Categories { get; set; }
+        //public DbSet<Category> Categorys { get; set; }
 
         public PgDbContext(DbContextOptions options) : base(options)
         {

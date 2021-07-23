@@ -2,7 +2,7 @@
 
 namespace StoryForce.Server.Services
 {
-    public interface ICategoriesService : IDataService<Category>
-    {
-    }
+    //public interface ICategoriesService : IDataService<Category>
+    //{
+    //}
 }

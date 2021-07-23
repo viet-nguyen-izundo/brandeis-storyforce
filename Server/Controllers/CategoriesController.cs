@@ -15,54 +15,54 @@ namespace StoryForce.Server.Controllers
     [Authorize]
     public class CategoriesController : ControllerBase
     {
-        private readonly ICategoriesService _categoriesService;
+     //   private readonly ICategoriesService _categoriesService;
         private readonly IStoryFileService _storyFileService;
         private readonly ISubmissionService _submissionService;
 
-        public CategoriesController(ICategoriesService categoriesService, IStoryFileService storyFileService, ISubmissionService submissionService)
-        {
-            _categoriesService = categoriesService;
-            this._storyFileService = storyFileService;
-            this._submissionService = submissionService;
-        }
+        //public CategoriesController(ICategoriesService categoriesService, IStoryFileService storyFileService, ISubmissionService submissionService)
+        //{
+        //    _categoriesService = categoriesService;
+        //    this._storyFileService = storyFileService;
+        //    this._submissionService = submissionService;
+        //}
 
-        // GET: api/<Category>
-        [HttpGet]
-        public async Task<List<Category>> Get()
-        {
-            return await _categoriesService.GetAsync();
-        }
+        //// GET: api/<Category>
+        //[HttpGet]
+        //public async Task<List<Category>> Get()
+        //{
+        //    return await _categoriesService.GetAsync();
+        //}
 
-        // GET api/<Category>/5
-        [HttpGet("{id}", Name = "GetCategory")]
-        public async Task<ActionResult<Category>> Get(int id)
-        {
-            return await _categoriesService.GetAsync(id);
-        }
+        //// GET api/<Category>/5
+        //[HttpGet("{id}", Name = "GetCategory")]
+        //public async Task<ActionResult<Category>> Get(int id)
+        //{
+        //    return await _categoriesService.GetAsync(id);
+        //}
 
         // POST api/<Category>
-        [HttpPost]
-        public async Task<ActionResult> Post(CreateCategoryDto categoriesDto)
-        {
-            var createdCategory = new Category();
-            if (categoriesDto.Name == "")
-            {
-                return BadRequest($"Error Category name because null");
-            }
-            else
-            {
-                createdCategory = await _categoriesService.CreateAsync(categoriesDto.ToEntity());
-            }
+      //  [HttpPost]
+        //public async Task<ActionResult> Post(CreateCategoryDto categoriesDto)
+        //{
+        //    var createdCategory = new Category();
+        //    if (categoriesDto.Name == "")
+        //    {
+        //        return BadRequest($"Error Category name because null");
+        //    }
+        //    else
+        //    {
+        //        createdCategory = await _categoriesService.CreateAsync(categoriesDto.ToEntity());
+        //    }
 
-            var storyFile = await _storyFileService.GetAsync(categoriesDto.StoryFileId);
-            if (storyFile == null)
-                return BadRequest($"Story file with id '{categoriesDto.StoryFileId}' not found.");
-            storyFile.Categories.Add(createdCategory);
-            await _storyFileService.UpdateAsync(storyFile.Id, storyFile);
+        //    var storyFile = await _storyFileService.GetAsync(categoriesDto.StoryFileId);
+        //    if (storyFile == null)
+        //        return BadRequest($"Story file with id '{categoriesDto.StoryFileId}' not found.");
+        //    storyFile.Categories.Add(createdCategory);
+        //    await _storyFileService.UpdateAsync(storyFile.Id, storyFile);
 
 
-            return CreatedAtRoute("GetCategory", new { id = createdCategory.Id }, createdCategory);
-        }
+        //    return CreatedAtRoute("GetCategory", new { id = createdCategory.Id }, createdCategory);
+        //}
 
         //// PUT api/<Tag>/5
         //[HttpPut("{id}")]
