@@ -784,11 +784,10 @@
             });
             });
             //Category
-            $(".attachment-list").on("click", ".new-categories-button", function () {
-
+            $(".attachment-list").on("click", ".new-categories-button", function () {               
                 var newNoteText = $(this).parents('.new-categories').find('.new-categories-input').val();
                 $.ajax({
-                    url: '/api/categories',
+                    url: '/api/category',
                     type: 'POST',
                     contentType: "application/json",
                     data: JSON.stringify({
