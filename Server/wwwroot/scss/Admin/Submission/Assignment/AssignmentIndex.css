@@ -1,0 +1,22 @@
+﻿.as-content {
+  cursor: pointer; }
+  .as-content .as-Title {
+    color: #6b6f82;
+    font-weight: 700; }
+  .as-content .as-Description {
+    padding-left: 35px;
+    margin-top: .25rem;
+    height: 39px; }
+    .as-content .as-Description .input-description {
+      color: #9e9e9e;
+      border: 0; }
+  .as-content .pd-left-20 {
+    padding-left: 20px; }
+
+.as-center {
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+
+.error-Text {
+  color: red; }

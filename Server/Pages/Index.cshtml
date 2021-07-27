@@ -1,0 +1,66 @@
+﻿@page
+@using Microsoft.Extensions.Configuration
+@model StoryForce.Server.Pages.IndexModel
+@inject IConfiguration Configuration
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Storim</title>
+    <base href="/" />
+    <!-- BEGIN: VENDOR CSS-->
+    <link rel="stylesheet" type="text/css" href="materialize-admin/app-assets/vendors/vendors.min.css">
+    <link rel="stylesheet" type="text/css" href="materialize-admin/app-assets/css/themes/horizontal-menu-template/materialize.css">
+    <link rel="stylesheet" type="text/css" href="materialize-admin/app-assets/css/themes/horizontal-menu-template/style.css">
+    <link rel="stylesheet" type="text/css" href="materialize-admin/app-assets/css/layouts/style-horizontal.css">
+    <script src="_content/MatBlazor/dist/matBlazor.js"></script>
+    <link rel="stylesheet" href="_content/MatBlazor/dist/matBlazor.css" />
+    <!-- END: VENDOR CSS-->
+    <!-- BEGIN: Custom CSS-->
+    <link href="css/app.css" type="text/css" rel="stylesheet" />
+    <!-- END: Custom CSS-->
+</head>
+
+<body>
+    <div id="app">Loading...</div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <!-- Custom JS (must be loaded before the Blazor framework script) -->
+    <script src="materialize-admin/app-assets/js/vendors.min.js"></script>
+    <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
+    @{
+        var pickerConfig = Configuration.GetSection("Google"); 
+    }
+    <script type="text/javascript">
+        // The Browser API key obtained from the Google API Console.
+        // Replace with your own Browser API key, or your own key.
+        window.developerKey = "@pickerConfig["DevKey"]";
+
+        // The Client ID obtained from the Google API Console. Replace with your own Client ID.
+        window.clientId = "@pickerConfig["ClientId"]";
+
+        // Replace with your own project number from console.developers.google.com.
+        // See "Project number" under "IAM & Admin" > "Settings"
+        window.appId = "@pickerConfig["ProjectId"]";
+    </script>
+    <script src="js/google-picker.js"></script>
+    <script src="js/interop.js"></script>
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        $(function() {
+            $("select").formSelect();
+        });
+    </script>
+</body>
+
+</html>

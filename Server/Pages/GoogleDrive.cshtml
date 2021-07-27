@@ -1,0 +1,151 @@
+﻿@page
+@using Microsoft.Extensions.Configuration
+@using Google.Apis.Drive.v3
+@model StoryForce.Server.Pages.GoogleDriveModel
+@inject IConfiguration Configuration
+@{
+    Layout = "Shared/_Layout";
+    ViewData["Title"] = "Google Picker";
+}
+@section HeadScripts
+{
+
+}
+
+<button id="addFiles">Add Google Drive Files</button>
+
+<div id="fileList">
+    <p>No files selected!</p>
+    <input tye="file" id="files" />
+</div>
+
+@section FooterScripts
+{
+    @{
+        var pickerConfig = Configuration.GetSection("Google");
+    }
+    <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
+    <script type="text/javascript">
+    window.onload = function() {
+        // The Browser API key obtained from the Google API Console.
+        // Replace with your own Browser API key, or your own key.
+        var developerKey = "@pickerConfig["DevKey"]";
+
+        // The Client ID obtained from the Google API Console. Replace with your own Client ID.
+        var clientId = "@pickerConfig["ClientId"]";
+
+        // Replace with your own project number from console.developers.google.com.
+        // See "Project number" under "IAM & Admin" > "Settings"
+        var appId = "@pickerConfig["ProjectId"]";
+
+        // Scope to use to access user's Drive items.
+        var scope = ["@DriveService.Scope.Drive"];
+
+        var pickerApiLoaded = false;
+        var oauthToken;
+
+        const button = document.getElementById("addFiles");
+        button.addEventListener("click",
+            function(e) {
+                loadPicker();
+            }
+        );
+
+        const filesInput = document.getElementById("files");
+        const dt = new DataTransfer();
+
+        // Use the Google API Loader script to load the google.picker script.
+        function loadPicker() {
+            gapi.load('auth', { 'callback': onAuthApiLoad });
+            gapi.load('picker', { 'callback': onPickerApiLoad });
+        }
+
+        function onAuthApiLoad() {
+            window.gapi.auth.authorize(
+                {
+                    'client_id': clientId,
+                    'scope': scope,
+                    'immediate': false
+                },
+                handleAuthResult);
+        }
+
+        function onPickerApiLoad() {
+            pickerApiLoaded = true;
+            createPicker();
+        }
+
+        function handleAuthResult(authResult) {
+            if (authResult && !authResult.error) {
+                oauthToken = authResult.access_token;
+                createPicker();
+            }
+        }
+
+        // Create and render a Picker object for searching images.
+        function createPicker() {
+            if (pickerApiLoaded && oauthToken) {
+                var view = new google.picker.View(google.picker.ViewId.DOCS);
+                view.setMimeTypes("image/png,image/jpeg,image/jpg");
+                var picker = new google.picker.PickerBuilder()
+                    .enableFeature(google.picker.Feature.NAV_HIDDEN)
+                    .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+                    .setAppId(appId)
+                    .setOAuthToken(oauthToken)
+                    .addView(view)
+                    .addView(new google.picker.DocsUploadView())
+                    .setDeveloperKey(developerKey)
+                    .setCallback(pickerCallback)
+                    .build();
+                picker.setVisible(true);
+            }
+        }
+
+        // A simple callback implementation.
+        function pickerCallback(data) {
+            if (data.action === google.picker.Action.PICKED) {
+                //var fileId = data.docs[0].id;
+                handleFiles(data.docs);
+            }
+        }
+
+        function handleFiles(docs) {
+            const fileList = document.getElementById("fileList");
+            if (!docs.length) {
+                fileList.innerHTML = "<p>No files selected!</p>";
+            } else {
+                fileList.innerHTML = "";
+                const list = document.createElement("div");
+                fileList.appendChild(list);
+                for (let i = 0; i < docs.length; i++) {
+                    const li = document.createElement("div");
+                    list.appendChild(li);
+
+                    const img = document.createElement("img");
+                    img.src = `https://drive.google.com/uc?export=download&id=${docs[i].id}`;
+                    img.title = docs[i].name;
+                    img.style = "width:300px;height:auto;";
+                    li.appendChild(img);
+                    img.onload = function() {
+                        //URL.revokeObjectURL(this.src);
+                        var c = document.createElement("canvas"), // create a temp. canvas
+                            ctx = c.getContext("2d");
+                        c.width = this.naturalWidth; // set size = image, draw
+                        c.height = this.naturalHeight;
+                        ctx.drawImage(this, 0, 0);
+
+                        // convert to File object, NOTE: we're using binary mime-type for the final Blob/File
+                        c.toBlob(function(blob) {
+                            dt.items.add(new File([blob], this.title, { type: "application/octet-stream" }));
+                            filesInput.files = dt.files;
+                        });
+                    };
+                    const info = document.createElement("span");
+                    info.innerHTML = docs[i].name + ": " + docs[i].sizeBytes + " bytes";
+                    li.appendChild(info);
+                }
+            }
+        }
+    }
+    </script>
+}

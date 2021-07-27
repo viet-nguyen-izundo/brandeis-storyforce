@@ -1,0 +1,274 @@
+﻿@page "/"
+@using System.Security.Cryptography.X509Certificates
+@using System.Text.Encodings.Web
+@using Google.Apis.Auth.OAuth2
+@using Google.Apis.Services
+@using System.Dynamic
+@using Blazored.LocalStorage
+@using StoryForce.Shared.Models
+@using StoryForce.Shared.ViewModels
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+<div class="row">
+    @*<h5 class="breadcrumbs-title">
+            Please use the form below to submit your files
+        </h5>*@
+</div>
+<div class="row">
+    <EditForm EditContext="editContext" class="col s12">
+        <ObjectGraphDataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="col s12 m12 l12">
+            <div class="card card-default scrollspy">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Your Info
+                    </h4>
+                    <div class="row">
+                        <div class="input-field col s12 m6">
+                            <InputText class="validate" @bind-Value="Submission.SubmittedBy.Name" placeholder="Full Name" @onkeypress="@KeyPress" />
+                            <ValidationMessage For="@(() => Submission.SubmittedBy.Name)" />
+                        </div>
+                        <div class="input-field col s12 m6">
+                            <InputText type="email" class="validate" @bind-Value="Submission.SubmittedBy.Email" placeholder="Email" />
+                            <ValidationMessage For="@(() => Submission.SubmittedBy.Email)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m12 l12">
+            <div class="card card-default scrollspy">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Please select where your files are located:
+                    </h4>
+                    <div class="row">
+                        <div class="col s12">
+                            Load files from your current device, Google Drive, or other online locations<br />
+                            You may load multiple files at once. We recommend you load videos, written documents, and sound files, one at a time to make the upload easier.
+                        </div>
+                    </div>                    
+
+                    <div class="row">
+                        <div class="col s12 m4 l4">
+                            <div class="file-field input-field">
+                                <div class="btn">
+                                    <span>Device</span>
+                                    <InputFile multiple class="form-control-file" id="uploadFiles" OnChange="@OnFileInputChange" />
+                                </div>
+
+                                <div class="file-path-wrapper">
+                                    <input class="file-path validate" type="text">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col s12 m4 l4">
+                            <div class="file-field input-field">
+                                <div class="btn" id="addGDriveFiles" @onclick="InitGooglePicker">
+                                    <span>Google Drive</span>
+                                    <input type="hidden" @bind-value="Submission.GDriveOAuthToken" id="Submission_GDriveOAuthToken" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col s12 m4 l4">
+                            <div class="file-field input-field">
+                                <div class="btn" id="uploadByUrl" @onclick="@AddUrl">
+                                    <span>URL</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m12 l12" id="previewFiles">
+            <!-- Modal -->
+
+            <div id="modal1" class="modal @modalClass" style="display:@modalDisplay; position:absolute; top: 50%; width: 800px!important; position: fixed">
+                <div class="modal-content">
+                    <h4>Upload Progress</h4>
+                    <div class="progress @modalProgressClass">
+                        <div class="indeterminate"></div>
+                    </div>
+                    <div class="success-message @successClass">Your files were uploaded successfully!</div>
+                    <div class="@errorMessageClass">@submissionFailedMessage</div>
+                </div>
+                <div class="modal-footer @modalFooterClass">
+                    <a class="modal-action modal-close waves-effect waves-green btn-flat" @onclick="@CloseModalWindow">Close</a>
+                </div>
+            </div>
+
+            <div id="modal2" class="modal show" style="display:@modalDisplayRequired; position:absolute; top: 50%; width: 800px!important; position: fixed">
+                <div class="modal-content">
+                    <h4 style="color:red">Error</h4>
+                    <div class="success-message"> Files: @filenameVali.TrimEnd(',') <br /> - The Description is required filed!</div>
+                </div>
+                <div class="modal-footer">
+                    <a class="modal-action modal-close waves-effect waves-green btn-flat" @onclick="@CloseValidateModalWindow">Close</a>
+                </div>
+            </div>
+
+            @foreach (var (file, index) in Submission.UploadFiles.Select((file, index) => (file, index)))
+            {
+                <div class="col s12 m6 l4">
+                    <div class="card">
+                        @if (string.IsNullOrEmpty(file.PreviewUrl))
+                        {
+                            <div class="card-image">
+                                <a class="btn-floating mb-1 waves-effect waves-light remove-file" @onclick="@(() => RemoveFile(file))">
+                                    <i class="material-icons">clear</i>
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="card-image" style="background: url('@file.PreviewUrl') no-repeat center center; background-size: cover; height: 300px;">
+                                <a class="btn-floating mb-1 waves-effect waves-light remove-file" @onclick="@(() => RemoveFile(file))">
+                                    <i class="material-icons">clear</i>
+                                </a>
+                            </div>
+                        }
+
+                        <div id="modal2" class="modal show" style="display:@modalDisplayRequired; position:absolute; width: 800px!important; position: fixed">
+                            <div class="modal-content">
+                                <h4 style="color:red">Error</h4>
+                                <div class="success-message"> Files: @filenameVali.TrimEnd(',') <br /> - The Description is required filed!</div>
+                            </div>
+                            <div class="modal-footer">
+                                <a class="modal-action modal-close waves-effect waves-green btn-flat" @onclick="@CloseValidateModalWindow">Close</a>
+                            </div>
+                        </div>
+
+                        <div class="card-content" data-children-count="1">
+                            <span class="card-title font-weight-400">@file.Title</span>
+                            @if (file.StorageProvider == StorageProvider.Url)
+                            {
+                                <InputText @bind-Value="file.DownloadUrl" class="validate" placeholder="Enter Url" />
+                            }
+                            <div class="row mb-10">
+                                What is in the file?
+                                <div class="input-field col m-0 s12 m12">
+                                    <InputText @bind-Value="file.Description" class="validate" placeholder="Describe file." />
+                                </div>
+                            </div>
+                            <div class="row mb-10">
+                                Is this file associated with an event or holiday?
+                                <div class="input-field col m-0 s12 m12 mt-2">
+                                    <MatAutocompleteList @bind-Value=@file.Event Label="Event Name..." Items=@Events TItem=@Event CustomStringSelector="@(e => string.IsNullOrEmpty(e.Name) ? string.Empty : e.Name)" />
+                                </div>
+                            </div>
+                            <div class="row mb-10">
+                                Who is featured?
+
+                                @foreach (var (person, pi) in file.FeaturedPeople.Select((person, pi) => (person, pi)))
+                                {
+                                    <div class="featured-person">
+                                        <div class="input-field col m-0 s12 m12 mt-2">
+                                            <InputSelect @bind-Value=person.Type>
+                                                <option value="">Select Type</option>
+                                                <option value="Student">Specific Student</option>
+                                                <option value="Class">Class</option>
+                                                <option value="Staff">Staff</option>
+                                                <option value="Parent">Parent</option>
+                                                <option value="Alumni">Alumni Student, Teacher, or Parent</option>
+                                                <option value="CommunityMember">Community Member</option>
+                                                <option value="Other">Other</option>
+                                            </InputSelect>
+                                        </div>
+
+                                        @if (person.Type == PersonType.Student)
+                                        {
+                                            <div class="input-field col m-0 s11 m11 mt-2">
+                                                <MatAutocompleteList @bind-Value=@person.Name Label="Full Name..." Items=@Students.Select(s => s.Name) TItem="string" />
+                                            </div>
+                                        }
+                                        else if (person.Type == PersonType.Staff)
+                                        {
+                                            <div class="input-field col m-0 s11 m11 mt-2">
+                                                <MatAutocompleteList @bind-Value=@person.Name Label="Full Name..." Items=@Staff.Select(s => s.Name) TItem="string" />
+                                            </div>
+                                        }
+                                        else if (person.Type == PersonType.Class)
+                                        {
+                                            <div class="input-field col m-0 s11 m11">
+                                                <InputSelect @bind-Value=file.Class placeholder="Select Graduating Year">
+                                                    <option value="">Select Graduating Year</option>
+                                                    @foreach (var year in this.Classes)
+                                                    {
+                                                        <option value="@year">@year</option>
+                                                    }
+                                                </InputSelect>
+                                            </div>
+                                        }
+                                        else if (person.Type.HasValue)
+                                        {
+                                            <div class="input-field col m-0 s11 m11">
+                                                <InputText @bind-Value="@person.Name" placeholder="Full Name"></InputText>
+                                            </div>
+                                        }
+                                        @if (file.FeaturedPeople.Count > 1)
+                                        {
+                                            <div class="input-field col m-0 s1 m1 p-0">
+                                                <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => RemoveFeaturedPerson(file, person))"><i class="material-icons dp48">remove_circle_outline</i></a>
+                                            </div>
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(person.Name) || file.Class.HasValue)
+                                        {
+                                            <div class="col pt-2">
+                                                <a class="btn-flat waves-effect add-person blue-text text-darken-3 p-0" @onclick="@(() => AddFeaturedPerson(file))"><i class="material-icons dp48">add_circle_outline</i>Add Person</a>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+
+                            </div>
+
+                            <div class="row">
+                                If this file was requested by a staff member, please specify who:
+                                <div class="input-field col s12 m12 mt-2">
+                                    <MatAutocompleteList @bind-Value=@file.RequestedBy Label="Full Name" Items=@Staff TItem=@Person CustomStringSelector="@(p => p.Name)" />
+                                </div>
+                            </div>
+                            @*@if (index == 0)*@
+                            @if (Submission.UploadFiles.Count() > 1)
+                            {
+                                <div class="row">
+                                    <a class="btn-flat waves-effect blue-text text-darken-3 duplicate-data p-0" @onclick="@(() => DuplicateFileAttributes(file))">Copy Info to All Other Files</a>
+                                    <br /><i>You can make changes to individual files</i>
+                                </div>
+                            }                        
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="row">
+            <div class="input-field col s6">
+                <a class="btn cyan waves-effect waves-light left" onClick="window.location.reload();">
+                    Reset
+                </a>
+            </div>
+            <div class="input-field col s6">
+                <a class="btn cyan waves-effect waves-light right" @onclick="ClickHandler" id="submit-button">
+                    Submit <i class="material-icons right">send</i>
+                </a>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+
+
+
+
+@if (showBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
