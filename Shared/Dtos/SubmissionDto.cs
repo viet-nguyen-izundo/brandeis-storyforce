@@ -105,7 +105,7 @@ namespace StoryForce.Shared.Dtos
                     CreatedAt = entity.CreatedAt,
                     ReviewedBy = entity.ReviewedBy,
                     UpdatedAt = entity.UpdatedAt,     
-                    Notes = entity.NoteFile.ToList(),                    
+                    Notes = entity.NoteFile.ToList()                       
                 };
         }
 

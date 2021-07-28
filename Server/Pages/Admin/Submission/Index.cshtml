@@ -202,7 +202,7 @@
                                                                         <textarea style="border: none; border-bottom: 1px solid">@item.Text</textarea>
                                                                     </div>
                                                                     <div class="col s2">
-                                                                        <button class="btn-small edit mb-1 teal lighten-2 edit-note-group-button" data-note-id="@item.Id" data-submittedfile-id="@file.Id" style="width:100%">
+                                                                        <button class="btn-small edit mb-1 teal lighten-2 edit-note-button" data-note-id="@item.Id" data-submittedfile-id="@file.Id" style="width:100%">
                                                                             <i class="material-icons left" style="width: 0px; margin-left: -45%">edit</i>
                                                                             <span style=" margin-right: -40%">Edit</span>
                                                                         </button>
@@ -313,6 +313,52 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                    }
+                                                    @if (file.Categories != null)
+                                                    {
+                                                        <p style="text-align: center"><i>Categories:</i></p>
+                                                        foreach (var category in file.Categories)
+                                                        {
+
+                                                            <div class="row tags-item mt-2" style="width:100%">
+                                                                <div class="col s7 cate-text" style="width:65%; margin-left:-2%">@category.Name</div>
+                                                                <div class="col s7 cate-name" style="display: none; width:66%; margin-left:-2%">
+                                                                    <textarea style="border: none; border-bottom: 1px solid">@category.Name</textarea>
+                                                                </div>
+                                                                <div class="col s2" style=" margin-left: 0%;">
+                                                                    <button class="btn-small edit mb-1 teal lighten-2 edit-cate-button" data-category-id="@category.Id" style="width:100%; margin-right:-20%">
+                                                                        <i class="material-icons left" style="width: 0px; margin-left: -45%">edit</i>
+                                                                        <span style=" margin-right: -40%">Edit</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="col s2" style=" width: 18%; margin-left: 1%">
+                                                                    <button class="btn-small mb-1 delete-cate-button" data-category-id="@category.Id" style="width:100%">
+                                                                        <i class="material-icons left" style="width: 0px; margin-left: -45%">delete</i>
+                                                                        <span style=" margin-right: -40%">Delete</span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <!--<div class="row cate-item mt-2">
+                                                            <div class="col s7 cate-text" style="width:65%">@category.Name</div>
+                                                            <div class="col s7 cate-name" style="display: none; width:66%">-->
+                                                            @*<input type="text" placeholder="Note" value="@item.Text" />*@
+                                                            <!--<textarea style="border: none; border-bottom: 1px solid">@category.Name</textarea>
+                                                                </div>
+                                                                <div class="col s2">
+                                                                    <button class="btn-small edit mb-1 teal lighten-2 edit-cate-button" data-category-id="@category.Id" style="width:100%">
+                                                                        <i class="material-icons left" style="width: 0px; margin-left: -45%">edit</i>
+                                                                        <span style=" margin-right: -40%">Edit</span>
+                                                                    </button>
+                                                                </div>
+
+                                                                <div class="col s2" style="text-align: end">
+                                                                    <button class="btn-small mb-1 delete-cate-button" data-category-id="@category.Id" style="width:100%">
+                                                                        <i class="material-icons left" style="width: 0px; margin-left: -45%">delete</i>
+                                                                        <span style=" margin-right: -40%">Delete</span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>-->
+                                                        }
                                                     }
                                                 </div>
                                                 <a class="btn-small edit mb-1 teal lighten-2 edit-note-group-button" data-note-id="@file.Id" href="/storyFile/@file.Id" style="width:21%; margin-left:180%">
@@ -524,27 +570,26 @@
             });
 
             $(".email-footer").on("click", ".new-note-group-button", function () {
-                                    var newNoteText = $(this).parents('.note-group').find('.new-note-group-input').val();
-                                    var submissionId = $(this).data("submission-id");
+                var newNoteText = $(this).parents('.note-group').find('.new-note-group-input').val();
+                var submissionId = $(this).data("submission-id");
                 $.ajax({
-                                        url: '/api/note',
+                    url: '/api/note',
                     type: 'POST',
                     contentType: "application/json",
                     data: JSON.stringify({
-                                            text: newNoteText,
+                        text: newNoteText,
                         username: '@User?.Identity?.Name',
                         storyFileId: $(this).data("file-id"),
                         SubmissionId: submissionId
                     })
                 }).then(function (res) {
-                                        window.location.reload();
-                                    });
-
-                                });
+                        window.location.reload();
+                    });
+                });
 
             $(".attachment-list").on("click", ".delete-note-button", function () {
-                                    Swal.fire({
-                                        title: 'Are you sure?',
+            Swal.fire({
+                    title: 'Are you sure?',
                     text: "You won't be able to revert this!",
                     icon: 'warning',
                     showCancelButton: true,
@@ -557,25 +602,21 @@
                         url: '/api/note/' + $(this).data("note-id") + '?submittedFileId=' + $(this).data("submittedfile-id"),
                             type: 'DELETE'
                         }).then(function (res) {
-                                        Swal.fire(
-                                            'Deleted!',
-                                            "The note was deleted",
-                                            'success'
-                                        ).then(function() {
-                                            window.location.reload();
-                                        });
-
+                             Swal.fire(
+                                    'Deleted!',
+                                    "The note was deleted",
+                                    'success'
+                             ).then(function() {
+                                    window.location.reload();
                                     });
-
-                                }
+                             });
+                             }
                             });
-
-
                         });
 
             $(".note-group").on("click", ".delete-note-button", function () {
-                            Swal.fire({
-                                title: 'Are you sure?',
+            Swal.fire({
+                    title: 'Are you sure?',
                     text: "You won't be able to revert this!",
                     icon: 'warning',
                     showCancelButton: true,
@@ -607,17 +648,17 @@
             //------Tags------
 
             $(".tagstype").change(function () {
-                            let select = $(this).find("option:selected").val();
-                            if (select == "brandtags") {
+                    let select = $(this).find("option:selected").val();
+                    if (select == "brandtags") {
                     $(this).parents(".attachment").find('.new-tags-brand').css("display", "block");
                     $(this).parents(".attachment").find('.new-tags-process').css("display", "none");
                             }
-                            else if (select == "processtags") {
+                    else if (select == "processtags") {
                     $(this).parents(".attachment").find('.new-tags-brand').css("display", "none");
                     $(this).parents(".attachment").find('.new-tags-process').css("display", "block");
                     $(this).parents(".attachment").find('.note-tag-process').css("display", "block");
                             }
-                            else if (select == "") {
+                    else if (select == "") {
                     $(this).parents(".attachment").find('.new-tags-brand').css("display", "none");
                     $(this).parents(".attachment").find('.new-tags-process').css("display", "none");
                     $(this).parents(".attachment").find('.note-tag-process').css("display", "none");
@@ -625,8 +666,8 @@
                         })
 
             $('textarea.autocomplete_brand').autocomplete({
-                            data: {
-                                "Confident Leader (Outcome)": null,
+            data: {
+                    "Confident Leader (Outcome)": null,
                     "Joyful Learner (Outcome)": null,
                     "Global Citizen (Outcome)": null,
                     "Curriculum (Process)": null,
@@ -636,8 +677,8 @@
             });
 
             $('textarea.autocomplete_process').autocomplete({
-                            data: {
-                                "Pending": null,
+            data: {
+                    "Pending": null,
                     "Internal use only - Not for public view": null,
                     "Potential for newsletter, media": null,
                     "In editing process": null,
@@ -667,7 +708,7 @@
                         storyFileId: $(this).data("file-id")
                     })
                 }).then(function (res) {
-                                if (newNoteText) {
+                        if (newNoteText) {
                         $.ajax({
                             url: '/api/note',
                             type: 'POST',
@@ -707,10 +748,6 @@
                 $(this).parents(".attachment").find('.note-tag-process').css("display", "none");
                 $(this).parents(".attachment").find('.new-tags-button').css("display", "block");
             });
-
-            //$(".attachment-list").on("click", ".add-process-tags-button", function () {
-            //    $(this).parents(".attachment").find('.note-tag-process').css("display", "block");
-            //});
 
             $(".attachment-list").on("click", ".delete-tags-button", function () {
                 Swal.fire({
@@ -783,8 +820,9 @@
 
             });
             });
+
             //Category
-            $(".attachment-list").on("click", ".new-categories-button", function () {               
+            $(".attachment-list").on("click", ".new-categories-button", function () {
                 var newNoteText = $(this).parents('.new-categories').find('.new-categories-input').val();
                 $.ajax({
                     url: '/api/category',
@@ -797,6 +835,59 @@
                 }).then(function (res) {
                     window.location.reload();
                 });
+
+            });
+
+            $(".attachment-list").on("click", ".delete-cate-button", function () {                
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ok'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/api/category/' + $(this).data("category-id"),
+                            type: 'DELETE'
+                        }).then(function (res) {
+                            Swal.fire(
+                                'Deleted!',
+                                "The tag was deleted",
+                                'success'
+                            ).then(function () {
+                                window.location.reload();
+                            });
+
+                        });
+
+                    }
+                });
+            });
+
+            $(".attachment-list").on("click", ".edit-cate-button", function () {               
+                var mode = $(this).find('i').text();
+                if (mode === 'save') {
+                    $.ajax({
+                        url: '/api/category/' + $(this).data("category-id"),
+                        type: 'PUT',
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            name: $(this).parents('.tags-item').find('.cate-name textarea').val(),
+                            id: $(this).data("category-id")
+                        })
+                    }).then(function (res) {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    $(this).find('i').text('save');
+                    $(this).find('span').text('Save');
+                    $(this).parents('.tags-item').find('.cate-text').hide();
+                    $(this).parents('.tags-item').find('.cate-name').show();
+                }
 
             });
         });

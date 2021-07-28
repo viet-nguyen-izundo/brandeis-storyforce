@@ -62,28 +62,28 @@ namespace StoryForce.Server.Controllers
             return CreatedAtRoute("GetCategory", new { id = createdCategory.Id }, createdCategory);
         }
 
-        //// PUT api/<Tag>/5
-        //[HttpPut("{id}")]
-        //public async Task<ActionResult> Put(int id, EditTagDto tag)
-        //{
-        //    var tagInDb = await _tagsService.GetAsync(id);
-        //    if (tagInDb == null || tag.Id != id)
-        //        return BadRequest($"Tag with id '{id}' not found.");
-        //    tagInDb.Name = tag.Name;
-        //    await _tagsService.UpdateAsync(id, tagInDb);
-        //    return NoContent();
-        //}
+        // PUT api/<Category>/5
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, EditCategoriesDto category)
+        {
+            var categoryInDb = await _categoriesService.GetAsync(id);
+            if (categoryInDb == null || category.Id != id)
+                return BadRequest($"Category with id '{id}' not found.");
+            categoryInDb.Name = category.Name;
+            await _categoriesService.UpdateAsync(id, categoryInDb);
+            return NoContent();
+        }
 
-        //// DELETE api/<Tag>/5
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult> Delete(int id)
-        //{
-        //    var tagInDb = await _tagsService.GetAsync(id);
-        //    if (tagInDb == null)
-        //        return BadRequest($"Tag with id '{id}' not found.");
-        //    await _tagsService.RemoveAsync(id);
-        //    return NoContent();
-        //}
+        // DELETE api/<Category>/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var categoryInDb = await _categoriesService.GetAsync(id);
+            if (categoryInDb == null)
+                return BadRequest($"Category with id '{id}' not found.");
+            await _categoriesService.RemoveAsync(id);
+            return NoContent();
+        }
         public class CreateCategoryDto
         {
             public string Name { get; set; }
@@ -99,11 +99,11 @@ namespace StoryForce.Server.Controllers
             }
         }
 
-        //public class EditTagDto
-        //{
-        //    public int Id { get; set; }
-        //    public string Name { get; set; }
+        public class EditCategoriesDto
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
 
-        //}
+        }
     }
 }

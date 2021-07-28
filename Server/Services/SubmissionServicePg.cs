@@ -32,6 +32,7 @@ namespace StoryForce.Server.Services
                 .Include(x => x.SubmittedFiles).ThenInclude(m => m.Tags)
                 .Include(x => x.NoteFile)
                 .Include(x=>x.SubmittedFiles).ThenInclude(m=>m.FavouritesPeople)
+                .Include(x=>x.SubmittedFiles).ThenInclude(m=>m.Categories)
                 .ToListAsync();
         }
 
@@ -50,6 +51,7 @@ namespace StoryForce.Server.Services
                 .Include(x => x.SubmittedFiles).ThenInclude(m => m.Tags)
                 .Include(x => x.NoteFile)
                 .Include(x => x.SubmittedFiles).ThenInclude(m => m.FavouritesPeople)
+                .Include(x => x.SubmittedFiles).ThenInclude(m => m.Categories)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
         public async Task<List<Submission>> GetBySubmittedByIdAsync(int id)
@@ -65,6 +67,7 @@ namespace StoryForce.Server.Services
                 .Include(x => x.History)
                 .Include(x => x.SubmittedFiles).ThenInclude(m => m.Tags)
                 .Include(x => x.NoteFile)
+                .Include(x => x.SubmittedFiles).ThenInclude(m => m.Categories)
                 .Where(m => m.SubmittedBy.Id == id)
                 .ToListAsync();
 
