@@ -356,9 +356,9 @@
                                                                         <i class="material-icons left" style="width: 0px; margin-left: -45%">delete</i>
                                                                         <span style=" margin-right: -40%">Delete</span>
                                                                     </button>
-                                                                </div>
+                                                        </div>
                                                             </div>-->
-                                                        }
+                                                    }
                                                     }
                                                 </div>
                                                 <a class="btn-small edit mb-1 teal lighten-2 edit-note-group-button" data-note-id="@file.Id" href="/storyFile/@file.Id" style="width:21%; margin-left:180%">
@@ -570,26 +570,27 @@
             });
 
             $(".email-footer").on("click", ".new-note-group-button", function () {
-                var newNoteText = $(this).parents('.note-group').find('.new-note-group-input').val();
-                var submissionId = $(this).data("submission-id");
+                                    var newNoteText = $(this).parents('.note-group').find('.new-note-group-input').val();
+                                    var submissionId = $(this).data("submission-id");
                 $.ajax({
-                    url: '/api/note',
+                                        url: '/api/note',
                     type: 'POST',
                     contentType: "application/json",
                     data: JSON.stringify({
-                        text: newNoteText,
+                                            text: newNoteText,
                         username: '@User?.Identity?.Name',
                         storyFileId: $(this).data("file-id"),
                         SubmissionId: submissionId
                     })
                 }).then(function (res) {
-                        window.location.reload();
-                    });
-                });
+                                        window.location.reload();
+                                    });
+
+                                });
 
             $(".attachment-list").on("click", ".delete-note-button", function () {
-            Swal.fire({
-                    title: 'Are you sure?',
+                                    Swal.fire({
+                                        title: 'Are you sure?',
                     text: "You won't be able to revert this!",
                     icon: 'warning',
                     showCancelButton: true,
@@ -602,21 +603,25 @@
                         url: '/api/note/' + $(this).data("note-id") + '?submittedFileId=' + $(this).data("submittedfile-id"),
                             type: 'DELETE'
                         }).then(function (res) {
-                             Swal.fire(
-                                    'Deleted!',
-                                    "The note was deleted",
-                                    'success'
-                             ).then(function() {
-                                    window.location.reload();
+                                        Swal.fire(
+                                            'Deleted!',
+                                            "The note was deleted",
+                                            'success'
+                                        ).then(function() {
+                                            window.location.reload();
+                                        });
+
                                     });
-                             });
-                             }
+
+                                }
                             });
+
+
                         });
 
             $(".note-group").on("click", ".delete-note-button", function () {
-            Swal.fire({
-                    title: 'Are you sure?',
+                            Swal.fire({
+                                title: 'Are you sure?',
                     text: "You won't be able to revert this!",
                     icon: 'warning',
                     showCancelButton: true,
@@ -648,17 +653,17 @@
             //------Tags------
 
             $(".tagstype").change(function () {
-                    let select = $(this).find("option:selected").val();
-                    if (select == "brandtags") {
+                            let select = $(this).find("option:selected").val();
+                            if (select == "brandtags") {
                     $(this).parents(".attachment").find('.new-tags-brand').css("display", "block");
                     $(this).parents(".attachment").find('.new-tags-process').css("display", "none");
                             }
-                    else if (select == "processtags") {
+                            else if (select == "processtags") {
                     $(this).parents(".attachment").find('.new-tags-brand').css("display", "none");
                     $(this).parents(".attachment").find('.new-tags-process').css("display", "block");
                     $(this).parents(".attachment").find('.note-tag-process').css("display", "block");
                             }
-                    else if (select == "") {
+                            else if (select == "") {
                     $(this).parents(".attachment").find('.new-tags-brand').css("display", "none");
                     $(this).parents(".attachment").find('.new-tags-process').css("display", "none");
                     $(this).parents(".attachment").find('.note-tag-process').css("display", "none");
@@ -666,8 +671,8 @@
                         })
 
             $('textarea.autocomplete_brand').autocomplete({
-            data: {
-                    "Confident Leader (Outcome)": null,
+                            data: {
+                                "Confident Leader (Outcome)": null,
                     "Joyful Learner (Outcome)": null,
                     "Global Citizen (Outcome)": null,
                     "Curriculum (Process)": null,
@@ -677,8 +682,8 @@
             });
 
             $('textarea.autocomplete_process').autocomplete({
-            data: {
-                    "Pending": null,
+                            data: {
+                                "Pending": null,
                     "Internal use only - Not for public view": null,
                     "Potential for newsletter, media": null,
                     "In editing process": null,
@@ -708,7 +713,7 @@
                         storyFileId: $(this).data("file-id")
                     })
                 }).then(function (res) {
-                        if (newNoteText) {
+                                if (newNoteText) {
                         $.ajax({
                             url: '/api/note',
                             type: 'POST',
@@ -748,6 +753,10 @@
                 $(this).parents(".attachment").find('.note-tag-process').css("display", "none");
                 $(this).parents(".attachment").find('.new-tags-button').css("display", "block");
             });
+
+            //$(".attachment-list").on("click", ".add-process-tags-button", function () {
+            //    $(this).parents(".attachment").find('.note-tag-process').css("display", "block");
+            //});
 
             $(".attachment-list").on("click", ".delete-tags-button", function () {
                 Swal.fire({
@@ -822,7 +831,7 @@
             });
 
             //Category
-            $(".attachment-list").on("click", ".new-categories-button", function () {
+            $(".attachment-list").on("click", ".new-categories-button", function () {               
                 var newNoteText = $(this).parents('.new-categories').find('.new-categories-input').val();
                 $.ajax({
                     url: '/api/category',
@@ -858,10 +867,10 @@
                                 "The tag was deleted",
                                 'success'
                             ).then(function () {
-                                window.location.reload();
-                            });
+                    window.location.reload();
+                });
 
-                        });
+            });
 
                     }
                 });
